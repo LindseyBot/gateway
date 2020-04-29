@@ -18,10 +18,13 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url "https://maven.notfab.net/Hosted" }
+    maven { url "https://dl.bintray.com/kodehawa/maven" }
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:4.1.1_133'
+    compile 'net.kodehawa:imageboard-api:2.2.1'
+    compile group: 'org.json', name: 'json', version: '20190722'
+    compile 'net.dv8tion:JDA:4.1.1_140'
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     compileOnly 'org.projectlombok:lombok'

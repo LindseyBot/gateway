@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 
 import javax.security.auth.login.LoginException;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"net.notfab.lindsey.core", "net.notfab.lindsey.framework"})
 public class Application implements ApplicationRunner {
 
     @Value("${bot.token}")

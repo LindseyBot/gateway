@@ -4,6 +4,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Command;
+import net.notfab.lindsey.framework.command.CommandDescriptor;
+import net.notfab.lindsey.framework.command.Modules;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -14,9 +16,19 @@ import java.util.Arrays;
 
 public class Anime implements Command {
 
-    OkHttpClient client = new OkHttpClient().newBuilder()
+    private static final OkHttpClient client = new OkHttpClient().newBuilder()
             .followSslRedirects(true)
             .build();
+
+    @Override
+    public CommandDescriptor getInfo() {
+        return new CommandDescriptor.Builder()
+                .name("anime")
+                .module(Modules.FUN)
+                .permission("commands.anime", "Permission to use the base command")
+                .permission("commands.anime.nsfw", "Permission to use the command on nsfw channels")
+                .build();
+    }
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args) throws Exception {
@@ -28,7 +40,8 @@ public class Anime implements Command {
         Response resp = client.newCall(req).execute();
         JSONObject obj = new JSONObject(resp.body().string());
         JSONObject atr = obj.getJSONArray("data").getJSONObject(0).getJSONObject("attributes");
-        String link = "https://kitsu.io/anime/" + obj.getJSONArray("data").getJSONObject(0).getJSONObject("links").getString("self").split("anime/")[1];
+        String link = "https://kitsu.io/anime/" + obj.getJSONArray("data").getJSONObject(0)
+                .getJSONObject("links").getString("self").split("anime/")[1];
         EmbedBuilder embed = new EmbedBuilder();
 
         if (atr.getJSONObject("titles").has("en")) {
@@ -38,7 +51,7 @@ public class Anime implements Command {
         }
 
         //embed.setColor(new Color(255, 0, 54));
-        embed.setFooter("Requested by " + member.getEffectiveName() +"#"+ member.getUser().getDiscriminator(), member.getUser().getEffectiveAvatarUrl());
+        embed.setFooter("Requested by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(), member.getUser().getEffectiveAvatarUrl());
 
         if (!atr.isNull("synopsis")) {
             embed.setDescription(atr.getString("synopsis"));
@@ -60,12 +73,12 @@ public class Anime implements Command {
 
         if (!atr.isNull("averageRating")) {
             String rating = atr.getString("averageRating");
-            embed.addField("Rating", atr.getString("averageRating") + " / 100", true);
+            embed.addField("Rating", rating + " / 100", true);
         }
 
         if (!atr.isNull("ratingRank")) {
             int rank = atr.getInt("ratingRank");
-            embed.addField("Rank", Integer.toString(atr.getInt("ratingRank")), true);
+            embed.addField("Rank", String.valueOf(rank), true);
         }
 
         if (!atr.isNull("popularityRank")) {
@@ -89,16 +102,13 @@ public class Anime implements Command {
         }
 
         if (!atr.isNull("nsfw")) {
-            if(atr.getBoolean("nsfw")) {
-                embed.addField("NSFW","Yes", true);
-            }else{
-                embed.addField("NSFW","No", true);
+            if (atr.getBoolean("nsfw")) {
+                embed.addField("NSFW", "Yes", true);
+            } else {
+                embed.addField("NSFW", "No", true);
             }
-
         }
-
         channel.sendMessage(embed.build()).queue();
-
         return false;
     }
 

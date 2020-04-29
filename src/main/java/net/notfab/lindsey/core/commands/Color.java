@@ -3,6 +3,8 @@ package net.notfab.lindsey.core.commands;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Command;
+import net.notfab.lindsey.framework.command.CommandDescriptor;
+import net.notfab.lindsey.framework.command.Modules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,15 @@ import java.io.IOException;
 public class Color implements Command {
 
     private static final Logger logger = LoggerFactory.getLogger(Color.class);
+
+    @Override
+    public CommandDescriptor getInfo() {
+        return new CommandDescriptor.Builder()
+                .name("color")
+                .module(Modules.FUN)
+                .permission("commands.color", "Permission to use the base command")
+                .build();
+    }
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args) throws Exception {

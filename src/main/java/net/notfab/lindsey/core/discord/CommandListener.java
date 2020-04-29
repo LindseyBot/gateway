@@ -4,18 +4,30 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.notfab.lindsey.framework.command.Command;
+import net.notfab.lindsey.framework.command.CommandManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
 public class CommandListener extends ListenerAdapter {
 
+    private static final Logger logger = LoggerFactory.getLogger(CommandListener.class);
+    private static final ExecutorService threadPool = Executors.newCachedThreadPool();
     private final Pattern argPattern = Pattern.compile("(?:([^\\s\"]+)|\"((?:\\w+|\\\\\"|[^\"])+)\")");
+
+    @Autowired
+    private CommandManager manager;
 
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
@@ -46,7 +58,17 @@ public class CommandListener extends ListenerAdapter {
             arguments.remove(0);
         }
         // -- Execution
-
+        Command command = this.manager.findCommand(commandName);
+        if (command == null) {
+            return;
+        }
+        threadPool.submit(() -> {
+            try {
+                command.execute(member, event.getChannel(), arguments.toArray(new String[0]));
+            } catch (Exception ex) {
+                logger.error("Error during command execution", ex);
+            }
+        });
     }
 
     private String findPrefix(String message, Guild guild, Member self) {
