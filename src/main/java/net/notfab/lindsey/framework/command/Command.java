@@ -29,4 +29,8 @@ public interface Command {
         return String.join(" ", args);
     }
 
+    default String sender(Member member) {
+        return "**" + member.getEffectiveName() + "**";
+    }
+
 }
