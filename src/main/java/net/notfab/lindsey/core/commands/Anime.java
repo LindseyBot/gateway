@@ -3,6 +3,7 @@ package net.notfab.lindsey.core.commands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
@@ -31,7 +32,7 @@ public class Anime implements Command {
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
         Request req = new Request.Builder()
                 .url("https://kitsu.io/api/edge/anime?filter[text]=" + Arrays.toString(args))
                 .get()

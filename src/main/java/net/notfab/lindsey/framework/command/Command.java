@@ -8,7 +8,7 @@ public interface Command {
 
     CommandDescriptor getInfo();
 
-    boolean execute(Member member, TextChannel channel, String[] args) throws Exception;
+    boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception;
 
     default boolean hasPermission(Member member, String name) {
         if (member.isOwner()) {

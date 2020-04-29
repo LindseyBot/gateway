@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.kodehawa.lib.imageboards.DefaultImageBoards;
 import net.kodehawa.lib.imageboards.entities.BoardImage;
 import net.kodehawa.lib.imageboards.entities.Rating;
+import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
@@ -26,7 +27,7 @@ public class Danbooru implements Command {
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
         Rating r = Rating.QUESTIONABLE;
         int page = Math.max(1, random.nextInt(25));
         if (args.length == 0) {

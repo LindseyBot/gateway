@@ -64,7 +64,7 @@ public class CommandListener extends ListenerAdapter {
         }
         threadPool.submit(() -> {
             try {
-                command.execute(member, event.getChannel(), arguments.toArray(new String[0]));
+                command.execute(member, event.getChannel(), arguments.toArray(new String[0]), null);
             } catch (Exception ex) {
                 logger.error("Error during command execution", ex);
             }
