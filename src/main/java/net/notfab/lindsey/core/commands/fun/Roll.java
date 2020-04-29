@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands;
+package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;

@@ -1,8 +1,9 @@
 package net.notfab.lindsey.framework.command;
 
-import net.notfab.lindsey.core.commands.Anime;
-import net.notfab.lindsey.core.commands.Color;
-import net.notfab.lindsey.core.commands.Flip;
+import net.notfab.lindsey.core.commands.fun.Anime;
+import net.notfab.lindsey.core.commands.fun.Color;
+import net.notfab.lindsey.core.commands.fun.Flip;
+import net.notfab.lindsey.core.commands.fun.Roll;
 import net.notfab.lindsey.core.commands.nsfw.Danbooru;
 import net.notfab.lindsey.core.commands.nsfw.Rule34;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ public class CommandManager {
         this.register(new Anime());
         this.register(new Rule34());
         this.register(new Danbooru());
+        this.register(new Roll());
     }
 
     private void register(Command command) {
