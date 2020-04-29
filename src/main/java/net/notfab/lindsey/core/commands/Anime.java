@@ -7,6 +7,7 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.utils.Messenger;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -52,7 +53,8 @@ public class Anime implements Command {
         }
 
         //embed.setColor(new Color(255, 0, 54));
-        embed.setFooter("Requested by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(), member.getUser().getEffectiveAvatarUrl());
+        embed.setFooter("Requested by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                member.getUser().getEffectiveAvatarUrl());
 
         if (!atr.isNull("synopsis")) {
             embed.setDescription(atr.getString("synopsis"));
@@ -69,7 +71,7 @@ public class Anime implements Command {
 
         if (!atr.isNull("episodeCount")) {
             int eps = atr.getInt("episodeCount");
-            embed.addField("Episodes", Integer.toString(atr.getInt("episodeCount")), true);
+            embed.addField("Episodes", String.valueOf(eps), true);
         }
 
         if (!atr.isNull("averageRating")) {
@@ -83,7 +85,7 @@ public class Anime implements Command {
         }
 
         if (!atr.isNull("popularityRank")) {
-            embed.addField("Popularity", Integer.toString(atr.getInt("popularityRank")), true);
+            embed.addField("Popularity", String.valueOf(atr.getInt("popularityRank")), true);
         }
 
         if (!atr.isNull("startDate")) {
@@ -109,7 +111,7 @@ public class Anime implements Command {
                 embed.addField("NSFW", "No", true);
             }
         }
-        channel.sendMessage(embed.build()).queue();
+        Messenger.send(channel, embed.build());
         return false;
     }
 

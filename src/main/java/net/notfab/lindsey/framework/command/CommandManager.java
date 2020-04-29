@@ -1,6 +1,10 @@
 package net.notfab.lindsey.framework.command;
 
+import net.notfab.lindsey.core.commands.Anime;
 import net.notfab.lindsey.core.commands.Color;
+import net.notfab.lindsey.core.commands.Flip;
+import net.notfab.lindsey.core.commands.nsfw.Danbooru;
+import net.notfab.lindsey.core.commands.nsfw.Rule34;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -13,6 +17,10 @@ public class CommandManager {
 
     public CommandManager() {
         this.register(new Color());
+        this.register(new Flip());
+        this.register(new Anime());
+        this.register(new Rule34());
+        this.register(new Danbooru());
     }
 
     private void register(Command command) {

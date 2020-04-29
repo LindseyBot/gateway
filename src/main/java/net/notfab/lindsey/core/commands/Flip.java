@@ -6,6 +6,7 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.utils.Messenger;
 
 import java.util.Random;
 
@@ -24,9 +25,9 @@ public class Flip implements Command {
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
         Random gem = new Random();
         if (gem.nextBoolean()) {
-            channel.sendMessage("**" + member.getEffectiveName() + "** flipped a coin and got **Heads**.").queue();
+            Messenger.send(channel, "**" + member.getEffectiveName() + "** flipped a coin and got **Heads**.");
         } else {
-            channel.sendMessage("**" + member.getEffectiveName() + "** flipped a coin and got **Tails**.").queue();
+            Messenger.send(channel, "**" + member.getEffectiveName() + "** flipped a coin and got **Tails**.");
         }
         return false;
     }

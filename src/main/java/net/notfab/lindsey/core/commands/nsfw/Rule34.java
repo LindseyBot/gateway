@@ -9,6 +9,7 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.utils.Messenger;
 
 import java.util.Random;
 
@@ -44,7 +45,7 @@ public class Rule34 implements Command {
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) {
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("click here if image doesn't load", image.getURL())
+                .setTitle("Click here if image doesn't load", image.getURL())
                 .setDescription("**Tags**:" + image.getTags())
                 .setFooter("Requested by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
                         member.getUser().getEffectiveAvatarUrl())
@@ -52,7 +53,7 @@ public class Rule34 implements Command {
                 .addField("Size", image.getWidth() + "x" + image.getHeight(), true)
                 .addField("Score", Integer.toString(image.getScore()), true)
                 .setImage(image.getURL());
-        channel.sendMessage(embed.build()).queue();
+        Messenger.send(channel, embed.build());
     }
 
 }
