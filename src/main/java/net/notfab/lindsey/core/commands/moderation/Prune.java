@@ -5,11 +5,15 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.*;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+
+import static net.notfab.lindsey.framework.translate.Translator.translate;
 
 public class Prune implements Command {
     @Override
@@ -57,11 +61,15 @@ public class Prune implements Command {
                         });
                     }
                     channel.deleteMessages(del).queue(d -> {
-                        channel.sendMessage(sender(member) + " " + (del.size() - 1) + " Messages deleted. This message will auto-destruct in 5 seconds.").queue(m -> {
-                            m.delete().queueAfter(5, TimeUnit.SECONDS, x -> {
-                            }, e -> {
+                        try {
+                            channel.sendMessage(sender(member) + " " + (del.size() - 1) + " " + translate("en", "core.commands.moderation.prune.del")).queue(m -> {
+                                m.delete().queueAfter(5, TimeUnit.SECONDS, x -> {
+                                }, e -> {
+                                });
                             });
-                        });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     });
                 }
             } else {

@@ -16,6 +16,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import static net.notfab.lindsey.framework.translate.Translator.translate;
+
 public class Color implements Command {
 
     private static final Logger logger = LoggerFactory.getLogger(Color.class);
@@ -48,7 +50,7 @@ public class Color implements Command {
             try {
                 ImageIO.write(image, "png", os);
             } catch (IOException ex) {
-                logger.error("Error writing color", ex);
+                logger.error(translate("en", "core.commands.fun.color.error"), ex);
                 return false;
             }
             channel.sendFile(new ByteArrayInputStream(os.toByteArray()), color + ".png").queue();

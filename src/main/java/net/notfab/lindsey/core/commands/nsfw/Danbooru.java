@@ -12,7 +12,10 @@ import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
 import net.notfab.lindsey.utils.Messenger;
 
+import java.io.IOException;
 import java.util.Random;
+
+import static net.notfab.lindsey.framework.translate.Translator.translate;
 
 public class Danbooru implements Command {
 
@@ -34,12 +37,20 @@ public class Danbooru implements Command {
         if (args.length == 0) {
             DefaultImageBoards.DANBOORU.get(page, 1, r).async(danbooruImages -> {
                 BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                buildEmbed(image, member, channel);
+                try {
+                    buildEmbed(image, member, channel);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
         } else if (args.length == 1) {
             DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
                 BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                buildEmbed(image, member, channel);
+                try {
+                    buildEmbed(image, member, channel);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
         } else if (args.length == 2) {
             switch (args[0]) {
@@ -58,21 +69,25 @@ public class Danbooru implements Command {
             }
             DefaultImageBoards.DANBOORU.search(args[1], r).async(danbooruImages -> {
                 BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                buildEmbed(image, member, channel);
+                try {
+                    buildEmbed(image, member, channel);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
         }
         return false;
     }
 
-    private void buildEmbed(BoardImage image, Member member, TextChannel channel) {
+    private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("Click here if image doesn't load", image.getURL())
-                .setDescription("**Tags**:" + image.getTags())
-                .setFooter("Requested by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                .setTitle(translate("en", "core.commands.nsfw.load"), image.getURL())
+                .setDescription("**" + translate("en", "core.commands.nsfw.tags") + "**:" + image.getTags())
+                .setFooter(translate("en", "core.commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
                         member.getUser().getEffectiveAvatarUrl())
-                .addField("Rating", image.getRating().toString(), true)
-                .addField("Size", image.getWidth() + "x" + image.getHeight(), true)
-                .addField("Score", Integer.toString(image.getScore()), true)
+                .addField(translate("en", "core.commands.nsfw.rating"), image.getRating().toString(), true)
+                .addField(translate("en", "core.commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
+                .addField(translate("en", "core.commands.nsfw.score"), Integer.toString(image.getScore()), true)
                 .setImage(image.getURL());
         Messenger.send(channel, embed.build());
     }

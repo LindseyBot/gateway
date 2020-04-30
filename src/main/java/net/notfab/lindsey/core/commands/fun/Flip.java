@@ -10,6 +10,9 @@ import net.notfab.lindsey.utils.Messenger;
 
 import java.util.Random;
 
+import static net.notfab.lindsey.framework.translate.Translator.translate;
+
+
 public class Flip implements Command {
 
     @Override
@@ -25,9 +28,9 @@ public class Flip implements Command {
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
         Random gem = new Random();
         if (gem.nextBoolean()) {
-            Messenger.send(channel, "**" + member.getEffectiveName() + "** flipped a coin and got **Heads**.");
+            Messenger.send(channel, "**" + member.getEffectiveName() + "** " + translate("en", "core.commands.fun.flip.heads"));
         } else {
-            Messenger.send(channel, "**" + member.getEffectiveName() + "** flipped a coin and got **Tails**.");
+            Messenger.send(channel, "**" + member.getEffectiveName() + "** " + translate("en", "core.commands.fun.flip.tails"));
         }
         return false;
     }

@@ -16,6 +16,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 
+import static net.notfab.lindsey.framework.translate.Translator.translate;
+
 public class Anime implements Command {
 
     private static final OkHttpClient client = new OkHttpClient().newBuilder()
@@ -53,7 +55,7 @@ public class Anime implements Command {
         }
 
         //embed.setColor(new Color(255, 0, 54));
-        embed.setFooter("Requested by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+        embed.setFooter(translate("en", "core.commands.fun.anime.request") + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
                 member.getUser().getEffectiveAvatarUrl());
 
         if (!atr.isNull("synopsis")) {
@@ -66,42 +68,42 @@ public class Anime implements Command {
         }
 
         if (!atr.isNull("status")) {
-            embed.addField("Status", StringUtils.capitalize(atr.getString("status")), true);
+            embed.addField(translate("en", "core.commands.fun.anime.status"), StringUtils.capitalize(atr.getString("status")), true);
         }
 
         if (!atr.isNull("episodeCount")) {
             int eps = atr.getInt("episodeCount");
-            embed.addField("Episodes", String.valueOf(eps), true);
+            embed.addField(translate("en", "core.commands.fun.anime.episodes"), String.valueOf(eps), true);
         }
 
         if (!atr.isNull("averageRating")) {
             String rating = atr.getString("averageRating");
-            embed.addField("Rating", rating + " / 100", true);
+            embed.addField(translate("en", "core.commands.fun.anime.rating"), rating + " / 100", true);
         }
 
         if (!atr.isNull("ratingRank")) {
             int rank = atr.getInt("ratingRank");
-            embed.addField("Rank", String.valueOf(rank), true);
+            embed.addField(translate("en", "core.commands.fun.anime.rank"), String.valueOf(rank), true);
         }
 
         if (!atr.isNull("popularityRank")) {
-            embed.addField("Popularity", String.valueOf(atr.getInt("popularityRank")), true);
+            embed.addField(translate("en", "core.commands.fun.anime.popularity"), String.valueOf(atr.getInt("popularityRank")), true);
         }
 
         if (!atr.isNull("startDate")) {
-            embed.addField("First Airing", atr.getString("startDate"), true);
+            embed.addField(translate("en", "core.commands.fun.anime.first"), atr.getString("startDate"), true);
         }
 
         if (!atr.isNull("endDate")) {
-            embed.addField("Last Airing", atr.getString("endDate"), true);
+            embed.addField(translate("en", "core.commands.fun.anime.last"), atr.getString("endDate"), true);
         }
 
         if (!atr.isNull("nextRelease")) {
-            embed.addField("Next Airing", atr.getString("nextRelease"), true);
+            embed.addField(translate("en", "core.commands.fun.anime.next"), atr.getString("nextRelease"), true);
         }
 
         if (!atr.isNull("ageRating") & atr.has("ageRatingGuide")) {
-            embed.addField("Age Rating", atr.getString("ageRating") + " - " + atr.getString("ageRatingGuide"), true);
+            embed.addField(translate("en", "core.commands.fun.anime.age"), atr.getString("ageRating") + " - " + atr.getString("ageRatingGuide"), true);
         }
 
         if (!atr.isNull("nsfw")) {

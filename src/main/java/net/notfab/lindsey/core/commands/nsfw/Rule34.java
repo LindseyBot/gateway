@@ -11,7 +11,10 @@ import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
 import net.notfab.lindsey.utils.Messenger;
 
+import java.io.IOException;
 import java.util.Random;
+
+import static net.notfab.lindsey.framework.translate.Translator.translate;
 
 public class Rule34 implements Command {
 
@@ -32,26 +35,34 @@ public class Rule34 implements Command {
         if (args.length == 0) {
             DefaultImageBoards.RULE34.get(page, 1).async(rule34Images -> {
                 BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
-                buildEmbed(image, member, channel);
+                try {
+                    buildEmbed(image, member, channel);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
         } else {
             DefaultImageBoards.RULE34.search(page, 1, String.join(" ", args)).async(rule34Images -> {
                 BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
-                buildEmbed(image, member, channel);
+                try {
+                    buildEmbed(image, member, channel);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
         }
         return false;
     }
 
-    private void buildEmbed(BoardImage image, Member member, TextChannel channel) {
+    private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("Click here if image doesn't load", image.getURL())
-                .setDescription("**Tags**:" + image.getTags())
-                .setFooter("Requested by " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                .setTitle(translate("en", "core.commands.nsfw.load"), image.getURL())
+                .setDescription("**" + translate("en", "core.commands.nsfw.tags") + "**:" + image.getTags())
+                .setFooter(translate("en", "core.commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
                         member.getUser().getEffectiveAvatarUrl())
-                .addField("Rating", image.getRating().toString(), true)
-                .addField("Size", image.getWidth() + "x" + image.getHeight(), true)
-                .addField("Score", Integer.toString(image.getScore()), true)
+                .addField(translate("en", "core.commands.nsfw.rating"), image.getRating().toString(), true)
+                .addField(translate("en", "core.commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
+                .addField(translate("en", "core.commands.nsfw.score"), Integer.toString(image.getScore()), true)
                 .setImage(image.getURL());
         Messenger.send(channel, embed.build());
     }
