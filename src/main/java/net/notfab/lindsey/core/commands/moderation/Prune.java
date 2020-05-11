@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.*;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +16,9 @@ import java.util.stream.Stream;
 
 import static net.notfab.lindsey.framework.translate.Translator.translate;
 
+@Component
 public class Prune implements Command {
+    
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()

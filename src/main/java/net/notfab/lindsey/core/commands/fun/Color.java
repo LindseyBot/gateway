@@ -8,6 +8,7 @@ import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,6 +19,7 @@ import java.io.IOException;
 
 import static net.notfab.lindsey.framework.translate.Translator.translate;
 
+@Component
 public class Color implements Command {
 
     private static final Logger logger = LoggerFactory.getLogger(Color.class);

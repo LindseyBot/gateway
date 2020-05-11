@@ -1,33 +1,39 @@
 package net.notfab.lindsey.framework.command;
 
-import net.notfab.lindsey.core.commands.fun.Anime;
-import net.notfab.lindsey.core.commands.fun.Color;
-import net.notfab.lindsey.core.commands.fun.Flip;
-import net.notfab.lindsey.core.commands.fun.Roll;
-import net.notfab.lindsey.core.commands.moderation.Prune;
-import net.notfab.lindsey.core.commands.nsfw.Danbooru;
-import net.notfab.lindsey.core.commands.nsfw.Rule34;
-import org.springframework.stereotype.Component;
+import lombok.Getter;
+import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-@Component
+@Service
 public class CommandManager {
 
     private final Map<String, Command> commandList = new HashMap<>();
 
-    public CommandManager() {
-        this.register(new Color());
-        this.register(new Flip());
-        this.register(new Anime());
-        this.register(new Rule34());
-        this.register(new Danbooru());
-        this.register(new Roll());
-        this.register(new Prune());
+    @Getter
+    private final TaskExecutor pool;
+
+    private final ApplicationContext context;
+
+    public CommandManager(@Qualifier("commands") TaskExecutor pool, ApplicationContext context) {
+        this.pool = pool;
+        this.context = context;
+        this.findCommands().forEach(this::register);
     }
 
-    private void register(Command command) {
+    private Set<Class<? extends Command>> findCommands() {
+        Reflections reflections = new Reflections("net.notfab.lindsey.core.commands");
+        return reflections.getSubTypesOf(Command.class);
+    }
+
+    private void register(Class<? extends Command> clazz) {
+        Command command = context.getBean(clazz);
         CommandDescriptor descriptor = command.getInfo();
         this.commandList.put(descriptor.getName(), command);
         for (String alias : descriptor.getAliases()) {

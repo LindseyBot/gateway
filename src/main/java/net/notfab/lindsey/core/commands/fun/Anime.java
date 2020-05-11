@@ -12,12 +12,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 
 import static net.notfab.lindsey.framework.translate.Translator.translate;
 
+@Component
 public class Anime implements Command {
 
     private static final OkHttpClient client = new OkHttpClient().newBuilder()

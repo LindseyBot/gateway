@@ -22,19 +22,29 @@ repositories {
 }
 
 dependencies {
-    compile group: 'com.moandjiezana.toml', name: 'toml4j', version: '0.4.0'
     compile 'net.kodehawa:imageboard-api:2.2.1'
+
+    // Framework
+    compile group: 'net.dv8tion', name: 'JDA', version: '4.1.1_142'
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.12'
+
+    // Data
+    compile group: 'redis.clients', name: 'jedis', version: '3.2.0'
+    compile group: 'com.moandjiezana.toml', name: 'toml4j', version: '0.4.0'
     compile group: 'org.json', name: 'json', version: '20190722'
-    compile 'net.dv8tion:JDA:4.1.1_140'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    compileOnly 'org.projectlombok:lombok'
+
     runtimeOnly 'com.h2database:h2'
+
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.amqp:spring-rabbit-test'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    testImplementation 'org.springframework.amqp:spring-rabbit-test'
 }
 
 test {

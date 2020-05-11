@@ -11,12 +11,14 @@ import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
 import net.notfab.lindsey.utils.Messenger;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Random;
 
 import static net.notfab.lindsey.framework.translate.Translator.translate;
 
+@Component
 public class Danbooru implements Command {
 
     private final Random random = new Random();

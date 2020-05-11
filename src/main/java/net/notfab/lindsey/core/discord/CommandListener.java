@@ -8,26 +8,26 @@ import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.core.task.TaskExecutor;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component
 public class CommandListener extends ListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(CommandListener.class);
-    private static final ExecutorService threadPool = Executors.newCachedThreadPool();
     private final Pattern argPattern = Pattern.compile("(?:([^\\s\"]+)|\"((?:\\w+|\\\\\"|[^\"])+)\")");
 
-    @Autowired
-    private CommandManager manager;
+    private final CommandManager manager;
+    private final TaskExecutor threadPool;
+
+    public CommandListener(CommandManager manager) {
+        this.manager = manager;
+        this.threadPool = manager.getPool();
+    }
 
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
@@ -62,7 +62,7 @@ public class CommandListener extends ListenerAdapter {
         if (command == null) {
             return;
         }
-        threadPool.submit(() -> {
+        threadPool.execute(() -> {
             try {
                 command.execute(member, event.getChannel(), arguments.toArray(new String[0]), null);
             } catch (Exception ex) {
