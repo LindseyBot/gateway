@@ -6,8 +6,11 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandManager;
+import net.notfab.lindsey.framework.settings.GuildProfile;
+import net.notfab.lindsey.framework.settings.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 
 import javax.annotation.Nonnull;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class CommandListener extends ListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(CommandListener.class);
@@ -23,6 +27,9 @@ public class CommandListener extends ListenerAdapter {
 
     private final CommandManager manager;
     private final TaskExecutor threadPool;
+
+    @Autowired
+    private ProfileManager profiles;
 
     public CommandListener(CommandManager manager) {
         this.manager = manager;
@@ -33,7 +40,7 @@ public class CommandListener extends ListenerAdapter {
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
         Member member = event.getMember();
         if (member == null || event.getAuthor().isBot()
-                || event.getAuthor().isFake() || event.isWebhookMessage()) {
+                || event.isWebhookMessage()) {
             return;
         }
         String rawMessage = event.getMessage().getContentRaw();
@@ -77,7 +84,8 @@ public class CommandListener extends ListenerAdapter {
         } else if (message.startsWith(self.getAsMention()) || message.startsWith("<@!119482224713269248>")) {
             return "@" + self.getEffectiveName();
         } else {
-            String prefix = "!";
+            GuildProfile profile = profiles.get(guild);
+            String prefix = profile.getPrefix();
             if (message.startsWith(prefix)) {
                 return prefix;
             }

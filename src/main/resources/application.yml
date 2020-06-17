@@ -1,5 +1,32 @@
 bot:
   token: ''
 spring:
+  datasource:
+    url: jdbc:h2:mem:mazgo
+    username: root
+    password: root
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  redis:
+    host: 'localhost'
+
+---
+
+bot:
+  token: ''
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:mariadb://localhost:3306/staging
+    username: root
+    password: root
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: update
   redis:
     host: 'localhost'

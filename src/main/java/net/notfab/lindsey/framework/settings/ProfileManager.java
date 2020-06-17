@@ -1,0 +1,56 @@
+package net.notfab.lindsey.framework.settings;
+
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.notfab.lindsey.framework.settings.repositories.ServerProfileRepository;
+import net.notfab.lindsey.framework.settings.repositories.UserProfileRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class ProfileManager {
+
+    @Autowired
+    private UserProfileRepository userRepository;
+
+    @Autowired
+    private ServerProfileRepository guildRepository;
+
+    public UserProfile get(Member member) {
+        return this.get(member.getUser());
+    }
+
+    public UserProfile get(User user) {
+        return this.getUser(user.getIdLong());
+    }
+
+    private UserProfile getUser(long id) {
+        Optional<UserProfile> user = this.userRepository.findById(id);
+        if (user.isEmpty()) {
+            UserProfile settings = new UserProfile();
+            settings.setOwner(id);
+            return settings;
+        } else {
+            return user.get();
+        }
+    }
+
+    public GuildProfile get(Guild guild) {
+        return this.getGuild(guild.getIdLong());
+    }
+
+    public GuildProfile getGuild(long id) {
+        Optional<GuildProfile> guild = this.guildRepository.findById(id);
+        if (guild.isEmpty()) {
+            GuildProfile settings = new GuildProfile();
+            settings.setOwner(id);
+            return settings;
+        } else {
+            return guild.get();
+        }
+    }
+
+}

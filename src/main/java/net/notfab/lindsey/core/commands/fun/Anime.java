@@ -7,17 +7,17 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
-import net.notfab.lindsey.utils.Messenger;
+import net.notfab.lindsey.framework.i18n.Messenger;
+import net.notfab.lindsey.framework.i18n.Translator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
-
-import static net.notfab.lindsey.framework.translate.Translator.translate;
 
 @Component
 public class Anime implements Command {
@@ -25,6 +25,12 @@ public class Anime implements Command {
     private static final OkHttpClient client = new OkHttpClient().newBuilder()
             .followSslRedirects(true)
             .build();
+
+    @Autowired
+    private Translator i18n;
+
+    @Autowired
+    private Messenger msg;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -57,7 +63,7 @@ public class Anime implements Command {
         }
 
         //embed.setColor(new Color(255, 0, 54));
-        embed.setFooter(translate("en", "core.commands.fun.anime.request") + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+        embed.setFooter(i18n.get(member, "commands.fun.anime.request") + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
                 member.getUser().getEffectiveAvatarUrl());
 
         if (!atr.isNull("synopsis")) {
@@ -70,42 +76,42 @@ public class Anime implements Command {
         }
 
         if (!atr.isNull("status")) {
-            embed.addField(translate("en", "core.commands.fun.anime.status"), StringUtils.capitalize(atr.getString("status")), true);
+            embed.addField(i18n.get(member, "commands.fun.anime.status"), StringUtils.capitalize(atr.getString("status")), true);
         }
 
         if (!atr.isNull("episodeCount")) {
             int eps = atr.getInt("episodeCount");
-            embed.addField(translate("en", "core.commands.fun.anime.episodes"), String.valueOf(eps), true);
+            embed.addField(i18n.get(member, "commands.fun.anime.episodes"), String.valueOf(eps), true);
         }
 
         if (!atr.isNull("averageRating")) {
             String rating = atr.getString("averageRating");
-            embed.addField(translate("en", "core.commands.fun.anime.rating"), rating + " / 100", true);
+            embed.addField(i18n.get(member, "commands.fun.anime.rating"), rating + " / 100", true);
         }
 
         if (!atr.isNull("ratingRank")) {
             int rank = atr.getInt("ratingRank");
-            embed.addField(translate("en", "core.commands.fun.anime.rank"), String.valueOf(rank), true);
+            embed.addField(i18n.get(member, "commands.fun.anime.rank"), String.valueOf(rank), true);
         }
 
         if (!atr.isNull("popularityRank")) {
-            embed.addField(translate("en", "core.commands.fun.anime.popularity"), String.valueOf(atr.getInt("popularityRank")), true);
+            embed.addField(i18n.get(member, "commands.fun.anime.popularity"), String.valueOf(atr.getInt("popularityRank")), true);
         }
 
         if (!atr.isNull("startDate")) {
-            embed.addField(translate("en", "core.commands.fun.anime.first"), atr.getString("startDate"), true);
+            embed.addField(i18n.get(member, "commands.fun.anime.first"), atr.getString("startDate"), true);
         }
 
         if (!atr.isNull("endDate")) {
-            embed.addField(translate("en", "core.commands.fun.anime.last"), atr.getString("endDate"), true);
+            embed.addField(i18n.get(member, "commands.fun.anime.last"), atr.getString("endDate"), true);
         }
 
         if (!atr.isNull("nextRelease")) {
-            embed.addField(translate("en", "core.commands.fun.anime.next"), atr.getString("nextRelease"), true);
+            embed.addField(i18n.get(member, "commands.fun.anime.next"), atr.getString("nextRelease"), true);
         }
 
         if (!atr.isNull("ageRating") & atr.has("ageRatingGuide")) {
-            embed.addField(translate("en", "core.commands.fun.anime.age"), atr.getString("ageRating") + " - " + atr.getString("ageRatingGuide"), true);
+            embed.addField(i18n.get(member, "commands.fun.anime.age"), atr.getString("ageRating") + " - " + atr.getString("ageRatingGuide"), true);
         }
 
         if (!atr.isNull("nsfw")) {
@@ -115,7 +121,7 @@ public class Anime implements Command {
                 embed.addField("NSFW", "No", true);
             }
         }
-        Messenger.send(channel, embed.build());
+        msg.send(channel, embed.build());
         return false;
     }
 

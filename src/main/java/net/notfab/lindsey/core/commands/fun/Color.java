@@ -6,8 +6,11 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.framework.i18n.Messenger;
+import net.notfab.lindsey.framework.i18n.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -17,12 +20,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static net.notfab.lindsey.framework.translate.Translator.translate;
-
 @Component
 public class Color implements Command {
 
     private static final Logger logger = LoggerFactory.getLogger(Color.class);
+
+    @Autowired
+    private Translator i18n;
+
+    @Autowired
+    private Messenger msg;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -42,6 +49,7 @@ public class Color implements Command {
             try {
                 color = Integer.parseInt((args[0].replace("#", "")), 16);
             } catch (IllegalArgumentException ex) {
+                msg.send(channel, sender(member) + i18n.get(member, ""));
                 return false;
             }
             BufferedImage image = new BufferedImage(128, 128, BufferedImage.TYPE_INT_RGB);
@@ -52,7 +60,7 @@ public class Color implements Command {
             try {
                 ImageIO.write(image, "png", os);
             } catch (IOException ex) {
-                logger.error(translate("en", "core.commands.fun.color.error"), ex);
+                logger.error("Error while writing color", ex);
                 return false;
             }
             channel.sendFile(new ByteArrayInputStream(os.toByteArray()), color + ".png").queue();

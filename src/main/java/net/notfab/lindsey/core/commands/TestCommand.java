@@ -5,8 +5,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
-import net.notfab.lindsey.framework.settings.UserSettings;
-import net.notfab.lindsey.framework.settings.repositories.UserSettingsRepository;
+import net.notfab.lindsey.framework.settings.ProfileManager;
+import net.notfab.lindsey.framework.settings.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class TestCommand implements Command {
 
     @Autowired
-    private UserSettingsRepository repository;
+    private ProfileManager profiles;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -29,19 +29,7 @@ public class TestCommand implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
-        Optional<UserSettings> profileOptional = repository.findById(member.getIdLong());
-        UserSettings settings;
-        if (profileOptional.isPresent()) {
-            settings = profileOptional.get();
-            channel.sendMessage("Test: " + settings.isTest()).queue();
-            settings.setTest(!settings.isTest());
-        } else {
-            settings = new UserSettings();
-            settings.setOwner(member.getIdLong());
-            settings.setTest(true);
-        }
-
-        repository.save(settings);
+        UserProfile profile = profiles.get(member);
         return false;
     }
 

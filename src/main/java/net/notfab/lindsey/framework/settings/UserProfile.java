@@ -1,18 +1,19 @@
 package net.notfab.lindsey.framework.settings;
 
 import lombok.Data;
+import net.notfab.lindsey.framework.i18n.Language;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Data
-@RedisHash("Lindsey:Settings")
-public class UserSettings {
+@Lazy
+@RedisHash("Lindsey:Profile")
+public class UserProfile {
 
     @Id
     private long owner;
 
-    @Lazy
-    private boolean test = false;
+    private Language language = Language.en_US;
 
 }

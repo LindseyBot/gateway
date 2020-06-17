@@ -1,14 +1,18 @@
 package net.notfab.lindsey.framework.settings;
 
 import lombok.Data;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Data
-@RedisHash("Lindsey:Settings")
-public class GuildSettings {
+@Lazy
+@RedisHash("Lindsey:Profile")
+public class GuildProfile {
 
     @Id
     private long owner;
+
+    private String prefix;
 
 }

@@ -9,18 +9,24 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
-import net.notfab.lindsey.utils.Messenger;
+import net.notfab.lindsey.framework.i18n.Messenger;
+import net.notfab.lindsey.framework.i18n.Translator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Random;
 
-import static net.notfab.lindsey.framework.translate.Translator.translate;
-
 @Component
 public class Rule34 implements Command {
 
     private final Random random = new Random();
+
+    @Autowired
+    private Translator i18n;
+
+    @Autowired
+    private Messenger msg;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -58,15 +64,15 @@ public class Rule34 implements Command {
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle(translate("en", "core.commands.nsfw.load"), image.getURL())
-                .setDescription("**" + translate("en", "core.commands.nsfw.tags") + "**:" + image.getTags())
-                .setFooter(translate("en", "core.commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
+                .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
+                .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
                         member.getUser().getEffectiveAvatarUrl())
-                .addField(translate("en", "core.commands.nsfw.rating"), image.getRating().toString(), true)
-                .addField(translate("en", "core.commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
-                .addField(translate("en", "core.commands.nsfw.score"), Integer.toString(image.getScore()), true)
+                .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
+                .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
+                .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
                 .setImage(image.getURL());
-        Messenger.send(channel, embed.build());
+        msg.send(channel, embed.build());
     }
 
 }

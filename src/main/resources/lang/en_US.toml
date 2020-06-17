@@ -1,0 +1,40 @@
+[permissions]
+command = "Permission to use the base command"
+
+[commands.fun]
+    # Anime
+    [commands.fun.anime]
+    request = "Requested by"
+    status = "Status"
+    episodes = "Episodes"
+    rating = "Rating"
+    rank = "Rank"
+    popularity = "Popularity"
+    first = "First Airing"
+    last = "Last Airing"
+    next = "Next Airing"
+    age = "Age Rating"
+    # Color
+    [commands.fun.color]
+    error = "Error writing color"
+    notcolor = "That's not a color"
+    # Flip
+    [commands.fun.flip]
+    heads = "flipped a coin and got **Heads**."
+    tails = "flipped a coin and got **Tails**."
+    # Roll
+    [commands.fun.roll]
+    roll = "rolled"
+    nanumber = "not a number"
+[commands.mod]
+    # Prune
+    [commands.mod.prune]
+    del = "Messages deleted. This message will auto-destruct in 5 seconds."
+# NSFW
+[commands.nsfw]
+load = "Click here if image doesn't load"
+tags = "Tags"
+request = "Requested by "
+rating = "Rating"
+size = "Size"
+score = "Score"

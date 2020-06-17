@@ -6,15 +6,21 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
-import net.notfab.lindsey.utils.Messenger;
+import net.notfab.lindsey.framework.i18n.Messenger;
+import net.notfab.lindsey.framework.i18n.Translator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
-import static net.notfab.lindsey.framework.translate.Translator.translate;
-
 @Component
 public class Flip implements Command {
+
+    @Autowired
+    private Translator i18n;
+
+    @Autowired
+    private Messenger msg;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -29,9 +35,9 @@ public class Flip implements Command {
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
         Random gem = new Random();
         if (gem.nextBoolean()) {
-            Messenger.send(channel, "**" + member.getEffectiveName() + "** " + translate("en", "core.commands.fun.flip.heads"));
+            msg.send(channel, "**" + member.getEffectiveName() + "** " + i18n.get(member, "commands.fun.flip.heads"));
         } else {
-            Messenger.send(channel, "**" + member.getEffectiveName() + "** " + translate("en", "core.commands.fun.flip.tails"));
+            msg.send(channel, "**" + member.getEffectiveName() + "** " + i18n.get(member, "commands.fun.flip.tails"));
         }
         return false;
     }

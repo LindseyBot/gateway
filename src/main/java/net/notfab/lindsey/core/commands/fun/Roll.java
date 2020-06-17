@@ -6,17 +6,23 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
-import net.notfab.lindsey.utils.Messenger;
+import net.notfab.lindsey.framework.i18n.Messenger;
+import net.notfab.lindsey.framework.i18n.Translator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
-
-import static net.notfab.lindsey.framework.translate.Translator.translate;
 
 @Component
 public class Roll implements Command {
 
     private final Random random = new Random();
+
+    @Autowired
+    private Translator i18n;
+
+    @Autowired
+    private Messenger msg;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -30,12 +36,12 @@ public class Roll implements Command {
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
         if (args.length == 0) {
-            Messenger.send(channel, translate("en", "core.commands.fun.roll.roll") + "** " + random.nextInt(2000) + "**");
+            msg.send(channel, i18n.get(member, "commands.fun.roll.roll") + "** " + random.nextInt(2000) + "**");
         } else {
             try {
-                Messenger.send(channel, translate("en", "core.commands.fun.roll.roll") + "** " + random.nextInt(Integer.parseInt(args[0])) + "**");
+                msg.send(channel, i18n.get(member, "commands.fun.roll.roll") + "** " + random.nextInt(Integer.parseInt(args[0])) + "**");
             } catch (IllegalArgumentException ex) {
-                Messenger.send(channel, "**" + args[0] + "** " + translate("en", "core.commands.fun.roll.nanumber"));
+                msg.send(channel, "**" + args[0] + "** " + i18n.get(member, "commands.fun.roll.nanumber"));
             }
         }
         return false;
