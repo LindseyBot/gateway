@@ -10,8 +10,6 @@ import net.notfab.lindsey.framework.settings.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 public class TestCommand implements Command {
 
@@ -30,6 +28,7 @@ public class TestCommand implements Command {
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
         UserProfile profile = profiles.get(member);
+        channel.sendMessage(profile.getOwner() + " / " + profile.getLanguage().name()).queue();
         return false;
     }
 

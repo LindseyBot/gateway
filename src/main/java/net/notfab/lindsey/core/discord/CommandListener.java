@@ -10,7 +10,6 @@ import net.notfab.lindsey.framework.settings.GuildProfile;
 import net.notfab.lindsey.framework.settings.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 
 import javax.annotation.Nonnull;
@@ -19,21 +18,19 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class CommandListener extends ListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(CommandListener.class);
     private final Pattern argPattern = Pattern.compile("(?:([^\\s\"]+)|\"((?:\\w+|\\\\\"|[^\"])+)\")");
 
+    private final ProfileManager profiles;
     private final CommandManager manager;
     private final TaskExecutor threadPool;
 
-    @Autowired
-    private ProfileManager profiles;
-
-    public CommandListener(CommandManager manager) {
+    public CommandListener(CommandManager manager, ProfileManager profileManager) {
         this.manager = manager;
         this.threadPool = manager.getPool();
+        this.profiles = profileManager;
     }
 
     @Override
@@ -86,6 +83,9 @@ public class CommandListener extends ListenerAdapter {
         } else {
             GuildProfile profile = profiles.get(guild);
             String prefix = profile.getPrefix();
+            if (prefix == null || prefix.isBlank()) {
+                prefix = "L!";
+            }
             if (message.startsWith(prefix)) {
                 return prefix;
             }
