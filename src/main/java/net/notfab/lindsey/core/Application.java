@@ -28,7 +28,7 @@ public class Application implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         lindsey.init();
     }
 
@@ -36,7 +36,8 @@ public class Application implements ApplicationRunner {
     public ShardManager shardManager() throws LoginException {
         return DefaultShardManagerBuilder.createDefault(this.token)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                .disableCache(CacheFlag.CLIENT_STATUS, CacheFlag.ACTIVITY).build();
+                .disableCache(CacheFlag.CLIENT_STATUS, CacheFlag.ACTIVITY)
+                .build();
     }
 
 }
