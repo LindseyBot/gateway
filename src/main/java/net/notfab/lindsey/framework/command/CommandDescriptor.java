@@ -16,8 +16,6 @@ public class CommandDescriptor {
 
         private String name;
         private Modules module;
-        private String docs;
-        private String help;
         private List<String> aliases = new ArrayList<>();
         private Map<String, String> permissions = new HashMap<>();
 
@@ -28,16 +26,6 @@ public class CommandDescriptor {
 
         public Builder module(Modules module) {
             this.module = module;
-            return this;
-        }
-
-        public Builder docs(String url) {
-            this.docs = url;
-            return this;
-        }
-
-        public Builder help(String description) {
-            this.help = description;
             return this;
         }
 

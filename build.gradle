@@ -27,6 +27,7 @@ dependencies {
     // Framework
     compile group: 'net.dv8tion', name: 'JDA', version: '4.1.1_165'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.12'
+    compile group: 'net.jodah', name: 'expiringmap', version: '0.5.8'
 
     // Data
     compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'

@@ -1,6 +1,17 @@
 [permissions]
 command = "Permission to use the base command"
 
+[core]
+member_nf = "Member not found"
+help_nf = "No help pages found"
+
+[help]
+title = "Help for `{0}`:"
+permission = "**Permission**: `{0}`"
+syntax = "**Usage syntax**:"
+url = "**Docs**: {0}"
+examples = "**Examples**:"
+
 [commands.fun]
     # Anime
     [commands.fun.anime]
