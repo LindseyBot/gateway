@@ -9,15 +9,19 @@ import java.util.*;
 @AllArgsConstructor
 public class CommandDescriptor {
 
+    private final List<String> aliases;
+    private final Map<String, String> permissions;
+
     private String name;
-    private List<String> aliases;
+    private Modules module;
 
     public static class Builder {
 
+        private final List<String> aliases = new ArrayList<>();
+        private final Map<String, String> permissions = new HashMap<>();
+
         private String name;
         private Modules module;
-        private List<String> aliases = new ArrayList<>();
-        private Map<String, String> permissions = new HashMap<>();
 
         public Builder name(String name) {
             this.name = name;
@@ -40,7 +44,7 @@ public class CommandDescriptor {
         }
 
         public CommandDescriptor build() {
-            return new CommandDescriptor(name, aliases);
+            return new CommandDescriptor(aliases, permissions, name, module);
         }
 
     }

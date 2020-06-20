@@ -41,6 +41,11 @@ examples = "**Examples**:"
     # Prune
     [commands.mod.prune]
     del = "Messages deleted. This message will auto-destruct in 5 seconds."
+    # Ban
+    [commands.mod.ban]
+    description = "Bans a member from the guild, deleting all messages from that user for the past 7 days."
+    noreason = "No reason specified."
+    banned = "Banned {0}."
 # NSFW
 [commands.nsfw]
 load = "Click here if image doesn't load"
