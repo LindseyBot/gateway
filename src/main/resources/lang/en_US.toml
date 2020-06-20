@@ -47,6 +47,12 @@ examples = "**Examples**:"
     noreason = "No reason specified."
     banned = "Banned {0}."
     interact = "No permission to ban {0}."
+    # Kick
+    [commands.mod.kick]
+    description = "Kicks a member from the guild."
+    noreason = "No reason specified."
+    kicked = "Kicked {0}."
+    interact = "No permission to kick {0}."
 # NSFW
 [commands.nsfw]
 load = "Click here if image doesn't load"
