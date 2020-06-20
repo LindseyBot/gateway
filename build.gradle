@@ -21,6 +21,10 @@ repositories {
     maven { url "https://dl.bintray.com/kodehawa/maven" }
 }
 
+bootJar {
+    archiveFileName = "${project.name}.${archiveExtension.get()}"
+}
+
 dependencies {
     compile 'net.kodehawa:imageboard-api:2.2.1'
 
