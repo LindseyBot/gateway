@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class BanCommandTest {
+class BanTest {
 
-    private BanCommand command;
+    private Ban command;
 
     @BeforeEach
     void setUp() throws Exception {
-        command = mock(BanCommand.class);
+        command = mock(Ban.class);
         when(command.execute(null, null, new String[0], null))
                 .thenReturn(true);
         when(command.execute(null, null, new String[]{"0"}, null))
