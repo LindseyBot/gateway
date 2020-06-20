@@ -3,6 +3,7 @@ package net.notfab.lindsey.core;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.notfab.lindsey.core.discord.CommandListener;
 import net.notfab.lindsey.framework.command.CommandManager;
+import net.notfab.lindsey.framework.menu.MenuManager;
 import net.notfab.lindsey.framework.settings.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,11 @@ public class Lindsey {
     public void init() {
         this.shardManager.addEventListener(new CommandListener(this.commandManager, this.profileManager));
         logger.info("Boat is now Floating!");
+    }
+
+    public Lindsey addEventListener(MenuManager menuManager) {
+        this.shardManager.addEventListener(menuManager);
+        return this;
     }
 
 }

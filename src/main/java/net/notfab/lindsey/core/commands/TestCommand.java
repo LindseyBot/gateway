@@ -21,7 +21,6 @@ public class TestCommand implements Command {
         return new CommandDescriptor.Builder()
                 .name("test")
                 .permission("commands.test", "Testing command for developers")
-                .help("Used for testing new features")
                 .build();
     }
 
