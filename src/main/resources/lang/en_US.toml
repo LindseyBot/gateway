@@ -1,6 +1,7 @@
 [permissions]
 command = "Permission to use the base command"
 
+#FUN
 [commands.fun]
     # Anime
     [commands.fun.anime]
@@ -26,6 +27,7 @@ command = "Permission to use the base command"
     [commands.fun.roll]
     roll = "rolled"
     nanumber = "not a number"
+#MODERATION
 [commands.mod]
     # Prune
     [commands.mod.prune]
@@ -38,3 +40,8 @@ request = "Requested by "
 rating = "Rating"
 size = "Size"
 score = "Score"
+# WIKI
+[commands.wiki]
+    #Hearthstone
+    [commands.wiki.hearthstone]
+    404 = "Card Not Found!"
