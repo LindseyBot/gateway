@@ -2,7 +2,7 @@ bot:
   token: ''
 spring:
   datasource:
-    url: jdbc:h2:mem:mazgo
+    url: jdbc:h2:mem:lindsey
     username: root
     password: root
     driver-class-name: org.h2.Driver
