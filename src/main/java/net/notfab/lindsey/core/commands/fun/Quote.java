@@ -7,7 +7,6 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.i18n.Messenger;
-import net.notfab.lindsey.framework.i18n.Translator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
