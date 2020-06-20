@@ -18,14 +18,13 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import static net.notfab.lindsey.framework.command.Modules.FUN;
 
-@Component
 /**
  * Quote is a simple command which "generate" a random quote every time that is called.
  */
+@Component
 public class Quote implements Command {
 
     private static final String QUOTES_URL = "https://type.fit/api/quotes";
@@ -96,7 +95,6 @@ public class Quote implements Command {
         embed.setTitle(quote.get("text"));
         embed.setDescription(quote.get("author"));
 
-        channel.sendTyping().completeAfter(1, TimeUnit.SECONDS);
         msg.send(channel, embed.build());
     }
 
@@ -105,7 +103,6 @@ public class Quote implements Command {
      * @param channel Channel that message will be sent
      */
     private void handleError(TextChannel channel) {
-        channel.sendTyping().completeAfter(1, TimeUnit.SECONDS);
-        channel.sendMessage("Today's defeat will be greater tomorrow, don't worry. ☺").queue();
+        channel.sendMessage("Today's defeat will be greater tomorrow, don't worry.").queue();
     }
 }
