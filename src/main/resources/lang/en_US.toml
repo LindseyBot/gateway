@@ -61,3 +61,4 @@ score = "Score"
     #Hearthstone
     [commands.wiki.hearthstone]
     404 = "Card Not Found!"
+    description = "Search Hearthstone card by name."
