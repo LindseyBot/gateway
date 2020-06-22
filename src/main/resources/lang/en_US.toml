@@ -12,6 +12,7 @@ syntax = "**Usage syntax**:"
 url = "**Docs**: {0}"
 examples = "**Examples**:"
 
+#FUN
 [commands.fun]
     # Anime
     [commands.fun.anime]
@@ -55,3 +56,8 @@ request = "Requested by "
 rating = "Rating"
 size = "Size"
 score = "Score"
+# WIKI
+[commands.wiki]
+    #Hearthstone
+    [commands.wiki.hearthstone]
+    404 = "Card Not Found!"
