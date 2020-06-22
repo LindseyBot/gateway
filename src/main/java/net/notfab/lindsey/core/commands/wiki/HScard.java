@@ -7,6 +7,8 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.framework.command.help.HelpArticle;
+import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
 import net.notfab.lindsey.framework.settings.ProfileManager;
@@ -21,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Hearthstone implements Command {
+public class HScard implements Command {
+
+    String key = "79abb4b7fbmshb0ff1c23e6aab71p142b50jsn5730c96920f2";
 
     @Autowired
     private ProfileManager profiles;
@@ -37,7 +41,7 @@ public class Hearthstone implements Command {
         return new CommandDescriptor.Builder()
                 .name("hscard")
                 .module(Modules.GAME_WIKI)
-                .permission("commands.hearthstone", "Permission to use the base command")
+                .permission("commands.hscard", "permissions.command")
                 .build();
     }
 
@@ -67,10 +71,10 @@ public class Hearthstone implements Command {
         }
 
         Request request = new Request.Builder()
-                .url("https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/" + cardname + "?locale=" + locale + "&collectible=1")
+                .url("https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/search/" + cardname + "?collectible=1&locale=" + locale)
                 .get()
                 .addHeader("x-rapidapi-host", "omgvamp-hearthstone-v1.p.rapidapi.com")
-                .addHeader("x-rapidapi-key", "79abb4b7fbmshb0ff1c23e6aab71p142b50jsn5730c96920f2")
+                .addHeader("x-rapidapi-key", key)
                 .build();
         Response resp = client.newCall(request).execute();
         String str = resp.body().string();
@@ -83,15 +87,27 @@ public class Hearthstone implements Command {
             } else {
                 result = arr.getJSONObject(0).getString("img");
             }
-        }
-        catch (JSONException e){
+        } catch (JSONException e) {
             JSONObject obj = new JSONObject(str);
-            if(obj.getInt("error") == 404){
+            if (obj.getInt("error") == 404) {
                 result = i18n.get(member, "commands.wiki.hearthstone.404");
             }
         }
 
         msg.send(channel, result);
-        return false;
+        return true;
     }
+
+    @Override
+    public HelpArticle help(Member member) {
+        HelpPage page = new HelpPage("hscard")
+                .text("commands.wiki.hscard.description")
+                .usage("L!hscard <cardName> [isGold] [language]")
+                .permission("commands.hscard")
+                .addExample("L!hscard \"Leeroy Jenkins\"")
+                .addExample("L!hscard Leeroy true")
+                .addExample("L!hscard Leeroy true ptBR");
+        return HelpArticle.of(page);
+    }
+
 }
