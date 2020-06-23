@@ -1,6 +1,5 @@
 package net.notfab.lindsey.core.commands.wiki;
 
-import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
@@ -20,12 +19,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HScard implements Command {
 
-    String key = "79abb4b7fbmshb0ff1c23e6aab71p142b50jsn5730c96920f2";
+    @Value("${bot.integrations.hearthstone}")
+    private String key;
 
     @Autowired
     private ProfileManager profiles;
