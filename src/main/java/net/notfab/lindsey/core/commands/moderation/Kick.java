@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class Ban implements Command {
+public class Kick implements Command {
 
     @Autowired
     private Messenger msg;
@@ -26,8 +26,8 @@ public class Ban implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("ban")
-                .permission("commands.ban", "permissions.command")
+                .name("kick")
+                .permission("commands.kick", "permissions.command")
                 .module(Modules.MODERATION)
                 .build();
     }
@@ -43,20 +43,20 @@ public class Ban implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "core.member_nf"));
                 return false;
             }
-            String reason = member.getUser().getName() + ": " + i18n.get(member, "commands.mod.ban.noreason");
+            String reason = member.getUser().getName() + ": " + i18n.get(member, "commands.mod.kick.noreason");
             if (args.length > 1) {
                 reason = member.getUser().getName() + ": " + argsToString(args, 1);
             }
             if (!member.canInteract(target) || target.isOwner()
                     || target.hasPermission(Permission.ADMINISTRATOR)
                     || target.getUser().isBot()
-                    || !member.hasPermission(Permission.BAN_MEMBERS)) {
-                msg.send(channel, sender(member) + i18n.get(member, "commands.mod.ban.interact", target.getEffectiveName()));
+                    || !member.hasPermission(Permission.KICK_MEMBERS)) {
+                msg.send(channel, sender(member) + i18n.get(member, "commands.mod.kick.interact", target.getEffectiveName()));
                 return false;
             }
-            target.ban(7, reason)
+            target.kick(reason)
                     .flatMap(aVoid -> channel
-                            .sendMessage(i18n.get(member, "commands.mod.ban.banned", target.getEffectiveName())))
+                            .sendMessage(i18n.get(member, "commands.mod.kick.kicked", target.getEffectiveName())))
                     .delay(5, TimeUnit.SECONDS)
                     .flatMap(Message::delete)
                     .queue();
@@ -66,13 +66,13 @@ public class Ban implements Command {
 
     @Override
     public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("ban")
-                .text("commands.mod.ban.description")
-                .usage("L!ban <member|id> [reason]")
-                .permission("commands.ban")
-                .addExample("L!ban @lindsey")
-                .addExample("L!ban @lindsey Not sending images")
-                .addExample("L!ban 119482224713269248");
+        HelpPage page = new HelpPage("kick")
+                .text("commands.mod.kick.description")
+                .usage("L!kick <member|id> [reason]")
+                .permission("commands.kick")
+                .addExample("L!kick @lindsey")
+                .addExample("L!kick @lindsey Not sending images")
+                .addExample("L!kick 119482224713269248");
         return HelpArticle.of(page);
     }
 
