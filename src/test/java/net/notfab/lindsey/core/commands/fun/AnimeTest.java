@@ -1,5 +1,6 @@
-package net.notfab.lindsey.core.commands.wiki;
+package net.notfab.lindsey.core.commands.fun;
 
+import net.notfab.lindsey.core.commands.wiki.HScard;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
 import net.notfab.lindsey.framework.command.help.HelpArticle;
@@ -11,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class HScardTest {
+class AnimeTest {
 
-    private HScard command;
+    private Anime command;
 
     @BeforeEach
     void setUp() throws Exception {
-        command = mock(HScard.class);
+        command = mock(Anime.class);
         when(command.execute(null, null, new String[0], null))
                 .thenReturn(false);
         when(command.execute(null, null, new String[]{}, null))
@@ -29,8 +30,8 @@ class HScardTest {
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("hscard", info.getName(), "Name must be hscard");
-        assertEquals(Modules.GAME_WIKI, info.getModule(), "Module must be game wiki");
+        assertEquals("anime", info.getName(), "Name must be anime");
+        assertEquals(Modules.FUN, info.getModule(), "Module must be fun");
         assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
     }
 
@@ -42,7 +43,7 @@ class HScardTest {
     @Test
     void help() throws Exception {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("hscard");
+        HelpPage page = article.get("anime");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }
