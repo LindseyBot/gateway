@@ -6,6 +6,8 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.framework.command.help.HelpArticle;
+import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,7 @@ public class Flip implements Command {
         return new CommandDescriptor.Builder()
                 .name("flip")
                 .module(Modules.FUN)
-                .permission("commands.flip", "Permission to use the base command")
+                .permission("commands.flip", "permissions.command")
                 .build();
     }
 
@@ -40,6 +42,16 @@ public class Flip implements Command {
             msg.send(channel, "**" + member.getEffectiveName() + "** " + i18n.get(member, "commands.fun.flip.tails"));
         }
         return false;
+    }
+
+    @Override
+    public HelpArticle help(Member member) {
+        HelpPage page = new HelpPage("flip")
+                .text("commands.fun.flip.description")
+                .usage("L!flip")
+                .permission("commands.flip")
+                .addExample("L!flip");
+        return HelpArticle.of(page);
     }
 
 }

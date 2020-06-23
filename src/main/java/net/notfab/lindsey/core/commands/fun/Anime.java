@@ -7,6 +7,8 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.framework.command.help.HelpArticle;
+import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
 import okhttp3.OkHttpClient;
@@ -37,7 +39,7 @@ public class Anime implements Command {
         return new CommandDescriptor.Builder()
                 .name("anime")
                 .module(Modules.FUN)
-                .permission("commands.anime", "Permission to use the base command")
+                .permission("commands.anime", "permissions.command")
                 .permission("commands.anime.nsfw", "Permission to use the command on nsfw channels")
                 .build();
     }
@@ -123,6 +125,17 @@ public class Anime implements Command {
         }
         msg.send(channel, embed.build());
         return false;
+    }
+
+    @Override
+    public HelpArticle help(Member member) {
+        HelpPage page = new HelpPage("anime")
+                .text("commands.fun.anime.description")
+                .usage("L!anime <name>")
+                .permission("commands.anime")
+                .permission("commands.anime.nsfw")
+                .addExample("L!anime konosuba");
+        return HelpArticle.of(page);
     }
 
 }

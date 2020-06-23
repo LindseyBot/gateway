@@ -6,6 +6,8 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.framework.command.help.HelpArticle;
+import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ public class Roll implements Command {
         return new CommandDescriptor.Builder()
                 .name("roll")
                 .module(Modules.FUN)
-                .permission("commands.roll", "Permission to use the base command")
+                .permission("commands.roll", "permissions.command")
                 .build();
     }
 
@@ -45,6 +47,17 @@ public class Roll implements Command {
             }
         }
         return false;
+    }
+
+    @Override
+    public HelpArticle help(Member member) {
+        HelpPage page = new HelpPage("roll")
+                .text("commands.fun.roll.description")
+                .usage("L!roll [max]")
+                .permission("commands.roll")
+                .addExample("L!roll")
+                .addExample("L!roll 100");
+        return HelpArticle.of(page);
     }
 
 }

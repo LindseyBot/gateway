@@ -26,18 +26,24 @@ examples = "**Examples**:"
     last = "Last Airing"
     next = "Next Airing"
     age = "Age Rating"
+    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     # Color
     [commands.fun.color]
     error = "Error writing color"
     notcolor = "That's not a color"
+    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     # Flip
     [commands.fun.flip]
     heads = "flipped a coin and got **Heads**."
     tails = "flipped a coin and got **Tails**."
+    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     # Roll
     [commands.fun.roll]
     roll = "rolled"
     nanumber = "not a number"
+    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    [commands.fun.quote]
+    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 [commands.mod]
     # Prune
     [commands.mod.prune]
@@ -56,6 +62,10 @@ request = "Requested by "
 rating = "Rating"
 size = "Size"
 score = "Score"
+    [commands.nsfw.rule34]
+    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    [commands.nsfw.danbooru]
+    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 # WIKI
 [commands.wiki]
     #Hearthstone
