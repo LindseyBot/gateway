@@ -26,24 +26,24 @@ examples = "**Examples**:"
     last = "Last Airing"
     next = "Next Airing"
     age = "Age Rating"
-    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    description = "Search for anime information"
     # Color
     [commands.fun.color]
     error = "Error writing color"
     notcolor = "That's not a color"
-    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    description = "Show the color of a informed hex code"
     # Flip
     [commands.fun.flip]
     heads = "flipped a coin and got **Heads**."
     tails = "flipped a coin and got **Tails**."
-    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    description = "Flip's a coin"
     # Roll
     [commands.fun.roll]
     roll = "rolled"
     nanumber = "not a number"
-    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    description = "Roll's a random number"
     [commands.fun.quote]
-    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    description = "Quote is a simple command which \"generate\" a random quote every time that is called."
 [commands.mod]
     # Prune
     [commands.mod.prune]
@@ -63,9 +63,9 @@ rating = "Rating"
 size = "Size"
 score = "Score"
     [commands.nsfw.rule34]
-    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    description = "Searching for image in Rule34"
     [commands.nsfw.danbooru]
-    description = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    description = "Searching for image in Danbooru"
 # WIKI
 [commands.wiki]
     #Hearthstone
