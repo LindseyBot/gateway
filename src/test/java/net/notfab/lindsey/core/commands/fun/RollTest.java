@@ -16,12 +16,8 @@ class RollTest {
     private Roll command;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         command = mock(Roll.class);
-        when(command.execute(null, null, new String[0], null))
-                .thenReturn(true);
-        when(command.execute(null, null, new String[]{}, null))
-                .thenReturn(true);
         when(command.getInfo()).thenCallRealMethod();
         when(command.help(null)).thenCallRealMethod();
     }
@@ -35,16 +31,11 @@ class RollTest {
     }
 
     @Test
-    void execute() throws Exception {
-        assertTrue(command.execute(null, null, new String[0], null), "No arguments must execute");
-        assertTrue(command.execute(null, null, new String[1], null), "");
-    }
-
-    @Test
-    void help() throws Exception {
+    void help() {
         HelpArticle article = command.help(null);
         HelpPage page = article.get("roll");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }
+
 }

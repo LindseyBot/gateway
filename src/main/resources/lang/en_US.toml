@@ -1,5 +1,6 @@
 [permissions]
 command = "Permission to use the base command"
+nsfw = "Permission to use the command on nsfw channels"
 
 [core]
 member_nf = "Member not found"
@@ -26,24 +27,24 @@ examples = "**Examples**:"
     last = "Last Airing"
     next = "Next Airing"
     age = "Age Rating"
-    description = "Search for anime information"
+    description = "Searches for anime information"
     # Color
     [commands.fun.color]
     error = "Error writing color"
     notcolor = "That's not a color"
-    description = "Show the color of a informed hex code"
+    description = "Shows the color of an informed HEX code"
     # Flip
     [commands.fun.flip]
     heads = "flipped a coin and got **Heads**."
     tails = "flipped a coin and got **Tails**."
-    description = "Flip's a coin"
+    description = "Flips a coin."
     # Roll
     [commands.fun.roll]
     roll = "rolled"
     nanumber = "not a number"
-    description = "Roll's a random number"
+    description = "Rolls a random number."
     [commands.fun.quote]
-    description = "Quote is a simple command which \"generate\" a random quote every time that is called."
+    description = "Quote is a simple command which generates a random quote every time that it is called."
 [commands.mod]
     # Prune
     [commands.mod.prune]
@@ -63,9 +64,9 @@ rating = "Rating"
 size = "Size"
 score = "Score"
     [commands.nsfw.rule34]
-    description = "Searching for image in Rule34"
+    description = "Searches for an image on Rule34"
     [commands.nsfw.danbooru]
-    description = "Searching for image in Danbooru"
+    description = "Searches for an image on Danbooru"
 # WIKI
 [commands.wiki]
     #Hearthstone

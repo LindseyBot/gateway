@@ -16,14 +16,12 @@ class DanbooruTest {
     private Danbooru command;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         command = mock(Danbooru.class);
-        when(command.execute(null, null, new String[0], null))
-                .thenReturn(true);
-        when(command.execute(null, null, new String[]{}, null))
-                .thenReturn(true);
-        when(command.getInfo()).thenCallRealMethod();
-        when(command.help(null)).thenCallRealMethod();
+        when(command.getInfo())
+                .thenCallRealMethod();
+        when(command.help(null))
+                .thenCallRealMethod();
     }
 
     @Test
@@ -35,13 +33,7 @@ class DanbooruTest {
     }
 
     @Test
-    void execute() throws Exception {
-        assertTrue(command.execute(null, null, new String[0], null), "No arguments must execute");
-        assertTrue(command.execute(null, null, new String[]{}, null), "Valid argument");
-    }
-
-    @Test
-    void help() throws Exception {
+    void help() {
         HelpArticle article = command.help(null);
         HelpPage page = article.get("danbooru");
         assertNotNull(page, "Help page must not be null");

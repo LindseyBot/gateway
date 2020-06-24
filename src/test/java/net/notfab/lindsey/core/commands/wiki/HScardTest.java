@@ -16,14 +16,12 @@ class HScardTest {
     private HScard command;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         command = mock(HScard.class);
-        when(command.execute(null, null, new String[0], null))
-                .thenReturn(false);
-        when(command.execute(null, null, new String[]{}, null))
-                .thenReturn(true);
-        when(command.getInfo()).thenCallRealMethod();
-        when(command.help(null)).thenCallRealMethod();
+        when(command.getInfo())
+                .thenCallRealMethod();
+        when(command.help(null))
+                .thenCallRealMethod();
     }
 
     @Test
@@ -35,15 +33,11 @@ class HScardTest {
     }
 
     @Test
-    void execute() throws Exception {
-        assertFalse(command.execute(null, null, new String[0], null), "No arguments must execute");
-    }
-
-    @Test
-    void help() throws Exception {
+    void help() {
         HelpArticle article = command.help(null);
         HelpPage page = article.get("hscard");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }
+
 }

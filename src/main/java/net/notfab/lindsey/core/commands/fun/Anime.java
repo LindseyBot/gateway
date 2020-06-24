@@ -40,7 +40,7 @@ public class Anime implements Command {
                 .name("anime")
                 .module(Modules.FUN)
                 .permission("commands.anime", "permissions.command")
-                .permission("commands.anime.nsfw", "Permission to use the command on nsfw channels")
+                .permission("commands.anime.nsfw", "permissions.nsfw")
                 .build();
     }
 
@@ -133,7 +133,6 @@ public class Anime implements Command {
                 .text("commands.fun.anime.description")
                 .usage("L!anime <name>")
                 .permission("commands.anime")
-                .permission("commands.anime.nsfw")
                 .addExample("L!anime konosuba");
         return HelpArticle.of(page);
     }
