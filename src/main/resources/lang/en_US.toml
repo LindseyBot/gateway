@@ -13,7 +13,11 @@ syntax = "**Usage syntax**:"
 url = "**Docs**: {0}"
 examples = "**Examples**:"
 
-#FUN
+[commands.core]
+    # Help
+    [commands.core.help]
+    description = "Searches for help on the command database."
+
 [commands.fun]
     # Anime
     [commands.fun.anime]
