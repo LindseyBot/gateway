@@ -14,14 +14,16 @@ import java.util.Set;
 @Service
 public class CommandManager {
 
-    private final Map<String, Command> commandList = new HashMap<>();
+    @Getter
+    private static CommandManager Instance;
 
     @Getter
     private final TaskExecutor pool;
-
     private final ApplicationContext context;
+    private final Map<String, Command> commandList = new HashMap<>();
 
     public CommandManager(@Qualifier("commands") TaskExecutor pool, ApplicationContext context) {
+        Instance = this;
         this.pool = pool;
         this.context = context;
         this.findCommands().forEach(this::register);
