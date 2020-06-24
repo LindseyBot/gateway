@@ -10,6 +10,8 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.framework.command.help.HelpArticle;
+import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ public class Danbooru implements Command {
         return new CommandDescriptor.Builder()
                 .name("danbooru")
                 .module(Modules.NSFW)
-                .permission("commands.danbooru", "Permission to use the base command")
+                .permission("commands.danbooru", "permissions.command")
                 .build();
     }
 
@@ -51,7 +53,24 @@ public class Danbooru implements Command {
                     e.printStackTrace();
                 }
             });
-        } else if (args.length == 1) {
+        } else {
+            if ((args.length == 2)) {
+                switch (args[1]) {
+                    case "safe":
+                    case "s":
+                        r = Rating.SAFE;
+                        break;
+                    case "explicit":
+                    case "e":
+                        r = Rating.EXPLICIT;
+                        break;
+                    case "questionable":
+                    case "q":
+                        r = Rating.QUESTIONABLE;
+                        break;
+                }
+            }
+
             DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
                 BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
                 try {
@@ -60,31 +79,8 @@ public class Danbooru implements Command {
                     e.printStackTrace();
                 }
             });
-        } else if (args.length == 2) {
-            switch (args[0]) {
-                case "safe":
-                case "s":
-                    r = Rating.SAFE;
-                    break;
-                case "explicit":
-                case "e":
-                    r = Rating.EXPLICIT;
-                    break;
-                case "questionable":
-                case "q":
-                    r = Rating.QUESTIONABLE;
-                    break;
-            }
-            DefaultImageBoards.DANBOORU.search(args[1], r).async(danbooruImages -> {
-                BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                try {
-                    buildEmbed(image, member, channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
         }
-        return false;
+        return true;
     }
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
@@ -98,6 +94,18 @@ public class Danbooru implements Command {
                 .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
                 .setImage(image.getURL());
         msg.send(channel, embed.build());
+    }
+
+    @Override
+    public HelpArticle help(Member member) {
+        HelpPage page = new HelpPage("danbooru")
+                .text("commands.nsfw.danbooru.description")
+                .usage("L!danbooru [tag] [rating]")
+                .permission("commands.danbooru")
+                .addExample("L!danbooru")
+                .addExample("L!danbooru megumin")
+                .addExample("L!danbooru megumin explicit");
+        return HelpArticle.of(page);
     }
 
 }

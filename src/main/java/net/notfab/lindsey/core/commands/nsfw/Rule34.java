@@ -9,6 +9,8 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.framework.command.help.HelpArticle;
+import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class Rule34 implements Command {
         return new CommandDescriptor.Builder()
                 .name("rule34")
                 .module(Modules.NSFW)
-                .permission("commands.rule34", "Permission to use the base command")
+                .permission("commands.rule34", "permissions.command")
                 .build();
     }
 
@@ -59,7 +61,7 @@ public class Rule34 implements Command {
                 }
             });
         }
-        return false;
+        return true;
     }
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
@@ -73,6 +75,17 @@ public class Rule34 implements Command {
                 .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
                 .setImage(image.getURL());
         msg.send(channel, embed.build());
+    }
+
+    @Override
+    public HelpArticle help(Member member) {
+        HelpPage page = new HelpPage("rule34")
+                .text("commands.nsfw.rule34.description")
+                .usage("L!rule34 [tag]")
+                .permission("commands.rule34")
+                .addExample("L!rule34")
+                .addExample("L!rule34 megumin");
+        return HelpArticle.of(page);
     }
 
 }

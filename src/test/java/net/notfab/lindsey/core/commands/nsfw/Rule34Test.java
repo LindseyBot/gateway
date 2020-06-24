@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands.moderation;
+package net.notfab.lindsey.core.commands.nsfw;
 
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class BanTest {
+class Rule34Test {
 
-    private Ban command;
+    private Rule34 command;
 
     @BeforeEach
     void setUp() {
-        command = mock(Ban.class);
+        command = mock(Rule34.class);
         when(command.getInfo())
                 .thenCallRealMethod();
         when(command.help(null))
@@ -27,15 +27,15 @@ class BanTest {
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("ban", info.getName(), "Name must be ban");
-        assertEquals(Modules.MODERATION, info.getModule(), "Module must be Moderation");
+        assertEquals("rule34", info.getName(), "Name must be rule34");
+        assertEquals(Modules.NSFW, info.getModule(), "Module must be Nsfw");
         assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
     }
 
     @Test
     void help() {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("ban");
+        HelpPage page = article.get("rule34");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }

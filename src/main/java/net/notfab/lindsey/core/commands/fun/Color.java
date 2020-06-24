@@ -6,6 +6,8 @@ import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
+import net.notfab.lindsey.framework.command.help.HelpArticle;
+import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
 import org.slf4j.Logger;
@@ -36,7 +38,7 @@ public class Color implements Command {
         return new CommandDescriptor.Builder()
                 .name("color")
                 .module(Modules.FUN)
-                .permission("commands.color", "Permission to use the base command")
+                .permission("commands.color", "permissions.command")
                 .build();
     }
 
@@ -66,6 +68,16 @@ public class Color implements Command {
             channel.sendFile(new ByteArrayInputStream(os.toByteArray()), color + ".png").queue();
         }
         return false;
+    }
+
+    @Override
+    public HelpArticle help(Member member) {
+        HelpPage page = new HelpPage("color")
+                .text("commands.fun.color.description")
+                .usage("L!color <#RGB>")
+                .permission("commands.color")
+                .addExample("L!color ff00aa");
+        return HelpArticle.of(page);
     }
 
 }
