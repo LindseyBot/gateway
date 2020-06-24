@@ -29,7 +29,8 @@ class HScardTest {
         CommandDescriptor info = command.getInfo();
         assertEquals("hscard", info.getName(), "Name must be hscard");
         assertEquals(Modules.GAME_WIKI, info.getModule(), "Module must be game wiki");
-        assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
+        assertTrue(info.getPermissions().stream()
+                .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
 
     @Test

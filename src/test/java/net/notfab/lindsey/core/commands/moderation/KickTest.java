@@ -16,14 +16,12 @@ class KickTest {
     private Kick command;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         command = mock(Kick.class);
-        when(command.execute(null, null, new String[0], null))
-                .thenReturn(true);
-        when(command.execute(null, null, new String[]{"0"}, null))
-                .thenReturn(false);
-        when(command.getInfo()).thenCallRealMethod();
-        when(command.help(null)).thenCallRealMethod();
+        when(command.getInfo())
+                .thenCallRealMethod();
+        when(command.help(null))
+                .thenCallRealMethod();
     }
 
     @Test
@@ -31,17 +29,12 @@ class KickTest {
         CommandDescriptor info = command.getInfo();
         assertEquals("kick", info.getName(), "Name must be kick");
         assertEquals(Modules.MODERATION, info.getModule(), "Module must be Moderation");
-        assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
+        assertTrue(info.getPermissions().stream()
+                .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
 
     @Test
-    void execute() throws Exception {
-        assertTrue(command.execute(null, null, new String[0], null), "No arguments must execute");
-        assertFalse(command.execute(null, null, new String[]{"0"}, null), "Invalid target must fail");
-    }
-
-    @Test
-    void help() throws Exception {
+    void help() {
         HelpArticle article = command.help(null);
         HelpPage page = article.get("kick");
         assertNotNull(page, "Help page must not be null");

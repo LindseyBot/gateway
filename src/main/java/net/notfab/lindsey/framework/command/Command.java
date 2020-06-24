@@ -1,6 +1,5 @@
 package net.notfab.lindsey.framework.command;
 
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.help.HelpArticle;
@@ -14,21 +13,6 @@ public interface Command {
 
     default HelpArticle help(Member member) {
         return HelpArticle.of(new HelpPage(getInfo().getName()).text("core.help_nf"));
-    }
-
-    default boolean hasPermission(Member member, String name) {
-        if (member.isOwner()) {
-            return true;
-        }
-        if (member.hasPermission(Permission.ADMINISTRATOR)) {
-            return true;
-        }
-        // TODO: Profile check
-        return true;
-    }
-
-    default boolean hasPermission(Member member, Permission... permissions) {
-        return member.hasPermission(permissions);
     }
 
     default String argsToString(String[] args, int index) {

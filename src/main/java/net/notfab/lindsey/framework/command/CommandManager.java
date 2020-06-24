@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,10 @@ public class CommandManager {
 
     public Command findCommand(String name) {
         return commandList.get(name);
+    }
+
+    public Collection<Command> getCommands() {
+        return this.commandList.values();
     }
 
 }

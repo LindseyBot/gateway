@@ -29,7 +29,8 @@ class BanTest {
         CommandDescriptor info = command.getInfo();
         assertEquals("ban", info.getName(), "Name must be ban");
         assertEquals(Modules.MODERATION, info.getModule(), "Module must be Moderation");
-        assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
+        assertTrue(info.getPermissions().stream()
+                .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
 
     @Test
