@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class HScardTest {
+class HearthstoneTest {
 
-    private HScard command;
+    private Hearthstone command;
 
     @BeforeEach
     void setUp() {
-        command = mock(HScard.class);
+        command = mock(Hearthstone.class);
         when(command.getInfo())
                 .thenCallRealMethod();
         when(command.help(null))
