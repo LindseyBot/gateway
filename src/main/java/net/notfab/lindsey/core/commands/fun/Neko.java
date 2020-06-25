@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands;
+package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -61,12 +61,12 @@ public class Neko implements Command {
                     nsfw = false;
                     break;
             }
-        }else{
+        } else {
             nsfw = false;
             url = "https://nekos.club/api/sfw-nekos/";
         }
 
-        if(!nsfw || nsfw && channel.isNSFW()){
+        if (!nsfw || nsfw && channel.isNSFW()) {
             Request request = new Request.Builder()
                     .url(url)
                     .get()
@@ -74,12 +74,12 @@ public class Neko implements Command {
 
             Response resp = client.newCall(request).execute();
             JSONArray arr = new JSONArray(resp.body().string());
-            EmbedBuilder embed = new EmbedBuilder() ;
+            EmbedBuilder embed = new EmbedBuilder();
             msg.sendImage(channel, arr.getJSONObject(0).getString("Image"));
 
             return true;
-        }else{
-            msg.send(channel,i18n.get(member,"core.not_nsfw"));
+        } else {
+            msg.send(channel, i18n.get(member, "core.not_nsfw"));
             return false;
         }
     }

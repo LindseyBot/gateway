@@ -5,6 +5,7 @@ nsfw = "Permission to use the command on nsfw channels"
 [core]
 member_nf = "Member not found"
 help_nf = "No help pages found"
+not_nsfw = "This channel isn't nsfw"
 
 [help]
 title = "Help for `{0}`:"
