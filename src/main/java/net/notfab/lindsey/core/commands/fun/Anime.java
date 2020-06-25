@@ -40,7 +40,6 @@ public class Anime implements Command {
                 .name("anime")
                 .module(Modules.FUN)
                 .permission("commands.anime", "permissions.command")
-                .permission("commands.anime.nsfw", "permissions.nsfw")
                 .build();
     }
 
@@ -58,73 +57,78 @@ public class Anime implements Command {
                 .getJSONObject("links").getString("self").split("anime/")[1];
         EmbedBuilder embed = new EmbedBuilder();
 
-        if (atr.getJSONObject("titles").has("en")) {
-            embed.setTitle(atr.getJSONObject("titles").getString("en") + " - " + atr.getJSONObject("titles").getString("ja_jp"), link);
-        } else {
-            embed.setTitle(atr.getJSONObject("titles").getString("en_jp") + " - " + atr.getJSONObject("titles").getString("ja_jp"), link);
-        }
-
-        //embed.setColor(new Color(255, 0, 54));
-        embed.setFooter(i18n.get(member, "commands.fun.anime.request") + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
-                member.getUser().getEffectiveAvatarUrl());
-
-        if (!atr.isNull("synopsis")) {
-            embed.setDescription(atr.getString("synopsis"));
-        }
-
-
-        if (!atr.getJSONObject("posterImage").isNull("original")) {
-            embed.setThumbnail(atr.getJSONObject("posterImage").getString("original"));
-        }
-
-        if (!atr.isNull("status")) {
-            embed.addField(i18n.get(member, "commands.fun.anime.status"), StringUtils.capitalize(atr.getString("status")), true);
-        }
-
-        if (!atr.isNull("episodeCount")) {
-            int eps = atr.getInt("episodeCount");
-            embed.addField(i18n.get(member, "commands.fun.anime.episodes"), String.valueOf(eps), true);
-        }
-
-        if (!atr.isNull("averageRating")) {
-            String rating = atr.getString("averageRating");
-            embed.addField(i18n.get(member, "commands.fun.anime.rating"), rating + " / 100", true);
-        }
-
-        if (!atr.isNull("ratingRank")) {
-            int rank = atr.getInt("ratingRank");
-            embed.addField(i18n.get(member, "commands.fun.anime.rank"), String.valueOf(rank), true);
-        }
-
-        if (!atr.isNull("popularityRank")) {
-            embed.addField(i18n.get(member, "commands.fun.anime.popularity"), String.valueOf(atr.getInt("popularityRank")), true);
-        }
-
-        if (!atr.isNull("startDate")) {
-            embed.addField(i18n.get(member, "commands.fun.anime.first"), atr.getString("startDate"), true);
-        }
-
-        if (!atr.isNull("endDate")) {
-            embed.addField(i18n.get(member, "commands.fun.anime.last"), atr.getString("endDate"), true);
-        }
-
-        if (!atr.isNull("nextRelease")) {
-            embed.addField(i18n.get(member, "commands.fun.anime.next"), atr.getString("nextRelease"), true);
-        }
-
-        if (!atr.isNull("ageRating") & atr.has("ageRatingGuide")) {
-            embed.addField(i18n.get(member, "commands.fun.anime.age"), atr.getString("ageRating") + " - " + atr.getString("ageRatingGuide"), true);
-        }
-
+        boolean nsfw = false;
         if (!atr.isNull("nsfw")) {
             if (atr.getBoolean("nsfw")) {
+                nsfw = true;
                 embed.addField("NSFW", "Yes", true);
             } else {
                 embed.addField("NSFW", "No", true);
             }
         }
-        msg.send(channel, embed.build());
-        return false;
+
+        if (!nsfw || nsfw && channel.isNSFW()) {
+            if (atr.getJSONObject("titles").has("en")) {
+                embed.setTitle(atr.getJSONObject("titles").getString("en") + " - " + atr.getJSONObject("titles").getString("ja_jp"), link);
+            } else {
+                embed.setTitle(atr.getJSONObject("titles").getString("en_jp") + " - " + atr.getJSONObject("titles").getString("ja_jp"), link);
+            }
+
+            embed.setFooter(i18n.get(member, "commands.fun.anime.request") + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                    member.getUser().getEffectiveAvatarUrl());
+            if (!atr.isNull("synopsis")) {
+                embed.setDescription(atr.getString("synopsis"));
+            }
+
+            if (!atr.getJSONObject("posterImage").isNull("original")) {
+                embed.setThumbnail(atr.getJSONObject("posterImage").getString("original"));
+            }
+
+            if (!atr.isNull("status")) {
+                embed.addField(i18n.get(member, "commands.fun.anime.status"), StringUtils.capitalize(atr.getString("status")), true);
+            }
+
+            if (!atr.isNull("episodeCount")) {
+                int eps = atr.getInt("episodeCount");
+                embed.addField(i18n.get(member, "commands.fun.anime.episodes"), String.valueOf(eps), true);
+            }
+
+            if (!atr.isNull("averageRating")) {
+                String rating = atr.getString("averageRating");
+                embed.addField(i18n.get(member, "commands.fun.anime.rating"), rating + " / 100", true);
+            }
+
+            if (!atr.isNull("ratingRank")) {
+                int rank = atr.getInt("ratingRank");
+                embed.addField(i18n.get(member, "commands.fun.anime.rank"), String.valueOf(rank), true);
+            }
+
+            if (!atr.isNull("popularityRank")) {
+                embed.addField(i18n.get(member, "commands.fun.anime.popularity"), String.valueOf(atr.getInt("popularityRank")), true);
+            }
+
+            if (!atr.isNull("startDate")) {
+                embed.addField(i18n.get(member, "commands.fun.anime.first"), atr.getString("startDate"), true);
+            }
+
+            if (!atr.isNull("endDate")) {
+                embed.addField(i18n.get(member, "commands.fun.anime.last"), atr.getString("endDate"), true);
+            }
+
+            if (!atr.isNull("nextRelease")) {
+                embed.addField(i18n.get(member, "commands.fun.anime.next"), atr.getString("nextRelease"), true);
+            }
+
+            if (!atr.isNull("ageRating") & atr.has("ageRatingGuide")) {
+                embed.addField(i18n.get(member, "commands.fun.anime.age"), atr.getString("ageRating") + " - " + atr.getString("ageRatingGuide"), true);
+            }
+
+            msg.send(channel, embed.build());
+            return true;
+        } else {
+            msg.send(channel, i18n.get(member, "core.not_nsfw"));
+            return false;
+        }
     }
 
     @Override

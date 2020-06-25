@@ -41,27 +41,32 @@ public class Rule34 implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
-        int page = Math.max(1, random.nextInt(25));
-        if (args.length == 0) {
-            DefaultImageBoards.RULE34.get(page, 1).async(rule34Images -> {
-                BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
-                try {
-                    buildEmbed(image, member, channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        } else {
-            DefaultImageBoards.RULE34.search(page, 1, String.join(" ", args)).async(rule34Images -> {
-                BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
-                try {
-                    buildEmbed(image, member, channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+        if (channel.isNSFW()) {
+            int page = Math.max(1, random.nextInt(25));
+            if (args.length == 0) {
+                DefaultImageBoards.RULE34.get(page, 1).async(rule34Images -> {
+                    BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
+                    try {
+                        buildEmbed(image, member, channel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } else {
+                DefaultImageBoards.RULE34.search(page, 1, String.join(" ", args)).async(rule34Images -> {
+                    BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
+                    try {
+                        buildEmbed(image, member, channel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+            return true;
+        }else{
+            msg.send(channel, i18n.get(member, "core.not_nsfw"));
+            return false;
         }
-        return true;
     }
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {

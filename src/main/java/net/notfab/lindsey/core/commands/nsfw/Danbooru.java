@@ -42,45 +42,50 @@ public class Danbooru implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
-        Rating r = Rating.QUESTIONABLE;
-        int page = Math.max(1, random.nextInt(25));
-        if (args.length == 0) {
-            DefaultImageBoards.DANBOORU.get(page, 1, r).async(danbooruImages -> {
-                BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                try {
-                    buildEmbed(image, member, channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (channel.isNSFW()) {
+            Rating r = Rating.QUESTIONABLE;
+            int page = Math.max(1, random.nextInt(25));
+            if (args.length == 0) {
+                DefaultImageBoards.DANBOORU.get(page, 1, r).async(danbooruImages -> {
+                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                    try {
+                        buildEmbed(image, member, channel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } else {
+                if ((args.length == 2)) {
+                    switch (args[1]) {
+                        case "safe":
+                        case "s":
+                            r = Rating.SAFE;
+                            break;
+                        case "explicit":
+                        case "e":
+                            r = Rating.EXPLICIT;
+                            break;
+                        case "questionable":
+                        case "q":
+                            r = Rating.QUESTIONABLE;
+                            break;
+                    }
                 }
-            });
-        } else {
-            if ((args.length == 2)) {
-                switch (args[1]) {
-                    case "safe":
-                    case "s":
-                        r = Rating.SAFE;
-                        break;
-                    case "explicit":
-                    case "e":
-                        r = Rating.EXPLICIT;
-                        break;
-                    case "questionable":
-                    case "q":
-                        r = Rating.QUESTIONABLE;
-                        break;
-                }
-            }
 
-            DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
-                BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                try {
-                    buildEmbed(image, member, channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+                DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
+                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                    try {
+                        buildEmbed(image, member, channel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+            return true;
+        } else {
+            msg.send(channel, i18n.get(member, "core.not_nsfw"));
+            return false;
         }
-        return true;
     }
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
