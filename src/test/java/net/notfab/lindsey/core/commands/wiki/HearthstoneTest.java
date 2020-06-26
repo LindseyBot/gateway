@@ -27,7 +27,7 @@ class HearthstoneTest {
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("hscard", info.getName(), "Name must be hscard");
+        assertEquals("hearthstone", info.getName(), "Name must be hearthstone");
         assertEquals(Modules.GAME_WIKI, info.getModule(), "Module must be game wiki");
         assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
     }
@@ -35,7 +35,7 @@ class HearthstoneTest {
     @Test
     void help() {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("hscard");
+        HelpPage page = article.get("hearthstone");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }
