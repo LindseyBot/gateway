@@ -23,6 +23,7 @@ import java.util.Random;
 
 @Component
 public class Rule34 implements Command {
+
     private static final Logger logger = LoggerFactory.getLogger(Rule34.class);
 
     private final Random random = new Random();

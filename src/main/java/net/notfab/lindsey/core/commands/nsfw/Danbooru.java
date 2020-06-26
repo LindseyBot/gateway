@@ -24,7 +24,8 @@ import java.util.Random;
 
 @Component
 public class Danbooru implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(Rule34.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(Danbooru.class);
 
     private final Random random = new Random();
 
