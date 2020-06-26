@@ -67,7 +67,7 @@ public class Anime implements Command {
             }
         }
 
-        if (!nsfw || nsfw && channel.isNSFW()) {
+        if (!nsfw || channel.isNSFW()) {
             if (atr.getJSONObject("titles").has("en")) {
                 embed.setTitle(atr.getJSONObject("titles").getString("en") + " - " + atr.getJSONObject("titles").getString("ja_jp"), link);
             } else {

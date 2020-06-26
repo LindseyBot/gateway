@@ -66,7 +66,7 @@ public class Neko implements Command {
             url = "https://nekos.club/api/sfw-nekos/";
         }
 
-        if (!nsfw || nsfw && channel.isNSFW()) {
+        if (!nsfw || channel.isNSFW()) {
             Request request = new Request.Builder()
                     .url(url)
                     .get()
