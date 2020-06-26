@@ -14,6 +14,8 @@ import net.notfab.lindsey.framework.command.help.HelpArticle;
 import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,8 @@ import java.util.Random;
 
 @Component
 public class Danbooru implements Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(Danbooru.class);
 
     private final Random random = new Random();
 
@@ -77,7 +81,7 @@ public class Danbooru implements Command {
                     try {
                         buildEmbed(image, member, channel);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.error("Error while creating embed", e);
                     }
                 });
             }

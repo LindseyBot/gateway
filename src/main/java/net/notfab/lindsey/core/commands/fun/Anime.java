@@ -17,7 +17,6 @@ import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 
@@ -67,7 +66,7 @@ public class Anime implements Command {
             }
         }
 
-        if (!nsfw || nsfw && channel.isNSFW()) {
+        if (!nsfw || channel.isNSFW()) {
             if (atr.getJSONObject("titles").has("en")) {
                 embed.setTitle(atr.getJSONObject("titles").getString("en") + " - " + atr.getJSONObject("titles").getString("ja_jp"), link);
             } else {
@@ -85,7 +84,7 @@ public class Anime implements Command {
             }
 
             if (!atr.isNull("status")) {
-                embed.addField(i18n.get(member, "commands.fun.anime.status"), StringUtils.capitalize(atr.getString("status")), true);
+                embed.addField(i18n.get(member, "commands.fun.anime.status"), (atr.getString("status")).toUpperCase(), true);
             }
 
             if (!atr.isNull("episodeCount")) {

@@ -26,8 +26,7 @@ public class Messenger {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setImage(url);
             this.send(channel, builder.build());
-        }
-        else{
+        } else {
             send(channel, url);
         }
     }

@@ -1,6 +1,5 @@
 package net.notfab.lindsey.core.commands.fun;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
@@ -66,7 +65,7 @@ public class Neko implements Command {
             url = "https://nekos.club/api/sfw-nekos/";
         }
 
-        if (!nsfw || nsfw && channel.isNSFW()) {
+        if (!nsfw || channel.isNSFW()) {
             Request request = new Request.Builder()
                     .url(url)
                     .get()
@@ -74,7 +73,6 @@ public class Neko implements Command {
 
             Response resp = client.newCall(request).execute();
             JSONArray arr = new JSONArray(resp.body().string());
-            EmbedBuilder embed = new EmbedBuilder();
             msg.sendImage(channel, arr.getJSONObject(0).getString("Image"));
 
             return true;
@@ -87,7 +85,7 @@ public class Neko implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("neko")
-                .text("commands.fun.neko.description") //ainda nao escrito
+                .text("commands.fun.neko.description")
                 .usage("L!neko [subcommand]")
                 .permission("commands.neko")
                 .addExample("L!neko")
