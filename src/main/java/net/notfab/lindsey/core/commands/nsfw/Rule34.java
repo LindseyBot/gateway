@@ -13,6 +13,8 @@ import net.notfab.lindsey.framework.command.help.HelpArticle;
 import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,8 @@ import java.util.Random;
 
 @Component
 public class Rule34 implements Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(Rule34.class);
 
     private final Random random = new Random();
 
@@ -41,27 +45,32 @@ public class Rule34 implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
-        int page = Math.max(1, random.nextInt(25));
-        if (args.length == 0) {
-            DefaultImageBoards.RULE34.get(page, 1).async(rule34Images -> {
-                BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
-                try {
-                    buildEmbed(image, member, channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+        if (channel.isNSFW()) {
+            int page = Math.max(1, random.nextInt(25));
+            if (args.length == 0) {
+                DefaultImageBoards.RULE34.get(page, 1).async(rule34Images -> {
+                    BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
+                    try {
+                        buildEmbed(image, member, channel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } else {
+                DefaultImageBoards.RULE34.search(page, 1, String.join(" ", args)).async(rule34Images -> {
+                    BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
+                    try {
+                        buildEmbed(image, member, channel);
+                    } catch (IOException e) {
+                        logger.error("Error while creating embed", e);
+                    }
+                });
+            }
+            return true;
         } else {
-            DefaultImageBoards.RULE34.search(page, 1, String.join(" ", args)).async(rule34Images -> {
-                BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
-                try {
-                    buildEmbed(image, member, channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+            msg.send(channel, i18n.get(member, "core.not_nsfw"));
+            return false;
         }
-        return true;
     }
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {

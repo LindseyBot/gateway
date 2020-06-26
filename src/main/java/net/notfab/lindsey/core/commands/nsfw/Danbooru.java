@@ -14,6 +14,8 @@ import net.notfab.lindsey.framework.command.help.HelpArticle;
 import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,8 @@ import java.util.Random;
 
 @Component
 public class Danbooru implements Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(Danbooru.class);
 
     private final Random random = new Random();
 
@@ -42,45 +46,50 @@ public class Danbooru implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
-        Rating r = Rating.QUESTIONABLE;
-        int page = Math.max(1, random.nextInt(25));
-        if (args.length == 0) {
-            DefaultImageBoards.DANBOORU.get(page, 1, r).async(danbooruImages -> {
-                BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                try {
-                    buildEmbed(image, member, channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (channel.isNSFW()) {
+            Rating r = Rating.QUESTIONABLE;
+            int page = Math.max(1, random.nextInt(25));
+            if (args.length == 0) {
+                DefaultImageBoards.DANBOORU.get(page, 1, r).async(danbooruImages -> {
+                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                    try {
+                        buildEmbed(image, member, channel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } else {
+                if ((args.length == 2)) {
+                    switch (args[1]) {
+                        case "safe":
+                        case "s":
+                            r = Rating.SAFE;
+                            break;
+                        case "explicit":
+                        case "e":
+                            r = Rating.EXPLICIT;
+                            break;
+                        case "questionable":
+                        case "q":
+                            r = Rating.QUESTIONABLE;
+                            break;
+                    }
                 }
-            });
-        } else {
-            if ((args.length == 2)) {
-                switch (args[1]) {
-                    case "safe":
-                    case "s":
-                        r = Rating.SAFE;
-                        break;
-                    case "explicit":
-                    case "e":
-                        r = Rating.EXPLICIT;
-                        break;
-                    case "questionable":
-                    case "q":
-                        r = Rating.QUESTIONABLE;
-                        break;
-                }
-            }
 
-            DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
-                BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                try {
-                    buildEmbed(image, member, channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+                DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
+                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                    try {
+                        buildEmbed(image, member, channel);
+                    } catch (IOException e) {
+                        logger.error("Error while creating embed", e);
+                    }
+                });
+            }
+            return true;
+        } else {
+            msg.send(channel, i18n.get(member, "core.not_nsfw"));
+            return false;
         }
-        return true;
     }
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
