@@ -65,21 +65,20 @@ public class Neko implements Command {
             url = "https://nekos.club/api/sfw-nekos/";
         }
 
-        if (!nsfw || channel.isNSFW()) {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .build();
-
-            Response resp = client.newCall(request).execute();
-            JSONArray arr = new JSONArray(resp.body().string());
-            msg.sendImage(channel, arr.getJSONObject(0).getString("Image"));
-
-            return true;
-        } else {
+        if (nsfw && !channel.isNSFW()) {
             msg.send(channel, i18n.get(member, "core.not_nsfw"));
             return false;
         }
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        Response resp = client.newCall(request).execute();
+        JSONArray arr = new JSONArray(resp.body().string());
+        msg.sendImage(channel, arr.getJSONObject(0).getString("Image"));
+
+        return true;
     }
 
     @Override

@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AnimeTest {
+class KitsuTest {
 
-    private Anime command;
+    private Kitsu command;
 
     @BeforeEach
     void setUp() {
-        command = mock(Anime.class);
+        command = mock(Kitsu.class);
         when(command.getInfo())
                 .thenCallRealMethod();
         when(command.help(null))
@@ -27,7 +27,7 @@ class AnimeTest {
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("anime", info.getName(), "Name must be anime");
+        assertEquals("kitsu", info.getName(), "Name must be kitsu");
         assertEquals(Modules.FUN, info.getModule(), "Module must be fun");
         assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
     }
@@ -35,9 +35,9 @@ class AnimeTest {
     @Test
     void help() {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("anime");
+        HelpPage page = article.get("kitsu");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }
-    
+
 }

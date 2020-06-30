@@ -33,6 +33,11 @@ examples = "**Examples**:"
     next = "Next Airing"
     age = "Age Rating"
     description = "Searches for anime information"
+    type = "Type"
+    score = "Score"
+    members = "Members"
+    airing = "Airing"
+    finished = "Finished"
     # Color
     [commands.fun.color]
     error = "Error writing color"
