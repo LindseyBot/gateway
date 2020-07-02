@@ -26,12 +26,6 @@ import java.util.Arrays;
 @Component
 public class MyAnimeList implements Command {
 
-    @Value("${bot.integrations.rapidapi}")
-    private String key;
-
-    @Autowired
-    private ProfileManager profiles;
-
     @Autowired
     private Translator i18n;
 

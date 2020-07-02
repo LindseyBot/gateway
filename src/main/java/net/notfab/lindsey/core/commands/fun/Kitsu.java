@@ -16,6 +16,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -26,6 +27,9 @@ public class Kitsu implements Command {
     private static final OkHttpClient client = new OkHttpClient().newBuilder()
             .followSslRedirects(true)
             .build();
+
+    @Value("${bot.integrations.kitsu}")
+    private String key;
 
     @Autowired
     private Translator i18n;
@@ -53,6 +57,7 @@ public class Kitsu implements Command {
 
         Request req = new Request.Builder()
                 .url("https://kitsu.io/api/edge/anime?filter[text]=" + Arrays.toString(args))
+                .addHeader("Authorization", "Bearer " + key)
                 .get()
                 .build();
 
