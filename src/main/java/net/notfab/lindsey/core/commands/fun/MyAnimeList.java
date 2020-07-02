@@ -60,10 +60,8 @@ public class MyAnimeList implements Command {
         EmbedBuilder embed = new EmbedBuilder();
 
         Request request = new Request.Builder()
-                .url("https://jikan1.p.rapidapi.com/search/anime?q=" + Arrays.toString(args))
+                .url("https://api.jikan.moe/v3/search/anime?q=" + Arrays.toString(args))
                 .get()
-                .addHeader("x-rapidapi-host", "jikan1.p.rapidapi.com")
-                .addHeader("x-rapidapi-key", key)
                 .build();
         Response resp = client.newCall(request).execute();
         JSONObject obj = new JSONObject(resp.body().string());
