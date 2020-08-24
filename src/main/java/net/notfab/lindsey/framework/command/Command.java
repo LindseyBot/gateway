@@ -28,7 +28,7 @@ public interface Command {
     }
 
     default String sender(Member member) {
-        return "**" + member.getEffectiveName() + "**";
+        return "**" + member.getEffectiveName() + "**: ";
     }
 
 }

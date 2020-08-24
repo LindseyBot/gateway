@@ -67,4 +67,35 @@ public class PermissionManager {
                 .forEach(perm -> this.defaults.put(perm.getName(), perm.isAllowed()));
     }
 
+    public List<MemberPermission> list(Role role) {
+        return repository.findAllByRole(role.getIdLong());
+    }
+
+    public void delete(Role role) {
+        repository.deleteAllByRole(role.getIdLong());
+    }
+
+    public void delete(Role role, String name) {
+        repository.deleteByRoleAndNode(role.getIdLong(), name);
+    }
+
+    public boolean exists(String name) {
+        return this.defaults.containsKey(name);
+    }
+
+    public void set(Role role, String name, boolean status) {
+        Optional<MemberPermission> optional = repository.findByRoleAndNode(role.getIdLong(), name);
+        MemberPermission object;
+        if (optional.isEmpty()) {
+            object = new MemberPermission();
+            object.setNode(name);
+            object.setAllowed(status);
+            object.setRole(role.getIdLong());
+        } else {
+            object = optional.get();
+            object.setAllowed(status);
+        }
+        repository.save(object);
+    }
+
 }
