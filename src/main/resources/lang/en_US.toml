@@ -14,10 +14,20 @@ syntax = "**Usage syntax**:"
 url = "**Docs**: {0}"
 examples = "**Examples**:"
 
+[search]
+role = "No roles found named `{0}`."
+permission = "No permissions found with name `{0}`."
+
 [commands.core]
     # Help
     [commands.core.help]
     description = "Searches for help on the command database."
+    # Permissions
+    [commands.core.permissions]
+    description = "Manages role permissions for bot features"
+    for = "Permissions for `{0}`:"
+    cleared = "Permissions cleared for `{0}`."
+    updated = "Permissions updated."
 
 [commands.fun]
     # Anime

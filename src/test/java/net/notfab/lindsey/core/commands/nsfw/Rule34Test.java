@@ -29,7 +29,8 @@ class Rule34Test {
         CommandDescriptor info = command.getInfo();
         assertEquals("rule34", info.getName(), "Name must be rule34");
         assertEquals(Modules.NSFW, info.getModule(), "Module must be Nsfw");
-        assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
+        assertTrue(info.getPermissions().stream()
+                .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
 
     @Test

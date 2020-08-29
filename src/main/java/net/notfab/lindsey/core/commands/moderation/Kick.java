@@ -27,7 +27,7 @@ public class Kick implements Command {
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
                 .name("kick")
-                .permission("commands.kick", "permissions.command")
+                .permission("commands.kick", "permissions.command", false)
                 .module(Modules.MODERATION)
                 .build();
     }
