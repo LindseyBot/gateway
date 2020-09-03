@@ -29,7 +29,8 @@ class DanbooruTest {
         CommandDescriptor info = command.getInfo();
         assertEquals("danbooru", info.getName(), "Name must be danbooru");
         assertEquals(Modules.NSFW, info.getModule(), "Module must be Nsfw");
-        assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
+        assertTrue(info.getPermissions().stream()
+                .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
 
     @Test

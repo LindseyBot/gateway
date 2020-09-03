@@ -29,7 +29,8 @@ class FlipTest {
         CommandDescriptor info = command.getInfo();
         assertEquals("flip", info.getName(), "Name must be flip");
         assertEquals(Modules.FUN, info.getModule(), "Module must be fun");
-        assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
+        assertTrue(info.getPermissions().stream()
+                .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
 
     @Test

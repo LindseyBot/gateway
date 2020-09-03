@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandManager;
+import net.notfab.lindsey.framework.permissions.PermissionManager;
 import net.notfab.lindsey.framework.settings.GuildProfile;
 import net.notfab.lindsey.framework.settings.ProfileManager;
 import org.slf4j.Logger;
@@ -25,12 +26,14 @@ public class CommandListener extends ListenerAdapter {
 
     private final ProfileManager profiles;
     private final CommandManager manager;
+    private final PermissionManager permissions;
     private final TaskExecutor threadPool;
 
-    public CommandListener(CommandManager manager, ProfileManager profileManager) {
+    public CommandListener(CommandManager manager, ProfileManager profileManager, PermissionManager permissions) {
         this.manager = manager;
         this.threadPool = manager.getPool();
         this.profiles = profileManager;
+        this.permissions = permissions;
     }
 
     @Override
@@ -64,6 +67,10 @@ public class CommandListener extends ListenerAdapter {
         // -- Execution
         Command command = this.manager.findCommand(commandName);
         if (command == null) {
+            return;
+        }
+        // -- Permission check
+        if (!this.permissions.hasPermission(member, "commands." + command.getInfo().getName())) {
             return;
         }
         threadPool.execute(() -> {

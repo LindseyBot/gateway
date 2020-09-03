@@ -27,7 +27,7 @@ public class Ban implements Command {
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
                 .name("ban")
-                .permission("commands.ban", "permissions.command")
+                .permission("commands.ban", "permissions.command", false)
                 .module(Modules.MODERATION)
                 .build();
     }

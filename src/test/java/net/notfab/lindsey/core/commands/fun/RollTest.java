@@ -18,8 +18,10 @@ class RollTest {
     @BeforeEach
     void setUp() {
         command = mock(Roll.class);
-        when(command.getInfo()).thenCallRealMethod();
-        when(command.help(null)).thenCallRealMethod();
+        when(command.getInfo())
+                .thenCallRealMethod();
+        when(command.help(null))
+                .thenCallRealMethod();
     }
 
     @Test
@@ -27,7 +29,8 @@ class RollTest {
         CommandDescriptor info = command.getInfo();
         assertEquals("roll", info.getName(), "Name must be roll");
         assertEquals(Modules.FUN, info.getModule(), "Module must be roll");
-        assertTrue(info.getPermissions().containsKey("commands." + info.getName()), "Must have permission with command name");
+        assertTrue(info.getPermissions().stream()
+                .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
 
     @Test
