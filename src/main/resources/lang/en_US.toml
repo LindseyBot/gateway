@@ -43,6 +43,12 @@ permission = "No permissions found with name `{0}`."
     next = "Next Airing"
     age = "Age Rating"
     description = "Searches for anime information"
+    type = "Type"
+    score = "Score"
+    members = "Members"
+    airing = "Airing"
+    finished = "Finished"
+    404 = "Anime Not Found!"
     # Color
     [commands.fun.color]
     error = "Error writing color"
