@@ -59,6 +59,12 @@ public class MyAnimeList implements Command {
                 .build();
         Response resp = client.newCall(request).execute();
         JSONObject obj = new JSONObject(resp.body().string());
+
+        if(obj.getJSONArray("results").isEmpty()){
+            msg.send(channel, i18n.get(member, "commands.fun.anime.404"));
+            return true;
+        }
+
         JSONObject anime = obj.getJSONArray("results").getJSONObject(0);
 
         String rate = "";

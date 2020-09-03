@@ -48,6 +48,7 @@ permission = "No permissions found with name `{0}`."
     members = "Members"
     airing = "Airing"
     finished = "Finished"
+    404 = "Anime Not Found!"
     # Color
     [commands.fun.color]
     error = "Error writing color"
