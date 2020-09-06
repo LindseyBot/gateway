@@ -89,7 +89,7 @@ public class Rule34 implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("rule34")
-                .text("commands.nsfw.rule34.description")
+                .text("commands.nsfw.description.rule34")
                 .usage("L!rule34 [tag]")
                 .permission("commands.rule34")
                 .addExample("L!rule34")
