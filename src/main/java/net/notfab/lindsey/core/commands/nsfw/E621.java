@@ -38,11 +38,11 @@ public class E621 implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("e621")
-                .alias("furry")
-                .module(Modules.NSFW)
-                .permission("commands.e621", "permissions.command")
-                .build();
+            .name("e621")
+            .alias("furry")
+            .module(Modules.NSFW)
+            .permission("commands.e621", "permissions.command")
+            .build();
     }
 
     @Override
@@ -95,26 +95,26 @@ public class E621 implements Command {
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
-                .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
-                .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
-                        member.getUser().getEffectiveAvatarUrl())
-                .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
-                .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
-                .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
-                .setImage(image.getURL());
+            .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
+            .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
+            .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                member.getUser().getEffectiveAvatarUrl())
+            .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
+            .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
+            .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
+            .setImage(image.getURL());
         msg.send(channel, embed.build());
     }
 
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("e621")
-                .text("commands.nsfw.description.e621")
-                .usage("L!e621 [tag] [rating]")
-                .permission("commands.e621")
-                .addExample("L!e621")
-                .addExample("L!furry cat")
-                .addExample("L!e621 cat safe");
+            .text("commands.nsfw.description.e621")
+            .usage("L!e621 [tag] [rating]")
+            .permission("commands.e621")
+            .addExample("L!e621")
+            .addExample("L!furry cat")
+            .addExample("L!e621 cat safe");
         return HelpArticle.of(page);
     }
 

@@ -38,10 +38,10 @@ public class Gelbooru implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("gelbooru")
-                .module(Modules.NSFW)
-                .permission("commands.gelbooru", "permissions.command")
-                .build();
+            .name("gelbooru")
+            .module(Modules.NSFW)
+            .permission("commands.gelbooru", "permissions.command")
+            .build();
     }
 
     @Override
@@ -94,26 +94,26 @@ public class Gelbooru implements Command {
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
-                .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
-                .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
-                        member.getUser().getEffectiveAvatarUrl())
-                .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
-                .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
-                .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
-                .setImage(image.getURL());
+            .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
+            .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
+            .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                member.getUser().getEffectiveAvatarUrl())
+            .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
+            .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
+            .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
+            .setImage(image.getURL());
         msg.send(channel, embed.build());
     }
 
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("gelbooru")
-                .text("commands.nsfw.description.gelbooru")
-                .usage("L!gelbooru [tag] [rating]")
-                .permission("commands.gelbooru")
-                .addExample("L!gelbooru")
-                .addExample("L!gelbooru megumin")
-                .addExample("L!gelbooru megumin safe");
+            .text("commands.nsfw.description.gelbooru")
+            .usage("L!gelbooru [tag] [rating]")
+            .permission("commands.gelbooru")
+            .addExample("L!gelbooru")
+            .addExample("L!gelbooru megumin")
+            .addExample("L!gelbooru megumin safe");
         return HelpArticle.of(page);
     }
 

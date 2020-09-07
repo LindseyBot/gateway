@@ -71,9 +71,9 @@ public class Neko implements Command {
             return false;
         }
         Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+            .url(url)
+            .get()
+            .build();
 
         Response resp = client.newCall(request).execute();
         JSONArray arr = new JSONArray(resp.body().string());

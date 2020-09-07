@@ -2,6 +2,7 @@ package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
@@ -25,8 +26,8 @@ import java.util.Arrays;
 public class Kitsu implements Command {
 
     private static final OkHttpClient client = new OkHttpClient().newBuilder()
-            .followSslRedirects(true)
-            .build();
+        .followSslRedirects(true)
+        .build();
 
     @Value("${bot.integrations.kitsu}")
     private String key;
@@ -40,15 +41,15 @@ public class Kitsu implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("kitsu")
-                .alias("anime")
-                .module(Modules.FUN)
-                .permission("commands.kitsu", "permissions.command")
-                .build();
+            .name("kitsu")
+            .alias("anime")
+            .module(Modules.FUN)
+            .permission("commands.kitsu", "permissions.command")
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
@@ -56,16 +57,16 @@ public class Kitsu implements Command {
         }
 
         Request req = new Request.Builder()
-                .url("https://kitsu.io/api/edge/anime?filter[text]=" + Arrays.toString(args))
-                .addHeader("Authorization", "Bearer " + key)
-                .get()
-                .build();
+            .url("https://kitsu.io/api/edge/anime?filter[text]=" + Arrays.toString(args))
+            .addHeader("Authorization", "Bearer " + key)
+            .get()
+            .build();
 
         Response resp = client.newCall(req).execute();
         JSONObject obj = new JSONObject(resp.body().string());
         JSONObject atr = obj.getJSONArray("data").getJSONObject(0).getJSONObject("attributes");
         String link = "https://kitsu.io/anime/" + obj.getJSONArray("data").getJSONObject(0)
-                .getJSONObject("links").getString("self").split("anime/")[1];
+            .getJSONObject("links").getString("self").split("anime/")[1];
         EmbedBuilder embed = new EmbedBuilder();
 
         boolean nsfw = false;
@@ -89,7 +90,7 @@ public class Kitsu implements Command {
         }
 
         embed.setFooter(i18n.get(member, "commands.fun.anime.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
-                member.getUser().getEffectiveAvatarUrl());
+            member.getUser().getEffectiveAvatarUrl());
 
         if (!atr.isNull("synopsis")) {
             embed.setDescription(atr.getString("synopsis"));
@@ -145,11 +146,11 @@ public class Kitsu implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("kitsu")
-                .text("commands.fun.anime.description")
-                .usage("L!kitsu <name>")
-                .permission("commands.kitsu")
-                .addExample("L!kitsu One Piece")
-                .addExample("L!anime konosuba");
+            .text("commands.fun.anime.description")
+            .usage("L!kitsu <name>")
+            .permission("commands.kitsu")
+            .addExample("L!kitsu One Piece")
+            .addExample("L!anime konosuba");
         return HelpArticle.of(page);
     }
 

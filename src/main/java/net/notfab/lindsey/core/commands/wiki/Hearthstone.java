@@ -78,11 +78,11 @@ public class Hearthstone implements Command {
         }
 
         Request request = new Request.Builder()
-                .url("https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/search/" + cardname + "?collectible=1&locale=" + locale)
-                .get()
-                .addHeader("x-rapidapi-host", "omgvamp-hearthstone-v1.p.rapidapi.com")
-                .addHeader("x-rapidapi-key", key)
-                .build();
+            .url("https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/search/" + cardname + "?collectible=1&locale=" + locale)
+            .get()
+            .addHeader("x-rapidapi-host", "omgvamp-hearthstone-v1.p.rapidapi.com")
+            .addHeader("x-rapidapi-key", key)
+            .build();
         Response resp = client.newCall(request).execute();
         String str = resp.body().string();
 

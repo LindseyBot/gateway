@@ -109,12 +109,12 @@ public class Danbooru implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("danbooru")
-                .text("commands.nsfw.description.danbooru")
-                .usage("L!danbooru [tag] [rating]")
-                .permission("commands.danbooru")
-                .addExample("L!danbooru")
-                .addExample("L!danbooru megumin")
-                .addExample("L!danbooru megumin explicit");
+            .text("commands.nsfw.description.danbooru")
+            .usage("L!danbooru [tag] [rating]")
+            .permission("commands.danbooru")
+            .addExample("L!danbooru")
+            .addExample("L!danbooru megumin")
+            .addExample("L!danbooru megumin explicit");
         return HelpArticle.of(page);
     }
 
