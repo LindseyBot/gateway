@@ -1,6 +1,7 @@
 package net.notfab.lindsey.framework.command;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.help.HelpArticle;
 import net.notfab.lindsey.framework.command.help.HelpPage;
@@ -9,7 +10,7 @@ public interface Command {
 
     CommandDescriptor getInfo();
 
-    boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception;
+    boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception;
 
     default HelpArticle help(Member member) {
         return HelpArticle.of(new HelpPage(getInfo().getName()).text("core.help_nf"));

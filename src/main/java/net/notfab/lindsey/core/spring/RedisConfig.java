@@ -19,7 +19,7 @@ public class RedisConfig {
     @Primary
     RedisConnectionFactory redisFactory(RedisProperties properties) {
         RedisStandaloneConfiguration config =
-                new RedisStandaloneConfiguration(properties.getHost(), properties.getPort());
+            new RedisStandaloneConfiguration(properties.getHost(), properties.getPort());
         if (properties.getPassword() != null && !properties.getPassword().isBlank()) {
             config.setPassword(properties.getPassword());
         }

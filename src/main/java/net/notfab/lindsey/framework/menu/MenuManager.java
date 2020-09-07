@@ -18,8 +18,8 @@ public class MenuManager extends ListenerAdapter {
     private static MenuManager Instance;
 
     private final Map<Long, Menu> menus = ExpiringMap.builder()
-            .expiration(5, TimeUnit.MINUTES)
-            .build();
+        .expiration(5, TimeUnit.MINUTES)
+        .build();
 
     public MenuManager(Lindsey lindsey) {
         lindsey.addEventListener(this);

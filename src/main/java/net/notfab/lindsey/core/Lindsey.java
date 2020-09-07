@@ -30,7 +30,7 @@ public class Lindsey {
 
     public void init() {
         this.shardManager.addEventListener(new CommandListener(this.commandManager,
-                this.profileManager, this.permissionManager));
+            this.profileManager, this.permissionManager));
         this.permissionManager.init();
         logger.info("Boat is now Floating!");
     }

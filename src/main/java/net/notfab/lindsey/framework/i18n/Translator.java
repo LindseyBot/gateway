@@ -19,6 +19,10 @@ public class Translator {
     @Autowired
     private ProfileManager profiles;
 
+    private static InputStream getLanguage(String language) {
+        return Translator.class.getResourceAsStream("/lang/" + language + ".toml");
+    }
+
     public String get(Member member, String message, Object... args) {
         return get(member.getUser(), message, args);
     }
@@ -41,10 +45,6 @@ public class Translator {
             msg = msg.replace("{" + i + "}", String.valueOf(args[i]));
         }
         return msg;
-    }
-
-    private static InputStream getLanguage(String language) {
-        return Translator.class.getResourceAsStream("/lang/" + language + ".toml");
     }
 
 }

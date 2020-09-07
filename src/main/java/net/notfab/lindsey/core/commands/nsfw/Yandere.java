@@ -2,6 +2,7 @@ package net.notfab.lindsey.core.commands.nsfw;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.kodehawa.lib.imageboards.DefaultImageBoards;
 import net.kodehawa.lib.imageboards.entities.BoardImage;
@@ -38,14 +39,14 @@ public class Yandere implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("yandere")
-                .module(Modules.NSFW)
-                .permission("commands.yandere", "permissions.command")
-                .build();
+            .name("yandere")
+            .module(Modules.NSFW)
+            .permission("commands.yandere", "permissions.command")
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (channel.isNSFW()) {
             Rating r = Rating.QUESTIONABLE;
             int page = Math.max(1, random.nextInt(25));
@@ -94,26 +95,26 @@ public class Yandere implements Command {
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
-                .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
-                .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
-                        member.getUser().getEffectiveAvatarUrl())
-                .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
-                .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
-                .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
-                .setImage(image.getURL());
+            .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
+            .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
+            .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                member.getUser().getEffectiveAvatarUrl())
+            .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
+            .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
+            .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
+            .setImage(image.getURL());
         msg.send(channel, embed.build());
     }
 
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("yandere")
-                .text("commands.nsfw.description.yandere")
-                .usage("L!yandere [tag] [rating]")
-                .permission("commands.yandere")
-                .addExample("L!yandere")
-                .addExample("L!yandere megumin")
-                .addExample("L!yandere megumin explicit");
+            .text("commands.nsfw.description.yandere")
+            .usage("L!yandere [tag] [rating]")
+            .permission("commands.yandere")
+            .addExample("L!yandere")
+            .addExample("L!yandere megumin")
+            .addExample("L!yandere megumin explicit");
         return HelpArticle.of(page);
     }
 

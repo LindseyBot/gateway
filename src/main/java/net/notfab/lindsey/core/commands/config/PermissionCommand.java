@@ -1,6 +1,7 @@
 package net.notfab.lindsey.core.commands.config;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.*;
@@ -30,15 +31,15 @@ public class PermissionCommand implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("permissions")
-                .alias("perms")
-                .permission("commands.permissions", "permissions.command", false)
-                .module(Modules.CORE)
-                .build();
+            .name("permissions")
+            .alias("perms")
+            .permission("commands.permissions", "permissions.command", false)
+            .module(Modules.CORE)
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
@@ -121,13 +122,13 @@ public class PermissionCommand implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("permissions")
-                .text("commands.core.permissions.description")
-                .usage("L!perms <get,clear,reset,set> [role] [node] [value]")
-                .permission("commands.permissions")
-                .addExample("L!perms get mods")
-                .addExample("L!perms clear mods")
-                .addExample("L!perms reset mods commands.kick")
-                .addExample("L!perms set mods commands.kick true");
+            .text("commands.core.permissions.description")
+            .usage("L!perms <get,clear,reset,set> [role] [node] [value]")
+            .permission("commands.permissions")
+            .addExample("L!perms get mods")
+            .addExample("L!perms clear mods")
+            .addExample("L!perms reset mods commands.kick")
+            .addExample("L!perms set mods commands.kick true");
         return HelpArticle.of(page);
     }
 

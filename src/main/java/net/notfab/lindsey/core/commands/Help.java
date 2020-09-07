@@ -1,6 +1,7 @@
 package net.notfab.lindsey.core.commands;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.*;
 import net.notfab.lindsey.framework.command.help.HelpArticle;
@@ -22,21 +23,21 @@ public class Help implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("help")
-                .permission("commands.help", "permissions.command")
-                .module(Modules.CORE)
-                .build();
+            .name("help")
+            .permission("commands.help", "permissions.command")
+            .module(Modules.CORE)
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
         } else {
             String commandName = this.argsToString(args, 0);
             Command command = CommandManager.getInstance()
-                    .findCommand(commandName.toLowerCase());
+                .findCommand(commandName.toLowerCase());
             if (command == null) {
                 msg.send(channel, sender(member) + i18n.get(member, "core.help_nf"));
                 return false;
@@ -51,10 +52,10 @@ public class Help implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("help")
-                .text("commands.core.help.description")
-                .usage("L!help [command]")
-                .permission("commands.help")
-                .addExample("L!help help");
+            .text("commands.core.help.description")
+            .usage("L!help [command]")
+            .permission("commands.help")
+            .addExample("L!help help");
         return HelpArticle.of(page);
     }
 

@@ -1,6 +1,7 @@
 package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
@@ -21,8 +22,8 @@ import org.springframework.stereotype.Component;
 public class Neko implements Command {
 
     private static final OkHttpClient client = new OkHttpClient().newBuilder()
-            .followSslRedirects(true)
-            .build();
+        .followSslRedirects(true)
+        .build();
 
     @Autowired
     private Translator i18n;
@@ -33,14 +34,14 @@ public class Neko implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("neko")
-                .module(Modules.FUN)
-                .permission("commands.neko", "permissions.command")
-                .build();
+            .name("neko")
+            .module(Modules.FUN)
+            .permission("commands.neko", "permissions.command")
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
 
         boolean nsfw = true;
         String url = "";
@@ -70,9 +71,9 @@ public class Neko implements Command {
             return false;
         }
         Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+            .url(url)
+            .get()
+            .build();
 
         Response resp = client.newCall(request).execute();
         JSONArray arr = new JSONArray(resp.body().string());
@@ -84,13 +85,13 @@ public class Neko implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("neko")
-                .text("commands.fun.neko.description")
-                .usage("L!neko [subcommand]")
-                .permission("commands.neko")
-                .addExample("L!neko")
-                .addExample("L!neko nsfw")
-                .addExample("L!neko nekopara")
-                .addExample("L!neko maid");
+            .text("commands.fun.neko.description")
+            .usage("L!neko [subcommand]")
+            .permission("commands.neko")
+            .addExample("L!neko")
+            .addExample("L!neko nsfw")
+            .addExample("L!neko nekopara")
+            .addExample("L!neko maid");
         return HelpArticle.of(page);
     }
 

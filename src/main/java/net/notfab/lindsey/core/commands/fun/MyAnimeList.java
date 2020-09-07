@@ -2,6 +2,7 @@ package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
@@ -11,14 +12,11 @@ import net.notfab.lindsey.framework.command.help.HelpArticle;
 import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
-import net.notfab.lindsey.framework.settings.ProfileManager;
-import net.notfab.lindsey.framework.settings.UserProfile;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -35,15 +33,15 @@ public class MyAnimeList implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("myanimelist")
-                .alias("mal")
-                .module(Modules.FUN)
-                .permission("commands.myanimelist", "permissions.command")
-                .build();
+            .name("myanimelist")
+            .alias("mal")
+            .module(Modules.FUN)
+            .permission("commands.myanimelist", "permissions.command")
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
@@ -54,13 +52,13 @@ public class MyAnimeList implements Command {
         EmbedBuilder embed = new EmbedBuilder();
 
         Request request = new Request.Builder()
-                .url("https://api.jikan.moe/v3/search/anime?q=" + Arrays.toString(args))
-                .get()
-                .build();
+            .url("https://api.jikan.moe/v3/search/anime?q=" + Arrays.toString(args))
+            .get()
+            .build();
         Response resp = client.newCall(request).execute();
         JSONObject obj = new JSONObject(resp.body().string());
 
-        if(obj.getJSONArray("results").isEmpty()){
+        if (obj.getJSONArray("results").isEmpty()) {
             msg.send(channel, i18n.get(member, "commands.fun.anime.404"));
             return true;
         }
@@ -120,7 +118,7 @@ public class MyAnimeList implements Command {
         }
 
         embed.setFooter(i18n.get(member, "commands.fun.anime.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
-                member.getUser().getEffectiveAvatarUrl());
+            member.getUser().getEffectiveAvatarUrl());
 
         msg.send(channel, embed.build());
         return true;
@@ -129,11 +127,11 @@ public class MyAnimeList implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("myanimelist")
-                .text("commands.fun.anime.description")
-                .usage("L!myanimelist <name>")
-                .permission("commands.myanimelist")
-                .addExample("L!mal One Piece")
-                .addExample("L!myanimelist konosuba");
+            .text("commands.fun.anime.description")
+            .usage("L!myanimelist <name>")
+            .permission("commands.myanimelist")
+            .addExample("L!mal One Piece")
+            .addExample("L!myanimelist konosuba");
         return HelpArticle.of(page);
     }
 

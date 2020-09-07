@@ -1,6 +1,7 @@
 package net.notfab.lindsey.core.commands.wiki;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
@@ -40,15 +41,15 @@ public class Hearthstone implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("hearthstone")
-                .alias("hscard")
-                .module(Modules.GAME_WIKI)
-                .permission("commands.hearthstone", "permissions.command")
-                .build();
+            .name("hearthstone")
+            .alias("hscard")
+            .module(Modules.GAME_WIKI)
+            .permission("commands.hearthstone", "permissions.command")
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
@@ -77,11 +78,11 @@ public class Hearthstone implements Command {
         }
 
         Request request = new Request.Builder()
-                .url("https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/search/" + cardname + "?collectible=1&locale=" + locale)
-                .get()
-                .addHeader("x-rapidapi-host", "omgvamp-hearthstone-v1.p.rapidapi.com")
-                .addHeader("x-rapidapi-key", key)
-                .build();
+            .url("https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/search/" + cardname + "?collectible=1&locale=" + locale)
+            .get()
+            .addHeader("x-rapidapi-host", "omgvamp-hearthstone-v1.p.rapidapi.com")
+            .addHeader("x-rapidapi-key", key)
+            .build();
         Response resp = client.newCall(request).execute();
         String str = resp.body().string();
 
@@ -108,12 +109,12 @@ public class Hearthstone implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("hearthstone")
-                .text("commands.wiki.hearthstone.description")
-                .usage("L!hscard <cardName> [isGold] [language]")
-                .permission("commands.hearthstone")
-                .addExample("L!hearthstone \"Leeroy Jenkins\"")
-                .addExample("L!hscard Leeroy true")
-                .addExample("L!hscard Leeroy true ptBR");
+            .text("commands.wiki.hearthstone.description")
+            .usage("L!hscard <cardName> [isGold] [language]")
+            .permission("commands.hearthstone")
+            .addExample("L!hearthstone \"Leeroy Jenkins\"")
+            .addExample("L!hscard Leeroy true")
+            .addExample("L!hscard Leeroy true ptBR");
         return HelpArticle.of(page);
     }
 

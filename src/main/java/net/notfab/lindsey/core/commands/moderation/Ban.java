@@ -26,14 +26,14 @@ public class Ban implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("ban")
-                .permission("commands.ban", "permissions.command", false)
-                .module(Modules.MODERATION)
-                .build();
+            .name("ban")
+            .permission("commands.ban", "permissions.command", false)
+            .module(Modules.MODERATION)
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
@@ -48,18 +48,18 @@ public class Ban implements Command {
                 reason = member.getUser().getName() + ": " + argsToString(args, 1);
             }
             if (!member.canInteract(target) || target.isOwner()
-                    || target.hasPermission(Permission.ADMINISTRATOR)
-                    || target.getUser().isBot()
-                    || !member.hasPermission(Permission.BAN_MEMBERS)) {
+                || target.hasPermission(Permission.ADMINISTRATOR)
+                || target.getUser().isBot()
+                || !member.hasPermission(Permission.BAN_MEMBERS)) {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.mod.ban.interact", target.getEffectiveName()));
                 return false;
             }
             target.ban(7, reason)
-                    .flatMap(aVoid -> channel
-                            .sendMessage(i18n.get(member, "commands.mod.ban.banned", target.getEffectiveName())))
-                    .delay(5, TimeUnit.SECONDS)
-                    .flatMap(Message::delete)
-                    .queue();
+                .flatMap(aVoid -> channel
+                    .sendMessage(i18n.get(member, "commands.mod.ban.banned", target.getEffectiveName())))
+                .delay(5, TimeUnit.SECONDS)
+                .flatMap(Message::delete)
+                .queue();
         }
         return true;
     }
@@ -67,12 +67,12 @@ public class Ban implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("ban")
-                .text("commands.mod.ban.description")
-                .usage("L!ban <member|id> [reason]")
-                .permission("commands.ban")
-                .addExample("L!ban @lindsey")
-                .addExample("L!ban @lindsey Not sending images")
-                .addExample("L!ban 119482224713269248");
+            .text("commands.mod.ban.description")
+            .usage("L!ban <member|id> [reason]")
+            .permission("commands.ban")
+            .addExample("L!ban @lindsey")
+            .addExample("L!ban @lindsey Not sending images")
+            .addExample("L!ban 119482224713269248");
         return HelpArticle.of(page);
     }
 

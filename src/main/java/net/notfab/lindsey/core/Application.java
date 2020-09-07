@@ -1,5 +1,6 @@
 package net.notfab.lindsey.core;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -35,9 +36,14 @@ public class Application implements ApplicationRunner {
     @Bean
     public ShardManager shardManager() throws LoginException {
         return DefaultShardManagerBuilder.createDefault(this.token)
-                .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                .disableCache(CacheFlag.CLIENT_STATUS, CacheFlag.ACTIVITY)
-                .build();
+            .enableIntents(GatewayIntent.GUILD_MEMBERS)
+            .disableCache(CacheFlag.CLIENT_STATUS, CacheFlag.ACTIVITY)
+            .build();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
 }
