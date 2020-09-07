@@ -41,6 +41,11 @@ jobs:
         with:
           name: bootjar
           path: build/libs/
+      # Delete artifact
+      - name: Delete artifacts
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: bootjar
       # Build
       - name: Docker Build
         run: docker build . --file Dockerfile --tag $IMAGE_NAME
