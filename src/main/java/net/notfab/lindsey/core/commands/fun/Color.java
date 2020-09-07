@@ -46,6 +46,8 @@ public class Color implements Command {
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
+            HelpArticle article = this.help(member);
+            article.send(channel, member, args, msg, i18n);
             return false;
         } else {
             int color;
