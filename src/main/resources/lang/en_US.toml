@@ -1,6 +1,8 @@
 [permissions]
 command = "Permission to use the base command"
 nsfw = "Permission to use the command on nsfw channels"
+user = "You do not have permission to do this. Missing `{0}`."
+bot = "I do not have permission to do this. Missing `{0}`."
 
 [core]
 member_nf = "Member not found"
@@ -72,7 +74,9 @@ permission = "No permissions found with name `{0}`."
 [commands.mod]
     # Prune
     [commands.mod.prune]
-    del = "Messages deleted. This message will auto-destruct in 5 seconds."
+    del = " Messages deleted. This message will auto-destruct in 5 seconds."
+    err = "Type a number between 2 and 99"
+    description = "Deleted messages"
     # Ban
     [commands.mod.ban]
     description = "Bans a member from the guild, deleting all messages from that user for the past 7 days."
