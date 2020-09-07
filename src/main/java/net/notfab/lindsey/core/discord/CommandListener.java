@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandManager;
 import net.notfab.lindsey.framework.permissions.PermissionManager;
@@ -39,16 +40,14 @@ public class CommandListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
         Member member = event.getMember();
-        if (member == null || event.getAuthor().isBot()
-                || event.isWebhookMessage()) {
+        if (member == null || event.getAuthor().isBot() || event.isWebhookMessage()) {
             return;
         }
         String rawMessage = event.getMessage().getContentRaw();
         if (rawMessage.split("\\s+").length == 0) {
             return;
         }
-        String prefix = this.findPrefix(rawMessage.split("\\s+")[0].toLowerCase(), event.getGuild(),
-                event.getGuild().getSelfMember());
+        String prefix = this.findPrefix(rawMessage.split("\\s+")[0].toLowerCase(), event.getGuild(), event.getGuild().getSelfMember());
         if (prefix == null) {
             return;
         }
@@ -75,7 +74,8 @@ public class CommandListener extends ListenerAdapter {
         }
         threadPool.execute(() -> {
             try {
-                command.execute(member, event.getChannel(), arguments.toArray(new String[0]), null);
+                Bundle bundle = new Bundle();
+                command.execute(member, event.getChannel(), arguments.toArray(new String[0]), event.getMessage(), bundle);
             } catch (Exception ex) {
                 logger.error("Error during command execution", ex);
             }

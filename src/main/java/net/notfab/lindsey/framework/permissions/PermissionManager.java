@@ -61,10 +61,10 @@ public class PermissionManager {
      */
     public void init() {
         CommandManager.getInstance().getCommands()
-                .stream()
-                .map(cmd -> cmd.getInfo().getPermissions())
-                .flatMap(Collection::stream)
-                .forEach(perm -> this.defaults.put(perm.getName(), perm.isAllowed()));
+            .stream()
+            .map(cmd -> cmd.getInfo().getPermissions())
+            .flatMap(Collection::stream)
+            .forEach(perm -> this.defaults.put(perm.getName(), perm.isAllowed()));
     }
 
     public List<MemberPermission> list(Role role) {

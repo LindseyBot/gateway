@@ -138,12 +138,12 @@ public class FinderUtil {
         Matcher userMention = USER_MENTION.matcher(query);
         if (userMention.matches()) {
             return guild.retrieveMemberById(userMention.replaceAll("$1"))
-                    .complete();
+                .complete();
         }
         // Id
         if (DISCORD_ID.matcher(query).matches()) {
             return guild.retrieveMemberById(query)
-                    .complete();
+                .complete();
         }
         // User#Dis
         Matcher fullRefMatch = FULL_USER_REF.matcher(query);

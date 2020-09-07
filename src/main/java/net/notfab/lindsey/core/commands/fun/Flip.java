@@ -1,6 +1,7 @@
 package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
@@ -27,14 +28,14 @@ public class Flip implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("flip")
-                .module(Modules.FUN)
-                .permission("commands.flip", "permissions.command")
-                .build();
+            .name("flip")
+            .module(Modules.FUN)
+            .permission("commands.flip", "permissions.command")
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         Random gem = new Random();
         if (gem.nextBoolean()) {
             msg.send(channel, "**" + member.getEffectiveName() + "** " + i18n.get(member, "commands.fun.flip.heads"));
@@ -47,10 +48,10 @@ public class Flip implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("flip")
-                .text("commands.fun.flip.description")
-                .usage("L!flip")
-                .permission("commands.flip")
-                .addExample("L!flip");
+            .text("commands.fun.flip.description")
+            .usage("L!flip")
+            .permission("commands.flip")
+            .addExample("L!flip");
         return HelpArticle.of(page);
     }
 

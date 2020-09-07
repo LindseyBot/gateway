@@ -1,0 +1,8 @@
+[
+  {
+    "name": "example.option",
+    "type": "BOOLEAN",
+    "description": "some.i18n.string",
+    "default": false
+  }
+]

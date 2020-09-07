@@ -1,6 +1,7 @@
 package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
@@ -36,14 +37,14 @@ public class Color implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("color")
-                .module(Modules.FUN)
-                .permission("commands.color", "permissions.command")
-                .build();
+            .name("color")
+            .module(Modules.FUN)
+            .permission("commands.color", "permissions.command")
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
             return false;
         } else {
@@ -73,10 +74,10 @@ public class Color implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("color")
-                .text("commands.fun.color.description")
-                .usage("L!color <#RGB>")
-                .permission("commands.color")
-                .addExample("L!color ff00aa");
+            .text("commands.fun.color.description")
+            .usage("L!color <#RGB>")
+            .permission("commands.color")
+            .addExample("L!color ff00aa");
         return HelpArticle.of(page);
     }
 

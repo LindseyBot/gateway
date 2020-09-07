@@ -1,6 +1,7 @@
 package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
@@ -29,14 +30,14 @@ public class Roll implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("roll")
-                .module(Modules.FUN)
-                .permission("commands.roll", "permissions.command")
-                .build();
+            .name("roll")
+            .module(Modules.FUN)
+            .permission("commands.roll", "permissions.command")
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
             msg.send(channel, i18n.get(member, "commands.fun.roll.roll") + "** " + random.nextInt(2000) + "**");
         } else {
@@ -52,11 +53,11 @@ public class Roll implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("roll")
-                .text("commands.fun.roll.description")
-                .usage("L!roll [max]")
-                .permission("commands.roll")
-                .addExample("L!roll")
-                .addExample("L!roll 100");
+            .text("commands.fun.roll.description")
+            .usage("L!roll [max]")
+            .permission("commands.roll")
+            .addExample("L!roll")
+            .addExample("L!roll 100");
         return HelpArticle.of(page);
     }
 

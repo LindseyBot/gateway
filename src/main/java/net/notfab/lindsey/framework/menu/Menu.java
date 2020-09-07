@@ -30,16 +30,16 @@ public class Menu {
 
     public static Menu create(TextChannel channel, List<MessageEmbed> pages) {
         Message message = channel.sendMessage(pages.get(0))
-                .complete();
+            .complete();
         if (pages.size() > 1) {
             message.addReaction(Emotes.LeftArrow.asReaction())
-                    .queue();
+                .queue();
         }
         message.addReaction(Emotes.XCheck.asReaction())
-                .queue();
+            .queue();
         if (pages.size() > 1) {
             message.addReaction(Emotes.RightArrow.asReaction())
-                    .queue();
+                .queue();
         }
         Menu menu = new Menu(message.getIdLong(), channel.getIdLong(), pages);
         MenuManager.getInstance().register(menu);
@@ -56,7 +56,7 @@ public class Menu {
         }
         if (Emotes.XCheck.getId().equalsIgnoreCase(reaction.getReactionEmote().getId())) {
             channel.deleteMessageById(this.messageId)
-                    .queue();
+                .queue();
             return;
         }
         if (!this.hasPagination()) {
@@ -69,10 +69,10 @@ public class Menu {
                 return;
             }
             Message msg = new MessageBuilder()
-                    .setEmbed(previous)
-                    .build();
+                .setEmbed(previous)
+                .build();
             channel.editMessageById(this.messageId, msg)
-                    .queue();
+                .queue();
         } else if (Emotes.RightArrow.getId().equals(reaction.getReactionEmote().getId())) {
             // Right Arrow
             MessageEmbed next = this.nextPage();
@@ -80,10 +80,10 @@ public class Menu {
                 return;
             }
             Message msg = new MessageBuilder()
-                    .setEmbed(next)
-                    .build();
+                .setEmbed(next)
+                .build();
             channel.editMessageById(this.messageId, msg)
-                    .queue();
+                .queue();
         }
     }
 

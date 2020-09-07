@@ -2,6 +2,7 @@ package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
@@ -31,8 +32,8 @@ public class Quote implements Command {
 
     private static final String QUOTES_URL = "https://type.fit/api/quotes";
     private static final OkHttpClient client = new OkHttpClient().newBuilder()
-            .followSslRedirects(true)
-            .build();
+        .followSslRedirects(true)
+        .build();
 
     @Autowired
     private Messenger msg;
@@ -40,20 +41,20 @@ public class Quote implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("quote")
-                .module(FUN)
-                .permission("commands.quote", "permissions.command")
-                .build();
+            .name("quote")
+            .module(FUN)
+            .permission("commands.quote", "permissions.command")
+            .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) {
         try {
             Request request = new Request.Builder()
-                    .url(QUOTES_URL)
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Content-Type", "application/json")
-                    .build();
+                .url(QUOTES_URL)
+                .addHeader("Accept", "application/json")
+                .addHeader("Content-Type", "application/json")
+                .build();
 
             Response response = client.newCall(request).execute();
             String strJson = response.body().string();
@@ -114,10 +115,10 @@ public class Quote implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("quote")
-                .text("commands.fun.quote.description")
-                .usage("L!quote")
-                .permission("commands.quote")
-                .addExample("L!quote");
+            .text("commands.fun.quote.description")
+            .usage("L!quote")
+            .permission("commands.quote")
+            .addExample("L!quote");
         return HelpArticle.of(page);
     }
 

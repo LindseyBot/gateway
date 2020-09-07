@@ -40,8 +40,8 @@ public class HelpArticle {
     public void send(TextChannel channel, Member member, String[] args, Messenger msg, Translator i18n) {
         if (args.length == 0) {
             Menu.create(channel, pages.values().stream()
-                    .map(page -> page.asEmbed(i18n, member))
-                    .collect(Collectors.toList()));
+                .map(page -> page.asEmbed(i18n, member))
+                .collect(Collectors.toList()));
         } else {
             HelpPage page = this.get(args[0]);
             if (page == null) {
