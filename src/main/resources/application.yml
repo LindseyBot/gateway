@@ -1,7 +1,8 @@
 bot:
   token: ''
   integrations:
-    hearthstone: ''
+    rapidapi: ''
+    kitsu: ''
 spring:
   datasource:
     url: jdbc:h2:mem:lindsey
@@ -20,7 +21,8 @@ spring:
 bot:
   token: ''
   integrations:
-    hearthstone: ''
+    rapidapi: ''
+    kitsu: ''
 spring:
   profiles: prod
   datasource:
