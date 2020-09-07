@@ -26,6 +26,7 @@ bootJar {
 }
 
 dependencies {
+    compile 'org.jsoup:jsoup:1.11.3'
     compile 'net.kodehawa:imageboard-api:2.2.1'
 
     // Framework

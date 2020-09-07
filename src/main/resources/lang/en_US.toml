@@ -66,6 +66,9 @@ permission = "No permissions found with name `{0}`."
     description = "Rolls a random number."
     [commands.fun.quote]
     description = "Quote is a simple command which generates a random quote every time that it is called."
+    [commands.fun.define]
+    description = "Defines a given word."
+    no_definitions = "No definitions found for {0}, can you define it?"
 [commands.mod]
     # Prune
     [commands.mod.prune]
