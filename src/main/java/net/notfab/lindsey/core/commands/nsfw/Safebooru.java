@@ -2,6 +2,7 @@ package net.notfab.lindsey.core.commands.nsfw;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.kodehawa.lib.imageboards.DefaultImageBoards;
 import net.kodehawa.lib.imageboards.entities.BoardImage;
@@ -42,7 +43,7 @@ public class Safebooru implements Command {
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         int page = Math.max(1, random.nextInt(25));
         if (args.length == 0) {
             DefaultImageBoards.SAFEBOORU.get(page, 1).async(safebooruImages -> {
