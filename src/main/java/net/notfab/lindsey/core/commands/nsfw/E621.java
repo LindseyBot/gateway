@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.util.Random;
 
 @Component
-public class Danbooru implements Command {
+public class E621 implements Command {
 
-    private static final Logger logger = LoggerFactory.getLogger(Danbooru.class);
+    private static final Logger logger = LoggerFactory.getLogger(E621.class);
 
     private final Random random = new Random();
 
@@ -38,9 +38,10 @@ public class Danbooru implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("danbooru")
+                .name("e621")
+                .alias("furry")
                 .module(Modules.NSFW)
-                .permission("commands.danbooru", "permissions.command")
+                .permission("commands.e621", "permissions.command")
                 .build();
     }
 
@@ -50,8 +51,8 @@ public class Danbooru implements Command {
             Rating r = Rating.QUESTIONABLE;
             int page = Math.max(1, random.nextInt(25));
             if (args.length == 0) {
-                DefaultImageBoards.DANBOORU.get(page, 1, r).async(danbooruImages -> {
-                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                DefaultImageBoards.E621.get(page, 1, r).async(furryImages -> {
+                    BoardImage image = furryImages.get(random.nextInt(furryImages.size()));
                     try {
                         buildEmbed(image, member, channel);
                     } catch (IOException e) {
@@ -59,7 +60,7 @@ public class Danbooru implements Command {
                     }
                 });
             } else {
-                if ((args.length == 2)) {
+                if (args.length == 2) {
                     switch (args[1]) {
                         case "safe":
                         case "s":
@@ -76,8 +77,8 @@ public class Danbooru implements Command {
                     }
                 }
 
-                DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
-                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                DefaultImageBoards.E621.search(args[0], r).async(furryImages -> {
+                    BoardImage image = furryImages.get(random.nextInt(furryImages.size()));
                     try {
                         buildEmbed(image, member, channel);
                     } catch (IOException e) {
@@ -107,13 +108,13 @@ public class Danbooru implements Command {
 
     @Override
     public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("danbooru")
-                .text("commands.nsfw.description.danbooru")
-                .usage("L!danbooru [tag] [rating]")
-                .permission("commands.danbooru")
-                .addExample("L!danbooru")
-                .addExample("L!danbooru megumin")
-                .addExample("L!danbooru megumin explicit");
+        HelpPage page = new HelpPage("e621")
+                .text("commands.nsfw.description.e621")
+                .usage("L!e621 [tag] [rating]")
+                .permission("commands.e621")
+                .addExample("L!e621")
+                .addExample("L!furry cat")
+                .addExample("L!e621 cat safe");
         return HelpArticle.of(page);
     }
 

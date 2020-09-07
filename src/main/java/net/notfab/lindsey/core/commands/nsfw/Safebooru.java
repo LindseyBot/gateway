@@ -8,7 +8,6 @@ import net.kodehawa.lib.imageboards.entities.BoardImage;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
-import net.notfab.lindsey.framework.command.Modules;
 import net.notfab.lindsey.framework.command.help.HelpArticle;
 import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.i18n.Messenger;
@@ -22,9 +21,9 @@ import java.io.IOException;
 import java.util.Random;
 
 @Component
-public class Rule34 implements Command {
+public class Safebooru implements Command {
 
-    private static final Logger logger = LoggerFactory.getLogger(Rule34.class);
+    private static final Logger logger = LoggerFactory.getLogger(Safebooru.class);
 
     private final Random random = new Random();
 
@@ -37,40 +36,34 @@ public class Rule34 implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("rule34")
-                .module(Modules.NSFW)
-                .permission("commands.rule34", "permissions.command")
+                .name("safebooru")
+                .permission("commands.safebooru", "permissions.command")
                 .build();
     }
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
-        if (channel.isNSFW()) {
-            int page = Math.max(1, random.nextInt(25));
-            if (args.length == 0) {
-                DefaultImageBoards.RULE34.get(page, 1).async(rule34Images -> {
-                    BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
-                    try {
-                        buildEmbed(image, member, channel);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-            } else {
-                DefaultImageBoards.RULE34.search(page, 1, String.join(" ", args)).async(rule34Images -> {
-                    BoardImage image = rule34Images.get(random.nextInt(rule34Images.size()));
-                    try {
-                        buildEmbed(image, member, channel);
-                    } catch (IOException e) {
-                        logger.error("Error while creating embed", e);
-                    }
-                });
-            }
-            return true;
+        int page = Math.max(1, random.nextInt(25));
+        if (args.length == 0) {
+            DefaultImageBoards.SAFEBOORU.get(page, 1).async(safebooruImages -> {
+                BoardImage image = safebooruImages.get(random.nextInt(safebooruImages.size()));
+                try {
+                    buildEmbed(image, member, channel);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         } else {
-            msg.send(channel, i18n.get(member, "core.not_nsfw"));
-            return false;
+            DefaultImageBoards.SAFEBOORU.search(args[0]).async(safeFurryImages -> {
+                BoardImage image = safeFurryImages.get(random.nextInt(safeFurryImages.size()));
+                try {
+                    buildEmbed(image, member, channel);
+                } catch (IOException e) {
+                    logger.error("Error while creating embed", e);
+                }
+            });
         }
+        return true;
     }
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
@@ -88,12 +81,12 @@ public class Rule34 implements Command {
 
     @Override
     public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("rule34")
-                .text("commands.nsfw.description.rule34")
-                .usage("L!rule34 [tag]")
-                .permission("commands.rule34")
-                .addExample("L!rule34")
-                .addExample("L!rule34 megumin");
+        HelpPage page = new HelpPage("safebooru")
+                .text("commands.nsfw.description.safebooru")
+                .usage("L!safebooru [tag] [rating]")
+                .permission("commands.safebooru")
+                .addExample("L!safebooru")
+                .addExample("L!safebooru cat");
         return HelpArticle.of(page);
     }
 

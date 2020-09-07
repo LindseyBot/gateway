@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.util.Random;
 
 @Component
-public class Danbooru implements Command {
+public class Yandere implements Command {
 
-    private static final Logger logger = LoggerFactory.getLogger(Danbooru.class);
+    private static final Logger logger = LoggerFactory.getLogger(Yandere.class);
 
     private final Random random = new Random();
 
@@ -38,9 +38,9 @@ public class Danbooru implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("danbooru")
+                .name("yandere")
                 .module(Modules.NSFW)
-                .permission("commands.danbooru", "permissions.command")
+                .permission("commands.yandere", "permissions.command")
                 .build();
     }
 
@@ -50,8 +50,8 @@ public class Danbooru implements Command {
             Rating r = Rating.QUESTIONABLE;
             int page = Math.max(1, random.nextInt(25));
             if (args.length == 0) {
-                DefaultImageBoards.DANBOORU.get(page, 1, r).async(danbooruImages -> {
-                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                DefaultImageBoards.YANDERE.get(page, 1, r).async(yandereImages -> {
+                    BoardImage image = yandereImages.get(random.nextInt(yandereImages.size()));
                     try {
                         buildEmbed(image, member, channel);
                     } catch (IOException e) {
@@ -76,8 +76,8 @@ public class Danbooru implements Command {
                     }
                 }
 
-                DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
-                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                DefaultImageBoards.YANDERE.search(args[0], r).async(yandereImages -> {
+                    BoardImage image = yandereImages.get(random.nextInt(yandereImages.size()));
                     try {
                         buildEmbed(image, member, channel);
                     } catch (IOException e) {
@@ -107,13 +107,13 @@ public class Danbooru implements Command {
 
     @Override
     public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("danbooru")
-                .text("commands.nsfw.description.danbooru")
-                .usage("L!danbooru [tag] [rating]")
-                .permission("commands.danbooru")
-                .addExample("L!danbooru")
-                .addExample("L!danbooru megumin")
-                .addExample("L!danbooru megumin explicit");
+        HelpPage page = new HelpPage("yandere")
+                .text("commands.nsfw.description.yandere")
+                .usage("L!yandere [tag] [rating]")
+                .permission("commands.yandere")
+                .addExample("L!yandere")
+                .addExample("L!yandere megumin")
+                .addExample("L!yandere megumin explicit");
         return HelpArticle.of(page);
     }
 

@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.util.Random;
 
 @Component
-public class Danbooru implements Command {
+public class E926 implements Command {
 
-    private static final Logger logger = LoggerFactory.getLogger(Danbooru.class);
+    private static final Logger logger = LoggerFactory.getLogger(E926.class);
 
     private final Random random = new Random();
 
@@ -38,58 +38,35 @@ public class Danbooru implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-                .name("danbooru")
-                .module(Modules.NSFW)
-                .permission("commands.danbooru", "permissions.command")
+                .name("e926")
+                .alias("safefurry")
+                .permission("commands.e926", "permissions.command")
                 .build();
     }
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
-        if (channel.isNSFW()) {
-            Rating r = Rating.QUESTIONABLE;
-            int page = Math.max(1, random.nextInt(25));
-            if (args.length == 0) {
-                DefaultImageBoards.DANBOORU.get(page, 1, r).async(danbooruImages -> {
-                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                    try {
-                        buildEmbed(image, member, channel);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-            } else {
-                if ((args.length == 2)) {
-                    switch (args[1]) {
-                        case "safe":
-                        case "s":
-                            r = Rating.SAFE;
-                            break;
-                        case "explicit":
-                        case "e":
-                            r = Rating.EXPLICIT;
-                            break;
-                        case "questionable":
-                        case "q":
-                            r = Rating.QUESTIONABLE;
-                            break;
-                    }
+        int page = Math.max(1, random.nextInt(25));
+        if (args.length == 0) {
+            DefaultImageBoards.E926.get(page, 1).async(safeFurryImages -> {
+                BoardImage image = safeFurryImages.get(random.nextInt(safeFurryImages.size()));
+                try {
+                    buildEmbed(image, member, channel);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-                DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
-                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
-                    try {
-                        buildEmbed(image, member, channel);
-                    } catch (IOException e) {
-                        logger.error("Error while creating embed", e);
-                    }
-                });
-            }
-            return true;
+            });
         } else {
-            msg.send(channel, i18n.get(member, "core.not_nsfw"));
-            return false;
+            DefaultImageBoards.E926.search(args[0]).async(safeFurryImages -> {
+                BoardImage image = safeFurryImages.get(random.nextInt(safeFurryImages.size()));
+                try {
+                    buildEmbed(image, member, channel);
+                } catch (IOException e) {
+                    logger.error("Error while creating embed", e);
+                }
+            });
         }
+        return true;
     }
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
@@ -107,13 +84,12 @@ public class Danbooru implements Command {
 
     @Override
     public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("danbooru")
-                .text("commands.nsfw.description.danbooru")
-                .usage("L!danbooru [tag] [rating]")
-                .permission("commands.danbooru")
-                .addExample("L!danbooru")
-                .addExample("L!danbooru megumin")
-                .addExample("L!danbooru megumin explicit");
+        HelpPage page = new HelpPage("e926")
+                .text("commands.nsfw.description.e926")
+                .usage("L!e926 [tag] [rating]")
+                .permission("commands.e926")
+                .addExample("L!e926")
+                .addExample("L!safefurry cat");
         return HelpArticle.of(page);
     }
 
