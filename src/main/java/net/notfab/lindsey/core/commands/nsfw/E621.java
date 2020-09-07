@@ -2,7 +2,6 @@ package net.notfab.lindsey.core.commands.nsfw;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.kodehawa.lib.imageboards.DefaultImageBoards;
 import net.kodehawa.lib.imageboards.entities.BoardImage;
@@ -24,9 +23,9 @@ import java.io.IOException;
 import java.util.Random;
 
 @Component
-public class Danbooru implements Command {
+public class E621 implements Command {
 
-    private static final Logger logger = LoggerFactory.getLogger(Danbooru.class);
+    private static final Logger logger = LoggerFactory.getLogger(E621.class);
 
     private final Random random = new Random();
 
@@ -39,20 +38,21 @@ public class Danbooru implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-            .name("danbooru")
-            .module(Modules.NSFW)
-            .permission("commands.danbooru", "permissions.command")
-            .build();
+                .name("e621")
+                .alias("furry")
+                .module(Modules.NSFW)
+                .permission("commands.e621", "permissions.command")
+                .build();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
+    public boolean execute(Member member, TextChannel channel, String[] args, Bundle bundle) throws Exception {
         if (channel.isNSFW()) {
             Rating r = Rating.QUESTIONABLE;
             int page = Math.max(1, random.nextInt(25));
             if (args.length == 0) {
-                DefaultImageBoards.DANBOORU.get(page, 1, r).async(danbooruImages -> {
-                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                DefaultImageBoards.E621.get(page, 1, r).async(furryImages -> {
+                    BoardImage image = furryImages.get(random.nextInt(furryImages.size()));
                     try {
                         buildEmbed(image, member, channel);
                     } catch (IOException e) {
@@ -60,7 +60,7 @@ public class Danbooru implements Command {
                     }
                 });
             } else {
-                if ((args.length == 2)) {
+                if (args.length == 2) {
                     switch (args[1]) {
                         case "safe":
                         case "s":
@@ -77,8 +77,8 @@ public class Danbooru implements Command {
                     }
                 }
 
-                DefaultImageBoards.DANBOORU.search(args[0], r).async(danbooruImages -> {
-                    BoardImage image = danbooruImages.get(random.nextInt(danbooruImages.size()));
+                DefaultImageBoards.E621.search(args[0], r).async(furryImages -> {
+                    BoardImage image = furryImages.get(random.nextInt(furryImages.size()));
                     try {
                         buildEmbed(image, member, channel);
                     } catch (IOException e) {
@@ -95,26 +95,26 @@ public class Danbooru implements Command {
 
     private void buildEmbed(BoardImage image, Member member, TextChannel channel) throws IOException {
         EmbedBuilder embed = new EmbedBuilder()
-            .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
-            .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
-            .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
-                member.getUser().getEffectiveAvatarUrl())
-            .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
-            .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
-            .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
-            .setImage(image.getURL());
+                .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
+                .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
+                .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                        member.getUser().getEffectiveAvatarUrl())
+                .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
+                .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
+                .addField(i18n.get(member, "commands.nsfw.score"), Integer.toString(image.getScore()), true)
+                .setImage(image.getURL());
         msg.send(channel, embed.build());
     }
 
     @Override
     public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("danbooru")
-                .text("commands.nsfw.description.danbooru")
-                .usage("L!danbooru [tag] [rating]")
-                .permission("commands.danbooru")
-                .addExample("L!danbooru")
-                .addExample("L!danbooru megumin")
-                .addExample("L!danbooru megumin explicit");
+        HelpPage page = new HelpPage("e621")
+                .text("commands.nsfw.description.e621")
+                .usage("L!e621 [tag] [rating]")
+                .permission("commands.e621")
+                .addExample("L!e621")
+                .addExample("L!furry cat")
+                .addExample("L!e621 cat safe");
         return HelpArticle.of(page);
     }
 

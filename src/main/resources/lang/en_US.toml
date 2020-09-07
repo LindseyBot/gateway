@@ -43,6 +43,12 @@ permission = "No permissions found with name `{0}`."
     next = "Next Airing"
     age = "Age Rating"
     description = "Searches for anime information"
+    type = "Type"
+    score = "Score"
+    members = "Members"
+    airing = "Airing"
+    finished = "Finished"
+    404 = "Anime Not Found!"
     # Color
     [commands.fun.color]
     error = "Error writing color"
@@ -84,10 +90,14 @@ request = "Requested by "
 rating = "Rating"
 size = "Size"
 score = "Score"
-    [commands.nsfw.rule34]
-    description = "Searches for an image on Rule34"
-    [commands.nsfw.danbooru]
-    description = "Searches for an image on Danbooru"
+    [commands.nsfw.description]
+    rule34 = "Searches for an image on Rule34"
+    danbooru = "Searches for an image on Danbooru"
+    gelbooru = "Searches for an image on Gelbooru"
+    konachan = "Searches for an image on Konachan"
+    Safebooru = "Searches for an image on e926"
+    e621 = "Searches for an image on e621"
+    e926 = "Searches for an image on e926"
 # WIKI
 [commands.wiki]
     #Hearthstone
