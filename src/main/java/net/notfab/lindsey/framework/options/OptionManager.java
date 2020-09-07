@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,10 @@ public class OptionManager {
         } else {
             redis.opsForHash().put("Settings:" + guild.getId(), option.getName(), target);
         }
+    }
+
+    public List<Option> getAll() {
+        return new ArrayList<>(optionMap.values());
     }
 
 }

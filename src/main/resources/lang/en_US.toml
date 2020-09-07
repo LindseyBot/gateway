@@ -21,6 +21,15 @@ examples = "**Examples**:"
 role = "No roles found named `{0}`."
 permission = "No permissions found with name `{0}`."
 
+[options]
+    [options.embed]
+    title = "Option `{0}`:"
+    type = "**Type**:"
+    default = "**Default**:"
+    current = "**Current**:"
+    list = "Available options:"
+    page = "Page [{0}/{1}]"
+
 [commands.core]
     # Help
     [commands.core.help]
@@ -31,6 +40,11 @@ permission = "No permissions found with name `{0}`."
     for = "Permissions for `{0}`:"
     cleared = "Permissions cleared for `{0}`."
     updated = "Permissions updated."
+    # Options
+    [commands.core.options]
+    description = "Manage guild options"
+    updated = "Updated `{0}`."
+    not_found = "Option not found."
 
 [commands.fun]
     # Anime
