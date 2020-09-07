@@ -51,7 +51,7 @@ public class Prune implements Command {
         int i = 1;
         try {
             i = Integer.parseInt(args[0]) + 1;
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             msg.send(channel, i18n.get(member, "core.not_number", args[0]));
             return false;
         }
