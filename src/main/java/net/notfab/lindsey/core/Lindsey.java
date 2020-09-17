@@ -5,7 +5,7 @@ import net.notfab.lindsey.core.discord.CommandListener;
 import net.notfab.lindsey.framework.command.CommandManager;
 import net.notfab.lindsey.framework.menu.MenuManager;
 import net.notfab.lindsey.framework.permissions.PermissionManager;
-import net.notfab.lindsey.framework.settings.ProfileManager;
+import net.notfab.lindsey.framework.profile.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

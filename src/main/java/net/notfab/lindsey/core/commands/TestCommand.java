@@ -8,8 +8,8 @@ import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.options.OptionManager;
-import net.notfab.lindsey.framework.settings.ProfileManager;
-import net.notfab.lindsey.framework.settings.UserProfile;
+import net.notfab.lindsey.framework.profile.GuildProfile;
+import net.notfab.lindsey.framework.profile.ProfileManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,16 +35,10 @@ public class TestCommand implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
-        UserProfile profile = profiles.get(member);
-        channel.sendMessage(profile.getOwner() + " / " + profile.getLanguage().name()).queue();
-        try {
-            options.find("example.option").set(member.getGuild(), true);
-        } catch (IllegalArgumentException ex) {
-            msg.send(channel, sender(member) + ex.getMessage());
-            return false;
-        }
-        boolean enabled = options.find("example.option").get(member.getGuild());
-        msg.send(channel, sender(member) + " example.option is " + enabled);
+        GuildProfile profile = profiles.get(message.getGuild());
+        System.out.println("Prefix: " + profile.getPrefix());
+        profile.setPrefix("!");
+        profiles.save(profile);
         return false;
     }
 

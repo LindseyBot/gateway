@@ -3,7 +3,7 @@ package net.notfab.lindsey.framework.i18n;
 import com.moandjiezana.toml.Toml;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.notfab.lindsey.framework.settings.ProfileManager;
+import net.notfab.lindsey.framework.profile.ProfileManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

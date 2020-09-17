@@ -1,11 +1,11 @@
-package net.notfab.lindsey.framework.settings;
+package net.notfab.lindsey.framework.profile;
 
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.notfab.lindsey.framework.settings.repositories.ServerProfileRepository;
-import net.notfab.lindsey.framework.settings.repositories.UserProfileRepository;
+import net.notfab.lindsey.framework.profile.repositories.ServerProfileRepository;
+import net.notfab.lindsey.framework.profile.repositories.UserProfileRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -57,6 +57,14 @@ public class ProfileManager {
         } else {
             return guild.get();
         }
+    }
+
+    public void save(GuildProfile profile) {
+        guildRepository.save(profile);
+    }
+
+    public void save(UserProfile profile) {
+        userRepository.save(profile);
     }
 
 }
