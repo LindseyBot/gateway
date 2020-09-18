@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.notfab.lindsey.core.service.IgnoreService;
 import net.notfab.lindsey.framework.command.Bundle;
 import net.notfab.lindsey.framework.command.Command;
 import net.notfab.lindsey.framework.command.CommandManager;
@@ -29,12 +30,14 @@ public class CommandListener extends ListenerAdapter {
     private final CommandManager manager;
     private final PermissionManager permissions;
     private final TaskExecutor threadPool;
+    private final IgnoreService ignores;
 
-    public CommandListener(CommandManager manager, ProfileManager profileManager, PermissionManager permissions) {
+    public CommandListener(CommandManager manager, ProfileManager profileManager, PermissionManager permissions, IgnoreService ignores) {
         this.manager = manager;
         this.threadPool = manager.getPool();
         this.profiles = profileManager;
         this.permissions = permissions;
+        this.ignores = ignores;
     }
 
     @Override
@@ -66,6 +69,10 @@ public class CommandListener extends ListenerAdapter {
         // -- Execution
         Command command = this.manager.findCommand(commandName);
         if (command == null) {
+            return;
+        }
+        // -- Ignore check
+        if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
             return;
         }
         // -- Permission check
