@@ -20,6 +20,7 @@ examples = "**Examples**:"
 [search]
 role = "No roles found named `{0}`."
 permission = "No permissions found with name `{0}`."
+channel = "No channel named `{0}` found."
 
 [options]
     [options.embed]
@@ -28,6 +29,11 @@ permission = "No permissions found with name `{0}`."
     default = "**Default**:"
     current = "**Current**:"
     list = "Available options:"
+    page = "Page [{0}/{1}]"
+
+[embeds]
+    [embeds.ignored]
+    title = "Ignored channels:"
     page = "Page [{0}/{1}]"
 
 [commands.core]
@@ -45,6 +51,13 @@ permission = "No permissions found with name `{0}`."
     description = "Manage guild options"
     updated = "Updated `{0}`."
     not_found = "Option not found."
+    [commands.core.ignore]
+    description = "Manage ignored channels"
+    added = "{0} is now ignored."
+    removed = "{0} is no longer ignored."
+    is_ignored = "{0} is already ignored."
+    is_not_ignored = "{0} is not currently ignored."
+    empty = "No channels are currently ignored."
 
 [commands.fun]
     # Anime

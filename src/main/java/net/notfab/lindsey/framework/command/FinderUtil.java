@@ -30,8 +30,8 @@ public class FinderUtil {
             return guild.getTextChannelById(query);
         }
         // -- Fuzzy
-        if (query.startsWith("@")) {
-            query = query.replaceFirst("@", "");
+        if (query.startsWith("#")) {
+            query = query.replaceFirst("#", "");
         }
         List<TextChannel> channels = guild.getTextChannels();
         // --
