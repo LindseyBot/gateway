@@ -7,10 +7,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.actions.impl.actions.AddRoleAction;
+import net.notfab.lindsey.framework.actions.impl.actions.KickAction;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = AddRoleAction.class, name = "AddRoleAction")
+    @JsonSubTypes.Type(value = AddRoleAction.class, name = "AddRoleAction"),
+    @JsonSubTypes.Type(value = KickAction.class, name = "KickAction")
 })
 public interface Action {
 
