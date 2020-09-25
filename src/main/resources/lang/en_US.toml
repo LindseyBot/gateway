@@ -58,6 +58,11 @@ channel = "No channel named `{0}` found."
     is_ignored = "{0} is already ignored."
     is_not_ignored = "{0} is not currently ignored."
     empty = "No channels are currently ignored."
+    [commands.core.language]
+    description = "Find out a users language or update your own."
+    unknown = "Unknown language."
+    updated = "Language updated to {0}."
+    target = "{0}'s preferred language is {1}."
 
 [commands.fun]
     # Anime

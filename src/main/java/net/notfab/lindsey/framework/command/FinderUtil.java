@@ -133,6 +133,83 @@ public class FinderUtil {
         return bestRole;
     }
 
+    public static Member findMember(String query, Message message) {
+        if (!message.isFromGuild()) {
+            return null;
+        }
+        Guild guild = message.getGuild();
+        if (!message.getMentionedMembers().isEmpty()) {
+            Member target = null;
+            for (Member mentioned : message.getMentionedMembers()) {
+                if (mentioned.isFake()) {
+                    continue;
+                }
+                if (guild.getSelfMember().getId().equals(mentioned.getId())) {
+                    continue;
+                }
+                target = mentioned;
+                break;
+            }
+            if (target != null) {
+                return target;
+            }
+        }
+        // Mention
+        Matcher userMention = USER_MENTION.matcher(query);
+        if (userMention.matches()) {
+            return guild.retrieveMemberById(userMention.replaceAll("$1"))
+                .complete();
+        }
+        // Id
+        if (DISCORD_ID.matcher(query).matches()) {
+            return guild.retrieveMemberById(query)
+                .complete();
+        }
+        // User#Dis
+        Matcher fullRefMatch = FULL_USER_REF.matcher(query);
+        if (fullRefMatch.matches()) {
+            String name = fullRefMatch.replaceAll("$1");
+            String disc = fullRefMatch.replaceAll("$2");
+            List<Member> oneMember = guild.retrieveMembersByPrefix(name, 1).get();
+            if (oneMember.isEmpty()) {
+                return null;
+            }
+            Member member = oneMember.get(0);
+            if (member.getUser().getDiscriminator().equals(disc)) {
+                return member;
+            } else {
+                return null;
+            }
+        }
+        // -- Fuzzy
+        if (query.startsWith("@")) {
+            query = query.replaceFirst("@", "");
+        }
+        List<Member> members = guild.retrieveMembersByPrefix(query, 10).get();
+        // --
+        int bestScore = 0;
+        Member bestMember = null;
+        for (Member member : members) {
+            int score = 0;
+            String currentName = member.getEffectiveName();
+            if (currentName.equals(query)) {
+                score += 4;
+            } else if (currentName.equalsIgnoreCase(query)) {
+                score += 3;
+            } else if (currentName.startsWith(query)) {
+                score += 2;
+            } else if (currentName.contains(query)) {
+                score++;
+            }
+            if (score > bestScore) {
+                bestMember = member;
+                bestScore = score;
+            }
+        }
+        return bestMember;
+    }
+
+    @Deprecated
     public static Member findMember(String query, Guild guild) {
         // Mention
         Matcher userMention = USER_MENTION.matcher(query);
