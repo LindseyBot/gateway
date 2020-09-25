@@ -63,6 +63,9 @@ channel = "No channel named `{0}` found."
     unknown = "Unknown language."
     updated = "Language updated to {0}."
     target = "{0}'s preferred language is {1}."
+    [commands.core.privacy]
+    description = "Links to Lindsey's privacy policy."
+    link = "You can review our privacy policy at <https://notfab.net/Lindsey/privacy.txt>"
 
 [commands.fun]
     # Anime
