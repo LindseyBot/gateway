@@ -16,6 +16,6 @@ public class UserProfile {
 
     private Language language = Language.en_US;
 
-    private double money = 0.0;
+    private long cookies = 0;
 
 }

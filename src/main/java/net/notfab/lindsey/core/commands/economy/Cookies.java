@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands.config;
+package net.notfab.lindsey.core.commands.economy;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.framework.command.*;
 import net.notfab.lindsey.framework.command.help.HelpArticle;
 import net.notfab.lindsey.framework.command.help.HelpPage;
-import net.notfab.lindsey.framework.i18n.Language;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
 import net.notfab.lindsey.framework.profile.ProfileManager;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class LanguageCommand implements Command {
+public class Cookies implements Command {
 
     @Autowired
     private Translator i18n;
@@ -31,10 +30,10 @@ public class LanguageCommand implements Command {
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
-            .name("language")
-            .alias("lang")
-            .module(Modules.CORE)
-            .permission("commands.language", "permissions.command")
+            .name("cookies")
+            .alias("cookie")
+            .module(Modules.ECONOMY)
+            .permission("commands.cookies", "permissions.command")
             .build();
     }
 
@@ -46,19 +45,11 @@ public class LanguageCommand implements Command {
         } else if (args.length == 1) {
             Member target = FinderUtil.findMember(args[0], message);
             if (target == null) {
-                try {
-                    Language language = Language.valueOf(args[0]);
-                    UserProfile profile = profiles.get(member);
-                    profile.setLanguage(language);
-                    profiles.save(profile);
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.core.language.updated", profile.getLanguage().name()));
-                } catch (IllegalArgumentException ex) {
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.core.language.unknown"));
-                    return false;
-                }
+                UserProfile profile = profiles.get(member);
+                msg.send(channel, sender(member) + i18n.get(member, "commands.core.cookies.self", profile.getCookies()));
             } else {
                 UserProfile profile = profiles.get(target);
-                msg.send(channel, sender(member) + i18n.get(member, "commands.core.language.target", profile.getLanguage().name()));
+                msg.send(channel, sender(member) + i18n.get(member, "commands.core.cookies.target", profile.getCookies()));
             }
         } else {
             HelpArticle article = this.help(member);
@@ -70,12 +61,12 @@ public class LanguageCommand implements Command {
 
     @Override
     public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("language")
-            .text("commands.core.language.description")
-            .usage("L!language <@user/name>")
-            .permission("commands.language")
-            .addExample("L!language en_US")
-            .addExample("L!language @Lindsey");
+        HelpPage page = new HelpPage("cookies")
+            .text("commands.core.cookies.description")
+            .usage("L!cookies <@user>")
+            .permission("commands.cookies")
+            .addExample("L!cookies")
+            .addExample("L!cookies @Lindsey");
         return HelpArticle.of(page);
     }
 

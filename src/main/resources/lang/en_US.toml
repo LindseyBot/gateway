@@ -63,6 +63,10 @@ channel = "No channel named `{0}` found."
     unknown = "Unknown language."
     updated = "Language updated to {0}."
     target = "{0}'s preferred language is {1}."
+    [commands.core.cookies]
+    description = "Find out how many cookies a user (like yourself) has!"
+    self = "You have {0} :cookie:."
+    target = "{0} has {1} :cookie:."
 
 [commands.fun]
     # Anime
