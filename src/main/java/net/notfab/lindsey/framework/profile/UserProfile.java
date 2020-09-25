@@ -18,4 +18,7 @@ public class UserProfile {
 
     private long cookies = 0;
 
+    private long cookieStreak = 0;
+    private long lastDailyCookies = 0;
+
 }

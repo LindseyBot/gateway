@@ -63,10 +63,15 @@ channel = "No channel named `{0}` found."
     unknown = "Unknown language."
     updated = "Language updated to {0}."
     target = "{0}'s preferred language is {1}."
-    [commands.core.cookies]
+[commands.economy]
+not_enough = "Not enough cookies."
+    [commands.economy.cookies]
     description = "Find out how many cookies a user (like yourself) has!"
     self = "You have {0} :cookie:."
     target = "{0} has {1} :cookie:."
+    daily_already = "You already received your daily cookies. Try again in {0}."
+    daily = "+{0} :cookie:! Come back tomorrow to start your streak!"
+    daily_streak = "+{0} :cookie:! (Streak = {1}) Come back tomorrow for more cookies!"
 
 [commands.fun]
     # Anime
