@@ -23,6 +23,16 @@ permission = "No permissions found with name `{0}`."
 channel = "No channel named `{0}` found."
 member = "No members named `{0}` found."
 
+[parts]
+days = "{0} days"
+hours = "{0} hours"
+minutes = "{0} minutes"
+seconds = "{0} seconds"
+day = "{0} day"
+hour = "{0} hour"
+minute = "{0} minute"
+second = "{0} second"
+
 [options]
     [options.embed]
     title = "Option `{0}`:"

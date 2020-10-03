@@ -70,7 +70,7 @@ public class Utils {
                 time.append(i18n.get(user, "parts.second", String.valueOf(seconds)));
             }
         }
-        return time.toString();
+        return time.substring(1, time.length());
     }
 
 }
