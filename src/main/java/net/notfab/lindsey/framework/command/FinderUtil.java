@@ -141,9 +141,6 @@ public class FinderUtil {
         if (!message.getMentionedMembers().isEmpty()) {
             Member target = null;
             for (Member mentioned : message.getMentionedMembers()) {
-                if (mentioned.isFake()) {
-                    continue;
-                }
                 if (guild.getSelfMember().getId().equals(mentioned.getId())) {
                     continue;
                 }
@@ -192,13 +189,14 @@ public class FinderUtil {
         for (Member member : members) {
             int score = 0;
             String currentName = member.getEffectiveName();
-            if (currentName.equals(query)) {
+            String normalName = member.getUser().getName();
+            if (currentName.equals(query) || normalName.equals(query)) {
                 score += 4;
-            } else if (currentName.equalsIgnoreCase(query)) {
+            } else if (currentName.equalsIgnoreCase(query) || normalName.equalsIgnoreCase(query)) {
                 score += 3;
-            } else if (currentName.startsWith(query)) {
+            } else if (currentName.startsWith(query) || normalName.startsWith(query)) {
                 score += 2;
-            } else if (currentName.contains(query)) {
+            } else if (currentName.contains(query) || normalName.contains(query)) {
                 score++;
             }
             if (score > bestScore) {

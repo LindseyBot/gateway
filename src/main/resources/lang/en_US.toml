@@ -21,6 +21,7 @@ examples = "**Examples**:"
 role = "No roles found named `{0}`."
 permission = "No permissions found with name `{0}`."
 channel = "No channel named `{0}` found."
+member = "No members named `{0}` found."
 
 [options]
     [options.embed]

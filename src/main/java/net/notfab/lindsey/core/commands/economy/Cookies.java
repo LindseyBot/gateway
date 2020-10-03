@@ -82,11 +82,11 @@ public class Cookies implements Command {
             }
             Member target = FinderUtil.findMember(args[0], message);
             if (target == null) {
-                UserProfile profile = profiles.get(member);
-                msg.send(channel, sender(member) + i18n.get(member, "commands.economy.cookies.self", profile.getCookies()));
+                msg.send(channel, sender(member) + i18n.get(member, "search.member", args[0]));
+                return false;
             } else {
                 UserProfile profile = profiles.get(target);
-                msg.send(channel, sender(member) + i18n.get(member, "commands.economy.cookies.target", profile.getCookies()));
+                msg.send(channel, sender(member) + i18n.get(member, "commands.economy.cookies.target", target.getEffectiveName(), profile.getCookies()));
             }
         } else {
             HelpArticle article = this.help(member);
