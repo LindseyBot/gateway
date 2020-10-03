@@ -30,7 +30,7 @@ dependencies {
     compile 'net.kodehawa:imageboard-api:2.2.1'
 
     // Framework
-    compile group: 'net.dv8tion', name: 'JDA', version: '4.1.1_165'
+    compile group: 'net.dv8tion', name: 'JDA', version: '4.2.0_207'
     compile group: 'net.jodah', name: 'expiringmap', version: '0.5.8'
 
     // Data

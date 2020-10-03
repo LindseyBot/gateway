@@ -21,6 +21,17 @@ examples = "**Examples**:"
 role = "No roles found named `{0}`."
 permission = "No permissions found with name `{0}`."
 channel = "No channel named `{0}` found."
+member = "No members named `{0}` found."
+
+[parts]
+days = "{0} days"
+hours = "{0} hours"
+minutes = "{0} minutes"
+seconds = "{0} seconds"
+day = "{0} day"
+hour = "{0} hour"
+minute = "{0} minute"
+second = "{0} second"
 
 [options]
     [options.embed]
@@ -66,6 +77,16 @@ channel = "No channel named `{0}` found."
     [commands.core.privacy]
     description = "Links to Lindsey's privacy policy."
     link = "You can review our privacy policy at <https://notfab.net/Lindsey/privacy.txt>"
+
+[commands.economy]
+not_enough = "Not enough cookies."
+    [commands.economy.cookies]
+    description = "Find out how many cookies a user (like yourself) has!"
+    self = "You have {0} :cookie:."
+    target = "{0} has {1} :cookie:."
+    daily_already = "You already received your daily cookies. Try again in {0}."
+    daily = "+{0} :cookie:! Come back tomorrow to start your streak!"
+    daily_streak = "+{0} :cookie:! (Streak = {1}) Come back tomorrow for more cookies!"
 
 [commands.fun]
     # Anime

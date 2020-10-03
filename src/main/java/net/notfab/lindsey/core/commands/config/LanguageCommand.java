@@ -75,7 +75,7 @@ public class LanguageCommand implements Command {
             .usage("L!language <@user/name>")
             .permission("commands.language")
             .addExample("L!language en_US")
-            .addExample("L!language @NotFab");
+            .addExample("L!language @Lindsey");
         return HelpArticle.of(page);
     }
 

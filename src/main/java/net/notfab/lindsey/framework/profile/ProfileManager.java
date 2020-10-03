@@ -33,7 +33,7 @@ public class ProfileManager {
         return this.getUser(user.getIdLong());
     }
 
-    private UserProfile getUser(long id) {
+    public UserProfile getUser(long id) {
         Optional<UserProfile> user = this.userRepository.findById(id);
         if (user.isEmpty()) {
             UserProfile settings = new UserProfile();
