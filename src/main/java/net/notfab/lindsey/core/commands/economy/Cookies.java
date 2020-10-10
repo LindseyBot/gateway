@@ -66,12 +66,12 @@ public class Cookies implements Command {
                     return false;
                 } else {
                     // streak
-                    profile.setLastDailyCookies(System.currentTimeMillis());
                     if (isInLastHours(profile, 48)) {
                         profile.setCookieStreak(profile.getCookieStreak() + 1);
                     } else {
                         profile.setCookieStreak(1);
                     }
+                    profile.setLastDailyCookies(System.currentTimeMillis());
                     long cookies = profile.getCookieStreak() * 15;
                     profiles.save(profile);
                     economy.pay(member, cookies);

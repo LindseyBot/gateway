@@ -29,7 +29,7 @@ public class EconomyService {
 
     public boolean has(long user, long count) {
         UserProfile profile = profiles.getUser(user);
-        return profile.getCookies() > count;
+        return profile.getCookies() >= count;
     }
 
     public void pay(Member member, long count) {

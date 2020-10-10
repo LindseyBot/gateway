@@ -94,6 +94,9 @@ not_enough = "Not enough cookies."
     values = "Price : {0} | Jackpot: {1}"
     lost = "You lost."
 
+[commands.items]
+not_enough = "Not enough items."
+
 [commands.fun]
     # Anime
     [commands.fun.anime]
