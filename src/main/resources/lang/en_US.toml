@@ -88,6 +88,9 @@ not_enough = "Not enough cookies."
     daily = "+{0} :cookie:! Come back tomorrow to start your streak!"
     daily_streak = "+{0} :cookie:! (Streak = {1}) Come back tomorrow for more cookies!"
 
+[commands.items]
+not_enough = "Not enough items."
+
 [commands.fun]
     # Anime
     [commands.fun.anime]
