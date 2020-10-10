@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands.fun;
+package net.notfab.lindsey.core.commands.economy;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -25,8 +25,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class Slot implements Command {
 
-    private final Random random = new Random();
-
     @Autowired
     private Translator i18n;
 
@@ -42,79 +40,65 @@ public class Slot implements Command {
     @Autowired
     private EconomyService economy;
 
-    private final double mult = 1.0;
-    private final int price = 10;
-    private int jackpot = 0;
+    private final Random random = new Random();
+    private static final double multiplier = 1.0;
+    private static final int price = 10;
 
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
             .name("slot")
             .alias("slotmachine")
-            .module(Modules.FUN)
+            .module(Modules.ECONOMY)
             .permission("commands.slot", "permissions.command")
             .build();
     }
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
-
         if (!economy.has(member, price)) {
             msg.send(channel, i18n.get(member, "commands.economy.not_enough"));
             return true;
         }
         economy.deduct(member, price);
 
-        try {
-            jackpot = Integer.parseInt(redis.opsForValue().get("lindsey:slotJackpot"));
-        } catch (Exception e) {
-            jackpot = 0;
-        }
-
-        String txt = member.getEffectiveName() + " " + i18n.get(member, "commands.fun.slot.start") + "\n" +
-            i18n.get(member, "commands.fun.slot.values", price, jackpot) + "\n" +
+        String txt = i18n.get(member, "commands.economy.slot.start", member.getEffectiveName()) + "\n" +
+            i18n.get(member, "commands.economy.slot.values", price, getJackpot()) + "\n" +
             Emotes.Slot.asEmote() + " | " + Emotes.Slot.asEmote() + " | " + Emotes.Slot.asEmote() + "\n \n";
         Message m = channel.sendMessage(txt).complete();
 
         TimeUnit.SECONDS.sleep(3);
         int a = random.nextInt(8);
-
         m = m.editMessage(m.getContentRaw().replaceFirst(Emotes.Slot.asEmote(), getEmote(a))).complete();
 
         TimeUnit.SECONDS.sleep(1);
         int b = random.nextInt(8);
-
         m = m.editMessage(m.getContentRaw().replaceFirst(Emotes.Slot.asEmote(), getEmote(b))).complete();
 
         TimeUnit.SECONDS.sleep(1);
         int c = random.nextInt(8);
-
-        m = m.editMessage(m.getContentRaw().replaceFirst(Emotes.Slot.asEmote(), getEmote(c))).complete();
+        m.editMessage(m.getContentRaw().replaceFirst(Emotes.Slot.asEmote(), getEmote(c))).complete();
 
         TimeUnit.SECONDS.sleep(1);
-
-        int win = 0;
-        if (getPrize(a, b, c) == -5) {
+        int win;
+        int prize = getPrize(a, b, c);
+        if (prize == -5) {
             ldService.update(member, LeaderboardType.SLOT_WINS);
-            win = jackpot;
-
-            redis.opsForValue().set("lindsey:slotJackpot", "0");
-
+            win = getJackpot();
+            redis.opsForValue().set("Lindsey:SlotJackpot", "0");
+        } else if (prize == 0) {
+            msg.send(channel, i18n.get(member, "commands.economy.slot.lost"));
+            return true;
         } else {
-
-            redis.opsForValue().increment("lindsey:slotJackpot", (long) (price / 2));
-
-            win = (int) (getPrize(a, b, c) * mult);
+            redis.opsForValue().increment("Lindsey:SlotJackpot", (price / 2));
+            win = (int) (prize * multiplier);
         }
-
         economy.pay(member, win);
-
-        msg.send(channel, i18n.get(member, "commands.fun.slot.win", win));
-
+        msg.send(channel, i18n.get(member, "commands.economy.slot.win", win));
         return true;
     }
 
-    public double getPrize(int a, int b, int c) {
+    public int getPrize(int a, int b, int c) {
         int prize;
         if (a == b && b == c) {
             prize = 20;
@@ -138,22 +122,31 @@ public class Slot implements Command {
     }
 
     public String getEmote(int value) {
-        String r = ":octagonal_sign:";
-        r = switch (value) {
+        String emote = ":octagonal_sign:";
+        emote = switch (value) {
             case 0 -> Emotes.Megumin.asEmote();
             case 7, 8 -> ":fire:";
             case 5, 6 -> ":eyes:";
             case 4, 3 -> ":eggplant:";
             case 2, 1 -> Emotes.Shrug.asEmote();
-            default -> r;
+            default -> emote;
         };
-        return r;
+        return emote;
+    }
+
+    public int getJackpot() {
+        String jack = redis.opsForValue().get("Lindsey:SlotJackpot");
+        if (jack == null) {
+            return 0;
+        } else {
+            return Integer.parseInt(jack);
+        }
     }
 
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("slot")
-            .text("commands.fun.slot.description")
+            .text("commands.economy.slot.description")
             .usage("L!slot")
             .permission("commands.slot")
             .addExample("L!slot");

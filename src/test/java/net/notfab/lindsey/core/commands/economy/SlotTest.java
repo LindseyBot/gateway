@@ -1,5 +1,6 @@
-package net.notfab.lindsey.core.commands.fun;
+package net.notfab.lindsey.core.commands.economy;
 
+import net.notfab.lindsey.core.commands.economy.Slot;
 import net.notfab.lindsey.framework.command.CommandDescriptor;
 import net.notfab.lindsey.framework.command.Modules;
 import net.notfab.lindsey.framework.command.help.HelpArticle;
@@ -28,7 +29,7 @@ class SlotTest {
     void getInfo() {
         CommandDescriptor info = command.getInfo();
         assertEquals("slot", info.getName(), "Name must be slot");
-        assertEquals(Modules.FUN, info.getModule(), "Module must be fun");
+        assertEquals(Modules.ECONOMY, info.getModule(), "Module must be fun");
         assertTrue(info.getPermissions().stream()
                 .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }

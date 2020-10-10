@@ -87,6 +87,12 @@ not_enough = "Not enough cookies."
     daily_already = "You already received your daily cookies. Try again in {0}."
     daily = "+{0} :cookie:! Come back tomorrow to start your streak!"
     daily_streak = "+{0} :cookie:! (Streak = {1}) Come back tomorrow for more cookies!"
+    [commands.economy.slot]
+    win = "You win {0} cookies!"
+    description = "Slot machine!"
+    start = "{0} started the slot machine!"
+    values = "Price : {0} | Jackpot: {1}"
+    lost = "You lost."
 
 [commands.fun]
     # Anime
@@ -129,13 +135,6 @@ not_enough = "Not enough cookies."
     [commands.fun.define]
     description = "Defines a given word."
     no_definitions = "No definitions found for {0}, can you define it?"
-    # Slot
-    [commands.fun.slot]
-    win = "You win {0} cookies!"
-    description = "commands.fun.slot.description"
-    start = "started the slot machine!"
-    values = "Price : {0}   | Jackpot: {1}"
-
 
 [commands.mod]
     # Prune
