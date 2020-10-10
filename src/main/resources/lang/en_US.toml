@@ -108,6 +108,7 @@ not_enough = "Not enough cookies."
     airing = "Airing"
     finished = "Finished"
     404 = "Anime Not Found!"
+
     # Color
     [commands.fun.color]
     error = "Error writing color"
@@ -128,6 +129,14 @@ not_enough = "Not enough cookies."
     [commands.fun.define]
     description = "Defines a given word."
     no_definitions = "No definitions found for {0}, can you define it?"
+    # Slot
+    [commands.fun.slot]
+    win = "You win {0} cookies!"
+    description = "commands.fun.slot.description"
+    start = "started the slot machine!"
+    values = "Price : {0}   | Jackpot: {1}"
+
+
 [commands.mod]
     # Prune
     [commands.mod.prune]
