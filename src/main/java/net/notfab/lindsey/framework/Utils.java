@@ -7,6 +7,7 @@ import net.notfab.lindsey.framework.i18n.Translator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class Utils {
 
@@ -71,6 +72,10 @@ public class Utils {
             }
         }
         return time.substring(1, time.length());
+    }
+
+    public static <T> Consumer<T> noop() {
+        return t -> {};
     }
 
 }
