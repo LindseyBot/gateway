@@ -150,6 +150,12 @@ not_enough = "Not enough items."
     noreason = "No reason specified."
     banned = "Banned {0}."
     interact = "No permission to ban {0}."
+    [commands.mod.multiban]
+    description = "Bans a list of members from the guild, deleting all messages from that user for the past 7 days."
+    banned = "Banned {0}."
+    member_nf = "{0} not found"
+    ban = "Banned {0} users"
+    audit = "{0} - Multiban"
     # Kick
     [commands.mod.kick]
     description = "Kicks a member from the guild."
