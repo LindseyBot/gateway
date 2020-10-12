@@ -19,4 +19,15 @@ public class TaskPoolProvider {
         return executor;
     }
 
+    @Bean
+    public TaskExecutor eventWaiter() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setQueueCapacity(Integer.MAX_VALUE);
+        executor.setMaxPoolSize(Integer.MAX_VALUE);
+        executor.setCorePoolSize(1);
+        executor.setThreadNamePrefix("EventWaiter-");
+        executor.initialize();
+        return executor;
+    }
+
 }
