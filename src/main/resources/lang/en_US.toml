@@ -117,7 +117,6 @@ not_enough = "Not enough items."
     airing = "Airing"
     finished = "Finished"
     404 = "Anime Not Found!"
-
     # Color
     [commands.fun.color]
     error = "Error writing color"
@@ -179,3 +178,11 @@ score = "Score"
     [commands.wiki.hearthstone]
     404 = "Card Not Found!"
     description = "Search Hearthstone card by name."
+    # Pokedex
+    [commands.wiki.pokedex]
+    id = "ID"
+    height = "Height"
+    weight = "Weight"
+    type = "Type"
+    description = "Pokemon Wiki."
+    404 = "Pokemon Not Found!"
