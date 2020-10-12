@@ -137,6 +137,11 @@ not_enough = "Not enough items."
     [commands.fun.define]
     description = "Defines a given word."
     no_definitions = "No definitions found for {0}, can you define it?"
+    # Scramble
+    [commands.fun.scramble]
+    description = "commands.fun.scramble.description"
+    start = "The word is `{0}`, you have 1 minute to guess"
+    fail = "Oops, Timed out! word: `{0}`"
 
 [commands.mod]
     # Prune
