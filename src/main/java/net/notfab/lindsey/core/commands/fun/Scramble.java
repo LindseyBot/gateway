@@ -18,17 +18,22 @@ import net.notfab.lindsey.framework.waiter.Waiter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class Scramble implements Command {
 
     private final Random random = new Random();
+
+    private List<Long> active = new ArrayList<>();
 
     @Autowired
     private Waiter waiter;
@@ -60,6 +65,11 @@ public class Scramble implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
+        long id = channel.getGuild().getIdLong();
+        if (active.contains(id)) {
+            msg.send(channel, i18n.get(member, "commands.fun.scramble.active"));
+            return true;
+        }
         String word;
         if (args.length == 0) {
             UserProfile profile = profiles.get(member);
@@ -72,15 +82,18 @@ public class Scramble implements Command {
             article.send(channel, member, new String[0], msg, i18n);
             return true;
         }
+        active.add(channel.getGuild().getIdLong());
         msg.send(channel, "**" + member.getEffectiveName() + "**: " + i18n.get(member, "commands.fun.scramble.start", scramble(word)));
         long time = System.currentTimeMillis();
-        waiter.forMessage((m) -> m.getContentRaw().contains(word), TimeUnit.SECONDS.toMillis(60)).success((m) -> {
+        waiter.forMessage((m) -> m.getContentRaw().equalsIgnoreCase(word) && m.getTextChannel().equals(channel), TimeUnit.SECONDS.toMillis(60)).success((m) -> {
             long seconds = 60 - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - time);
             int prize = (int) ((seconds * forSecond) + (word.length() * forCharacter));
             msg.send(channel, i18n.get(member, "commands.economy.slot.win", prize));
             economy.pay(member, basePrize + prize);
+            active.remove(id);
         }).timeout(() -> {
             msg.send(channel, i18n.get(member, "commands.fun.scramble.fail", word));
+            active.remove(id);
         });
         return true;
     }
@@ -99,17 +112,26 @@ public class Scramble implements Command {
         return res.toString();
     }
 
-    public String getWord(String lang) throws IOException {
-        lang = lang.toLowerCase().replace("_", "");
-        if (lang.equals("en") || lang.equals("enus")) {
-            List<String> txt = Files.readAllLines(Paths.get("src\\main\\resources\\words\\en_US.txt").toAbsolutePath());
-            return txt.get(random.nextInt(txt.size()));
+    public String getWord(String lang) {
+        String language = "";
+        switch (lang.toLowerCase().replace("_","")) {
+            case "en", "enus" -> language = "en_US";
+            case "swe" -> language = "swe";
         }
-        if (lang.equals("swe")) {
-            List<String> txt = Files.readAllLines(Paths.get("src\\main\\resources\\words\\swe.txt").toAbsolutePath());
-            return txt.get(random.nextInt(txt.size()));
+        if (!language.equals("")) {
+            List<String> file = getFile(language);
+            return file.get(random.nextInt(file.size()));
         }
         return "!help";
+    }
+
+    private static List<String> getFile(String language) {
+        try (InputStream stream = Scramble.class.getResourceAsStream("/words/" + language + ".txt")) {
+            return new BufferedReader(new InputStreamReader(stream))
+                .lines().collect(Collectors.toList());
+        } catch (IOException ex) {
+            return null;
+        }
     }
 
     @Override
