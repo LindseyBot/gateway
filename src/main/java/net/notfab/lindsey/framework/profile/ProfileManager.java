@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.notfab.lindsey.framework.profile.repositories.MemberProfileRepository;
 import net.notfab.lindsey.framework.profile.repositories.ServerProfileRepository;
 import net.notfab.lindsey.framework.profile.repositories.UserProfileRepository;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,34 @@ public class ProfileManager {
 
     private final UserProfileRepository userRepository;
     private final ServerProfileRepository guildRepository;
+    private final MemberProfileRepository memberRepository;
 
-    public ProfileManager(UserProfileRepository userRepository, ServerProfileRepository guildRepository) {
+    public ProfileManager(UserProfileRepository userRepository, ServerProfileRepository guildRepository,
+                          MemberProfileRepository memberRepository) {
         this.userRepository = userRepository;
         this.guildRepository = guildRepository;
+        this.memberRepository = memberRepository;
         Instance = this;
     }
 
-    public UserProfile get(Member member) {
+    public MemberProfile get(Member member) {
+        return this.getMember(member.getGuild().getIdLong(), member.getUser().getIdLong());
+    }
+
+    public MemberProfile getMember(long guild, long user) {
+        Optional<MemberProfile> oProfile = memberRepository.findById(guild + ":" + user);
+        if (oProfile.isEmpty()) {
+            MemberProfile profile = new MemberProfile();
+            profile.setId(guild + ":" + user);
+            profile.setGuildId(guild);
+            profile.setUserId(user);
+            return profile;
+        } else {
+            return oProfile.get();
+        }
+    }
+
+    public UserProfile getUser(Member member) {
         return this.get(member.getUser());
     }
 
@@ -65,6 +86,10 @@ public class ProfileManager {
 
     public void save(UserProfile profile) {
         userRepository.save(profile);
+    }
+
+    public void save(MemberProfile profile) {
+        memberRepository.save(profile);
     }
 
 }
