@@ -33,7 +33,12 @@ hour = "{0} hour"
 minute = "{0} minute"
 second = "{0} second"
 
+[features]
+keeproles = "[Keep Roles] Added {0} roles back."
+
 [options]
+keeproles = "Readds roles when a member joins"
+language = "Server language, used for audit reasons, modlog, etc.."
     [options.embed]
     title = "Option `{0}`:"
     type = "**Type**:"

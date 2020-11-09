@@ -1,8 +1,14 @@
 [
   {
-    "name": "example.option",
+    "name": "language",
+    "type": "STRING",
+    "description": "options.language",
+    "default": "en_US"
+  },
+  {
+    "name": "keeproles",
     "type": "BOOLEAN",
-    "description": "some.i18n.string",
+    "description": "options.keeproles",
     "default": false
   }
 ]
