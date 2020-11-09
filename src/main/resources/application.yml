@@ -15,6 +15,13 @@ spring:
       ddl-auto: update
   redis:
     host: 'localhost'
+  data:
+    mongodb:
+      username: 'root'
+      password: 'root'
+      host: 'localhost'
+      authentication-database: admin
+      database: test
 
 ---
 
@@ -36,3 +43,10 @@ spring:
       ddl-auto: update
   redis:
     host: 'localhost'
+  data:
+    mongodb:
+      username: 'root'
+      password: 'root'
+      host: 'localhost'
+      authentication-database: admin
+      database: lindsey

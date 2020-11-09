@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "bot.token",
+      "type": "java.lang.String",
+      "description": "Discord token."
+    },
+    {
+      "name": "bot.integrations.rapidapi",
+      "type": "java.lang.String",
+      "description": "RapidAPI api token."
+    },
+    {
+      "name": "bot.integrations.kitsu",
+      "type": "java.lang.String",
+      "description": "Kitsu API token."
+    }
+  ]
+}
