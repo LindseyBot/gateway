@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.kodehawa.lib.imageboards.DefaultImageBoards;
 import net.kodehawa.lib.imageboards.entities.BoardImage;
 import net.kodehawa.lib.imageboards.entities.Rating;
+import net.notfab.lindsey.core.framework.Emotes;
 import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.stream.Stream;
 
 @Component
 public class Yandere implements Command {
@@ -76,7 +78,10 @@ public class Yandere implements Command {
                             break;
                     }
                 }
-
+                if (r == Rating.EXPLICIT && Stream.of(args).anyMatch(f -> f.equalsIgnoreCase("loli"))) {
+                    msg.send(channel, sender(member) + Emotes.CopThink.asEmote());
+                    return true;
+                }
                 DefaultImageBoards.YANDERE.search(args[0], r).async(yandereImages -> {
                     BoardImage image = yandereImages.get(random.nextInt(yandereImages.size()));
                     try {

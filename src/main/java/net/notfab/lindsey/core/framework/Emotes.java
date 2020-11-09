@@ -46,7 +46,8 @@ public enum Emotes {
     Awoovement("141555945586163712", "356564184722571266", "AWOOVEMENT"),
     Megumin("141555945586163712", "402450606532460554", "megumin"),
     Slot("141555945586163712", "402450801592762368", "slot", true),
-    Slowmode("110373943822540800", "585790802979061760", "slowmode");
+    Slowmode("110373943822540800", "585790802979061760", "slowmode"),
+    CopThink("141555945586163712", "775361985944485898", "copthink");
 
     @Getter
     private final String guild;
