@@ -142,6 +142,12 @@ not_enough = "Not enough items."
     [commands.fun.define]
     description = "Defines a given word."
     no_definitions = "No definitions found for {0}, can you define it?"
+    # Scramble
+    [commands.fun.scramble]
+    description = "Starts a scramble game (Answer by simply saying the correct word in the chat)."
+    start = "The word is `{0}`, you have 1 minute to guess"
+    fail = "Oops, Timed out! word: `{0}`"
+    active = "There is already a scramble game on this server"
 
 [commands.mod]
     # Prune
