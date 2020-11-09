@@ -1,10 +1,10 @@
 package net.notfab.lindsey.core;
 
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.notfab.lindsey.core.discord.CommandListener;
 import net.notfab.lindsey.core.service.IgnoreService;
 import net.notfab.lindsey.framework.command.CommandManager;
-import net.notfab.lindsey.framework.menu.MenuManager;
 import net.notfab.lindsey.framework.permissions.PermissionManager;
 import net.notfab.lindsey.framework.profile.ProfileManager;
 import net.notfab.lindsey.framework.waiter.Waiter;
@@ -25,7 +25,8 @@ public class Lindsey {
     private final Waiter waiter;
 
     protected Lindsey(ShardManager shardManager, CommandManager commandManager,
-                      ProfileManager profileManager, PermissionManager permissionManager, IgnoreService ignoreService, Waiter waiter) {
+                      ProfileManager profileManager, PermissionManager permissionManager,
+                      IgnoreService ignoreService, Waiter waiter) {
         this.shardManager = shardManager;
         this.commandManager = commandManager;
         this.profileManager = profileManager;
@@ -42,9 +43,8 @@ public class Lindsey {
         logger.info("Boat is now Floating!");
     }
 
-    public Lindsey addEventListener(MenuManager menuManager) {
-        this.shardManager.addEventListener(menuManager);
-        return this;
+    public void addEventListener(ListenerAdapter listener) {
+        this.shardManager.addEventListener(listener);
     }
 
 }

@@ -1,8 +1,11 @@
 package net.notfab.lindsey.framework.i18n;
 
 import com.moandjiezana.toml.Toml;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.notfab.lindsey.framework.options.Option;
+import net.notfab.lindsey.framework.options.OptionManager;
 import net.notfab.lindsey.framework.profile.ProfileManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +21,9 @@ public class Translator {
 
     @Autowired
     private ProfileManager profiles;
+
+    @Autowired
+    private OptionManager options;
 
     private static InputStream getLanguage(String language) {
         return Translator.class.getResourceAsStream("/lang/" + language + ".toml");
@@ -45,6 +51,19 @@ public class Translator {
             msg = msg.replace("{" + i + "}", String.valueOf(args[i]));
         }
         return msg;
+    }
+
+    public String get(Guild guild, String message, Object... args) {
+        Option option = this.options.find("language");
+        Language language;
+        try {
+            String languageName = this.options.get(option, guild);
+            language = Language.valueOf(languageName);
+        } catch (IllegalArgumentException ex) {
+            this.options.set(option, guild, null);
+            language = Language.en_US;
+        }
+        return get(language, message, args);
     }
 
 }

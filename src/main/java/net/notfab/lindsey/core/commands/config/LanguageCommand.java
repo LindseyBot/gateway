@@ -48,7 +48,7 @@ public class LanguageCommand implements Command {
             if (target == null) {
                 try {
                     Language language = Language.valueOf(args[0]);
-                    UserProfile profile = profiles.get(member);
+                    UserProfile profile = profiles.getUser(member);
                     profile.setLanguage(language);
                     profiles.save(profile);
                     msg.send(channel, sender(member) + i18n.get(member, "commands.core.language.updated", profile.getLanguage().name()));
@@ -57,7 +57,7 @@ public class LanguageCommand implements Command {
                     return false;
                 }
             } else {
-                UserProfile profile = profiles.get(target);
+                UserProfile profile = profiles.getUser(target);
                 msg.send(channel, sender(member) + i18n.get(member, "commands.core.language.target", profile.getLanguage().name()));
             }
         } else {

@@ -47,11 +47,11 @@ public class Cookies implements Command {
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
         if (args.length == 0) {
-            UserProfile profile = profiles.get(member);
+            UserProfile profile = profiles.getUser(member);
             msg.send(channel, sender(member) + i18n.get(member, "commands.economy.cookies.self", profile.getCookies()));
         } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("daily")) {
-                UserProfile profile = profiles.get(member);
+                UserProfile profile = profiles.getUser(member);
                 if (profile.getCookieStreak() == 0) {
                     // no streak
                     profile.setLastDailyCookies(System.currentTimeMillis());
@@ -85,7 +85,7 @@ public class Cookies implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "search.member", args[0]));
                 return false;
             } else {
-                UserProfile profile = profiles.get(target);
+                UserProfile profile = profiles.getUser(target);
                 msg.send(channel, sender(member) + i18n.get(member, "commands.economy.cookies.target", target.getEffectiveName(), profile.getCookies()));
             }
         } else {

@@ -10,10 +10,11 @@ import net.notfab.lindsey.framework.command.Modules;
 import net.notfab.lindsey.framework.command.help.HelpArticle;
 import net.notfab.lindsey.framework.command.help.HelpPage;
 import net.notfab.lindsey.framework.economy.EconomyService;
+import net.notfab.lindsey.framework.i18n.Language;
 import net.notfab.lindsey.framework.i18n.Messenger;
 import net.notfab.lindsey.framework.i18n.Translator;
-import net.notfab.lindsey.framework.profile.ProfileManager;
-import net.notfab.lindsey.framework.profile.UserProfile;
+import net.notfab.lindsey.framework.options.Option;
+import net.notfab.lindsey.framework.options.OptionManager;
 import net.notfab.lindsey.framework.waiter.Waiter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,7 +46,7 @@ public class Scramble implements Command {
     private Translator i18n;
 
     @Autowired
-    private ProfileManager profiles;
+    private OptionManager options;
 
     @Autowired
     private Messenger msg;
@@ -72,8 +73,16 @@ public class Scramble implements Command {
         }
         String word;
         if (args.length == 0) {
-            UserProfile profile = profiles.get(member);
-            word = getWord(profile.getLanguage().name());
+            Option option = this.options.find("language");
+            Language language;
+            try {
+                String languageName = this.options.get(option, member.getGuild());
+                language = Language.valueOf(languageName);
+            } catch (IllegalArgumentException ex) {
+                this.options.set(option, member.getGuild(), null);
+                language = Language.en_US;
+            }
+            word = getWord(language.name());
         } else {
             word = getWord(args[0]);
         }
@@ -114,7 +123,7 @@ public class Scramble implements Command {
 
     public String getWord(String lang) {
         String language = "";
-        switch (lang.toLowerCase().replace("_","")) {
+        switch (lang.toLowerCase().replace("_", "")) {
             case "en", "enus" -> language = "en_US";
             case "swe" -> language = "swe";
         }

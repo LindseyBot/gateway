@@ -56,7 +56,7 @@ public class Hearthstone implements Command {
             return false;
         }
 
-        UserProfile profile = profiles.get(member);
+        UserProfile profile = profiles.getUser(member);
         OkHttpClient client = new OkHttpClient();
         String cardname = "";
         String locale = profile.getLanguage().name().replaceAll("_", "");
