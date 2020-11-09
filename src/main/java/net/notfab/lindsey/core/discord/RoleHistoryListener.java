@@ -9,12 +9,12 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
-import net.notfab.lindsey.framework.i18n.Translator;
-import net.notfab.lindsey.framework.options.Option;
-import net.notfab.lindsey.framework.options.OptionManager;
-import net.notfab.lindsey.framework.profile.MemberProfile;
-import net.notfab.lindsey.framework.profile.ProfileManager;
-import net.notfab.lindsey.framework.profile.member.RoleHistory;
+import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.framework.options.Option;
+import net.notfab.lindsey.core.framework.options.OptionManager;
+import net.notfab.lindsey.core.framework.profile.MemberProfile;
+import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.framework.profile.member.RoleHistory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

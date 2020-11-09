@@ -1,9 +1,9 @@
 package net.notfab.lindsey.core.commands.moderation;
 
-import net.notfab.lindsey.framework.command.CommandDescriptor;
-import net.notfab.lindsey.framework.command.Modules;
-import net.notfab.lindsey.framework.command.help.HelpArticle;
-import net.notfab.lindsey.framework.command.help.HelpPage;
+import net.notfab.lindsey.core.framework.command.CommandDescriptor;
+import net.notfab.lindsey.core.framework.command.Modules;
+import net.notfab.lindsey.core.framework.command.help.HelpArticle;
+import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

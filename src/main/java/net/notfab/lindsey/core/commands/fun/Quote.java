@@ -4,12 +4,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.notfab.lindsey.framework.command.Bundle;
-import net.notfab.lindsey.framework.command.Command;
-import net.notfab.lindsey.framework.command.CommandDescriptor;
-import net.notfab.lindsey.framework.command.help.HelpArticle;
-import net.notfab.lindsey.framework.command.help.HelpPage;
-import net.notfab.lindsey.framework.i18n.Messenger;
+import net.notfab.lindsey.core.framework.command.Bundle;
+import net.notfab.lindsey.core.framework.command.Command;
+import net.notfab.lindsey.core.framework.command.CommandDescriptor;
+import net.notfab.lindsey.core.framework.command.help.HelpArticle;
+import net.notfab.lindsey.core.framework.command.help.HelpPage;
+import net.notfab.lindsey.core.framework.i18n.Messenger;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Random;
 
-import static net.notfab.lindsey.framework.command.Modules.FUN;
+import static net.notfab.lindsey.core.framework.command.Modules.FUN;
 
 /**
  * Quote is a simple command which "generate" a random quote every time that is called.

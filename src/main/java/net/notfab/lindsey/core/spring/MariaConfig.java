@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EntityScan(basePackages = "net.notfab.lindsey")
-@EnableJpaRepositories(basePackages = "net.notfab.lindsey")
+@EnableJpaRepositories(basePackages = "net.notfab.lindsey.core.repositories.sql")
 public class MariaConfig {
 }

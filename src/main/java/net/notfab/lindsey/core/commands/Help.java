@@ -3,11 +3,11 @@ package net.notfab.lindsey.core.commands;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.notfab.lindsey.framework.command.*;
-import net.notfab.lindsey.framework.command.help.HelpArticle;
-import net.notfab.lindsey.framework.command.help.HelpPage;
-import net.notfab.lindsey.framework.i18n.Messenger;
-import net.notfab.lindsey.framework.i18n.Translator;
+import net.notfab.lindsey.core.framework.command.*;
+import net.notfab.lindsey.core.framework.command.help.HelpArticle;
+import net.notfab.lindsey.core.framework.command.help.HelpPage;
+import net.notfab.lindsey.core.framework.i18n.Messenger;
+import net.notfab.lindsey.core.framework.i18n.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
