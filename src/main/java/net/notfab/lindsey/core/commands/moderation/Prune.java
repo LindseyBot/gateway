@@ -48,7 +48,7 @@ public class Prune implements Command {
         long twoWeeks = ((System.currentTimeMillis() - 1209600000) - 1420070400000L) << 22;
         List<Message> del = new ArrayList<>();
         List<Member> target = new ArrayList<>();
-        int i = 1;
+        int i;
         try {
             i = Integer.parseInt(args[0]) + 1;
         } catch (NumberFormatException e) {
@@ -69,7 +69,7 @@ public class Prune implements Command {
             });
         } else {
             Stream.of(args).forEach(u -> {
-                Member user = FinderUtil.findMember(u, channel.getGuild());
+                Member user = FinderUtil.findMember(u, message);
                 if (user != null) {
                     target.add(user);
                 }

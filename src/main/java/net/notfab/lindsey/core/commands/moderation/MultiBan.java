@@ -76,7 +76,6 @@ public class MultiBan implements Command {
                         action = action.flatMap(aVoid -> m.ban(7, i18n.get(member, "commands.mod.ban.audit", adminName)));
                     }
                 }
-                //noinspection ConstantConditions
                 action.flatMap(aVoid -> channel.sendMessage(i18n.get(member, "commands.mod.multiban.ban", usersToBan.size())))
                     .delay(5, TimeUnit.SECONDS)
                     .flatMap(Message::delete)
