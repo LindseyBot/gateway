@@ -1,13 +1,18 @@
 package net.notfab.lindsey.core.framework.inventory;
 
-import net.notfab.lindsey.core.framework.inventory.enums.Type;
+import lombok.Data;
+import net.notfab.lindsey.core.framework.inventory.enums.Items;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-public interface Item {
+@Data
+@Document("Items")
+public class Item {
 
-    String getName();
-
-    String getDescription();
-
-    Type getType();
+    @Id
+    private String id;
+    private long user;
+    private Items model;
+    private int count;
 
 }

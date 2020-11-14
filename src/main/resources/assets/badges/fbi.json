@@ -1,0 +1,14 @@
+{
+  "name": "FBI",
+  "price": -1,
+  "type": "BADGE",
+  "description": "What have you done?",
+  "authors": [
+    "Fabricio20",
+    "Schneider"
+  ],
+  "tags": [
+    "Badge",
+    "FBI"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Translator",
+  "price": -1,
+  "type": "BADGE",
+  "description": "You are now a member of the Lindsey translation team.",
+  "authors": [
+    "Fabricio20",
+    "Schneider"
+  ],
+  "tags": [
+    "Badge",
+    "Translator"
+  ]
+}

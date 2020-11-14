@@ -1,0 +1,14 @@
+{
+  "name": "Beta",
+  "price": -1,
+  "type": "BADGE",
+  "description": "Awarded to those who helped test the badge system.",
+  "authors": [
+    "Fabricio20",
+    "Schneider"
+  ],
+  "tags": [
+    "Badge",
+    "Beta"
+  ]
+}

@@ -4,6 +4,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -75,7 +79,27 @@ public class Utils {
     }
 
     public static <T> Consumer<T> noop() {
-        return t -> {};
+        return t -> {
+        };
+    }
+
+    public static InputStream cloneStream(InputStream inputStream) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) > -1) {
+                baos.write(buffer, 0, len);
+            }
+            baos.flush();
+        } catch (IOException ex) {
+            return null;
+        }
+        return new ByteArrayInputStream(baos.toByteArray());
+    }
+
+    public static InputStream toStream(byte[] bytes) {
+        return new ByteArrayInputStream(bytes);
     }
 
 }
