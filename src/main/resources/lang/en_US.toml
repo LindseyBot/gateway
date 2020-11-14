@@ -48,19 +48,23 @@ language = "Server language, used for audit reasons, modlog, etc.."
     page = "Page [{0}/{1}]"
 
 [embeds]
-    [embeds.ignored]
-    title = "Ignored channels:"
-    page = "Page [{0}/{1}]"
+[embeds.ignored]
+title = "Ignored channels:"
+page = "Page [{0}/{1}]"
+[embeds.reactionroles]
+title = "Reaction Roles"
+page = "Page [{0}/{1}]"
+line = "Reaction {0} in {1} (Role `{2}`)"
 
 [commands.core]
-    # Help
-    [commands.core.help]
-    description = "Searches for help on the command database."
-    # Permissions
-    [commands.core.permissions]
-    description = "Manages role permissions for bot features"
-    for = "Permissions for `{0}`:"
-    cleared = "Permissions cleared for `{0}`."
+# Help
+[commands.core.help]
+description = "Searches for help on the command database."
+# Permissions
+[commands.core.permissions]
+description = "Manages role permissions for bot features"
+for = "Permissions for `{0}`:"
+cleared = "Permissions cleared for `{0}`."
     updated = "Permissions updated."
     # Options
     [commands.core.options]
@@ -167,12 +171,21 @@ not_enough = "Not enough items."
     member_nf = "{0} not found"
     ban = "Banned {0} users"
     audit = "{0} - Multiban"
-    # Kick
-    [commands.mod.kick]
-    description = "Kicks a member from the guild."
-    noreason = "No reason specified."
-    kicked = "Kicked {0}."
-    interact = "No permission to kick {0}."
+# Kick
+[commands.mod.kick]
+description = "Kicks a member from the guild."
+noreason = "No reason specified."
+kicked = "Kicked {0}."
+interact = "No permission to kick {0}."
+[commands.mod.reactionroles]
+description = "Adds roles based on reactions to a message"
+started = "Started reaction role creation. Please react to any message in the server with the appropriate emote/emoji. [5m Timeout]"
+created = "Reaction role created successfully. Name {0} - {1}"
+removed = "Removed reaction role {0}."
+failed_remove = "Reaction role named {0} not found."
+failed_create = "Failed to start a reaction role creation, one is already in progress."
+failed_name_too_big = "Reaction role name must not exceed 18 characters."
+empty = "No reaction roles are configured."
 # NSFW
 [commands.nsfw]
 load = "Click here if image doesn't load"
@@ -181,8 +194,8 @@ request = "Requested by "
 rating = "Rating"
 size = "Size"
 score = "Score"
-    [commands.nsfw.description]
-    rule34 = "Searches for an image on Rule34"
+[commands.nsfw.description]
+rule34 = "Searches for an image on Rule34"
     danbooru = "Searches for an image on Danbooru"
     gelbooru = "Searches for an image on Gelbooru"
     konachan = "Searches for an image on Konachan"
