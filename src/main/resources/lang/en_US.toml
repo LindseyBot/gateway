@@ -205,6 +205,12 @@ not_enough = "Not enough items."
     banned = "SoftBanned {0}."
     interact = "No permission to softban {0}."
     message = "You have been softbanned from **{0}**. You may join back if you desire.\nReason: `{1}`."
+    # Slowmode
+    [commands.mod.slowmode]
+    description = "Activates slowmode on this channel."
+    active = "Slowmode enabled (T={0}s)"
+    invalid = "Invalid max number of seconds for slowmode. Limit {0}s."
+
 # NSFW
 [commands.nsfw]
 load = "Click here if image doesn't load"
