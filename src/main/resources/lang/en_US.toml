@@ -39,13 +39,13 @@ keeproles = "[Keep Roles] Added {0} roles back."
 [options]
 keeproles = "Readds roles when a member joins"
 language = "Server language, used for audit reasons, modlog, etc.."
-    [options.embed]
-    title = "Option `{0}`:"
-    type = "**Type**:"
-    default = "**Default**:"
-    current = "**Current**:"
-    list = "Available options:"
-    page = "Page [{0}/{1}]"
+[options.embed]
+title = "Option `{0}`:"
+type = "**Type**:"
+default = "**Default**:"
+current = "**Current**:"
+list = "Available options:"
+page = "Page [{0}/{1}]"
 
 [embeds]
 [embeds.ignored]
@@ -65,24 +65,27 @@ description = "Searches for help on the command database."
 description = "Manages role permissions for bot features"
 for = "Permissions for `{0}`:"
 cleared = "Permissions cleared for `{0}`."
-    updated = "Permissions updated."
-    # Options
-    [commands.core.options]
-    description = "Manage guild options"
-    updated = "Updated `{0}`."
-    not_found = "Option not found."
-    [commands.core.ignore]
-    description = "Manage ignored channels"
-    added = "{0} is now ignored."
+updated = "Permissions updated."
+# Options
+[commands.core.options]
+description = "Manage guild options"
+updated = "Updated `{0}`."
+not_found = "Option not found."
+# Ignore
+[commands.core.ignore]
+description = "Manage ignored channels"
+added = "{0} is now ignored."
     removed = "{0} is no longer ignored."
     is_ignored = "{0} is already ignored."
     is_not_ignored = "{0} is not currently ignored."
     empty = "No channels are currently ignored."
+# Language
     [commands.core.language]
     description = "Find out a users language or update your own."
     unknown = "Unknown language."
     updated = "Language updated to {0}."
     target = "{0}'s preferred language is {1}."
+# Privacy
     [commands.core.privacy]
     description = "Links to Lindsey's privacy policy."
     link = "You can review our privacy policy at <https://notfab.net/Lindsey/privacy.txt>"
@@ -165,18 +168,20 @@ not_enough = "Not enough items."
     noreason = "No reason specified."
     banned = "Banned {0}."
     interact = "No permission to ban {0}."
-    [commands.mod.multiban]
-    description = "Bans a list of members from the guild, deleting all messages from that user for the past 7 days."
-    banned = "Banned {0}."
-    member_nf = "{0} not found"
-    ban = "Banned {0} users"
-    audit = "{0} - Multiban"
+# Multiban
+[commands.mod.multiban]
+description = "Bans a list of members from the guild, deleting all messages from that user for the past 7 days."
+banned = "Banned {0}."
+member_nf = "{0} not found"
+ban = "Banned {0} users"
+audit = "{0} - Multiban"
 # Kick
 [commands.mod.kick]
 description = "Kicks a member from the guild."
 noreason = "No reason specified."
 kicked = "Kicked {0}."
 interact = "No permission to kick {0}."
+# Reaction Roles
 [commands.mod.reactionroles]
 description = "Adds roles based on reactions to a message"
 started = "Started reaction role creation. Please react to any message in the server with the appropriate emote/emoji. [5m Timeout]"
@@ -186,6 +191,13 @@ failed_remove = "Reaction role named {0} not found."
 failed_create = "Failed to start a reaction role creation, one is already in progress."
 failed_name_too_big = "Reaction role name must not exceed 18 characters."
 empty = "No reaction roles are configured."
+# Strike
+[commands.mod.strike]
+description = "Strikes a user (warnings/punishments)"
+noreason = "No reason specified"
+interact = "This user is immune to strikes."
+message = "You have received a strike in **{0}**. You now have a total of **{2}** strike(s).\nReason: `{1}`."
+striked = "User striked. Total strikes `{0}` [+{1}]."
 # NSFW
 [commands.nsfw]
 load = "Click here if image doesn't load"
