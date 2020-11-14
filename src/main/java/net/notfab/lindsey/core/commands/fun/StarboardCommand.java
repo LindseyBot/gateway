@@ -62,6 +62,7 @@ public class StarboardCommand implements Command {
         HelpPage page = new HelpPage("starboard")
             .text("commands.fun.starboard.description")
             .usage("L!starboard <channel or OFF>")
+            .url("https://github.com/LindseyBot/core/wiki/commands-starboard")
             .permission("commands.starboard")
             .addExample("L!starboard #starboard")
             .addExample("L!starboard off");
