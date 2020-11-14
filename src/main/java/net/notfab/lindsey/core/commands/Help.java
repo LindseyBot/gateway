@@ -43,7 +43,7 @@ public class Help implements Command {
                 return false;
             } else {
                 HelpArticle article = command.help(member);
-                article.send(channel, member, args, msg, i18n);
+                article.send(channel, member, new String[0], msg, i18n);
             }
         }
         return true;

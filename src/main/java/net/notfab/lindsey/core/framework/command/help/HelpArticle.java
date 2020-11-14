@@ -43,7 +43,27 @@ public class HelpArticle {
                 .map(page -> page.asEmbed(i18n, member))
                 .collect(Collectors.toList()));
         } else {
-            HelpPage page = this.get(args[0]);
+            HelpPage page = null;
+            for (HelpPage value : this.pages.values()) {
+                if (value.getName().equalsIgnoreCase(args[0])) {
+                    page = value;
+                    break;
+                }
+                if (value.getName().toLowerCase().contains(args[0].toLowerCase())) {
+                    page = value;
+                    break;
+                }
+                if (value.getText().toLowerCase().contains(args[0].toLowerCase())) {
+                    page = value;
+                    break;
+                }
+                for (String example : value.getExamples()) {
+                    if (example.toLowerCase().contains(args[0].toLowerCase())) {
+                        page = value;
+                        break;
+                    }
+                }
+            }
             if (page == null) {
                 msg.send(channel, sender(member) + i18n.get(member, "core.help_nf"));
                 return;
@@ -54,7 +74,7 @@ public class HelpArticle {
     }
 
     private String sender(Member member) {
-        return "**" + member.getEffectiveName() + "**";
+        return "**" + member.getEffectiveName() + "**: ";
     }
 
 }
