@@ -10,5 +10,11 @@
     "type": "BOOLEAN",
     "description": "options.keeproles",
     "default": false
+  },
+  {
+    "name": "starboard",
+    "type": "TEXT_CHANNEL",
+    "description": "options.starboard",
+    "default": null
   }
 ]
