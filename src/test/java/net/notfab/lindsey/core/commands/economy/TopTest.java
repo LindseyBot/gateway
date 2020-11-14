@@ -11,32 +11,32 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class SlotTest {
+class TopTest {
 
-    private Slot command;
+    private Top command;
 
     @BeforeEach
     void setUp() {
-        command = mock(Slot.class);
+        command = mock(Top.class);
         when(command.getInfo())
-                .thenCallRealMethod();
+            .thenCallRealMethod();
         when(command.help(null))
-                .thenCallRealMethod();
+            .thenCallRealMethod();
     }
 
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("slot", info.getName(), "Name must be slot");
+        assertEquals("leaderboard", info.getName(), "Name must be leaderboard");
         assertEquals(Modules.ECONOMY, info.getModule(), "Module must be economy");
         assertTrue(info.getPermissions().stream()
-                .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
+            .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
 
     @Test
     void help() {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("slot");
+        HelpPage page = article.get("leaderboard");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }

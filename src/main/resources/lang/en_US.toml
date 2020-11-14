@@ -48,33 +48,36 @@ list = "Available options:"
 page = "Page [{0}/{1}]"
 
 [embeds]
-[embeds.ignored]
-title = "Ignored channels:"
-page = "Page [{0}/{1}]"
-[embeds.reactionroles]
-title = "Reaction Roles"
-page = "Page [{0}/{1}]"
-line = "Reaction {0} in {1} (Role `{2}`)"
+    [embeds.ignored]
+    title = "Ignored channels:"
+    page = "Page [{0}/{1}]"
+    [embeds.reactionroles]
+    title = "Reaction Roles"
+    page = "Page [{0}/{1}]"
+    line = "Reaction {0} in {1} (Role `{2}`)"
+    [embeds.leaderboard]
+    title = "{0} Leaderboard"
+    line = "{0}#{1} - {2} - {3}"
 
 [commands.core]
-# Help
-[commands.core.help]
-description = "Searches for help on the command database."
-# Permissions
-[commands.core.permissions]
-description = "Manages role permissions for bot features"
-for = "Permissions for `{0}`:"
-cleared = "Permissions cleared for `{0}`."
-updated = "Permissions updated."
-# Options
-[commands.core.options]
-description = "Manage guild options"
-updated = "Updated `{0}`."
-not_found = "Option not found."
-# Ignore
-[commands.core.ignore]
-description = "Manage ignored channels"
-added = "{0} is now ignored."
+    # Help
+    [commands.core.help]
+    description = "Searches for help on the command database."
+    # Permissions
+    [commands.core.permissions]
+    description = "Manages role permissions for bot features"
+    for = "Permissions for `{0}`:"
+    cleared = "Permissions cleared for `{0}`."
+    updated = "Permissions updated."
+    # Options
+    [commands.core.options]
+    description = "Manage guild options"
+    updated = "Updated `{0}`."
+    not_found = "Option not found."
+    # Ignore
+    [commands.core.ignore]
+    description = "Manage ignored channels"
+    added = "{0} is now ignored."
     removed = "{0} is no longer ignored."
     is_ignored = "{0} is already ignored."
     is_not_ignored = "{0} is not currently ignored."
@@ -105,6 +108,9 @@ not_enough = "Not enough cookies."
     start = "{0} started the slot machine!"
     values = "Price : {0} | Jackpot: {1}"
     lost = "You lost."
+    [commands.economy.leaderboard]
+    description = "Lindsey Leaderboards"
+    unknown_type = "Unknown Leaderboard Type, available: `{0}`."
 
 [commands.items]
 not_enough = "Not enough items."
