@@ -3,10 +3,15 @@ package net.notfab.lindsey.core.framework.inventory;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.framework.inventory.enums.Items;
-import net.notfab.lindsey.core.repositories.sql.ItemRepository;
+import net.notfab.lindsey.core.framework.inventory.enums.Type;
+import net.notfab.lindsey.core.repositories.mongo.ItemRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class InventoryService {
@@ -38,7 +43,7 @@ public class InventoryService {
     }
 
     public boolean has(long user, Items model, int count) {
-        Optional<ItemStack> oStack = repository.findByUserAndModel(user, model);
+        Optional<Item> oStack = repository.findByUserAndModel(user, model);
         if (oStack.isEmpty()) {
             return false;
         }
@@ -54,10 +59,11 @@ public class InventoryService {
     }
 
     public void add(long user, Items model, int count) {
-        Optional<ItemStack> oStack = repository.findByUserAndModel(user, model);
-        ItemStack stack;
+        Optional<Item> oStack = repository.findByUserAndModel(user, model);
+        Item stack;
         if (oStack.isEmpty()) {
-            stack = new ItemStack();
+            stack = new Item();
+            stack.setId(user + ":" + model.name());
             stack.setModel(model);
             stack.setUser(user);
         } else {
@@ -76,11 +82,11 @@ public class InventoryService {
     }
 
     public void remove(long user, Items model, int count) {
-        Optional<ItemStack> oStack = repository.findByUserAndModel(user, model);
+        Optional<Item> oStack = repository.findByUserAndModel(user, model);
         if (oStack.isEmpty()) {
             return;
         }
-        ItemStack stack = oStack.get();
+        Item stack = oStack.get();
         if (stack.getCount() - count < 0) {
             throw new IllegalArgumentException("commands.items.not_enough");
         }
@@ -90,6 +96,17 @@ public class InventoryService {
         } else {
             repository.save(stack);
         }
+    }
+
+    public List<Item> findAllByType(long owner, Type type) {
+        List<Items> models = Stream.of(Items.values())
+            .filter(item -> item.getMetadata() != null)
+            .filter(item -> item.getMetadata().getType() == type)
+            .collect(Collectors.toList());
+        if (models.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return repository.findAllByUserAndModelIn(owner, models);
     }
 
 }

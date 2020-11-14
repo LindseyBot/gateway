@@ -1,0 +1,17 @@
+{
+  "name": "Schneider's Background",
+  "price": -1,
+  "type": "BACKGROUND",
+  "description": "A special background for a special person.",
+  "authors": [
+    "Fabricio20",
+    "Schneider"
+  ],
+  "tags": [
+    "Header",
+    "Background",
+    "Wallpaper",
+    "Special"
+  ],
+  "fontColor": "#36393E"
+}

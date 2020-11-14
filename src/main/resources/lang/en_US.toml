@@ -162,6 +162,11 @@ not_enough = "Not enough items."
     start = "The word is `{0}`, you have 1 minute to guess"
     fail = "Oops, Timed out! word: `{0}`"
     active = "There is already a scramble game on this server"
+    # Profile
+    [commands.fun.profile]
+    description = "Looks up someone's profile"
+    failed = "Failed to load that profile."
+    error = "Error while trying to load that profile."
 
 [commands.mod]
     # Prune

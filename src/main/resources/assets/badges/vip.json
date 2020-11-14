@@ -1,0 +1,14 @@
+{
+  "name": "VIP",
+  "price": -1,
+  "type": "BADGE",
+  "description": "A very important person.",
+  "authors": [
+    "Fabricio20",
+    "Schneider"
+  ],
+  "tags": [
+    "Badge",
+    "VIP"
+  ]
+}
