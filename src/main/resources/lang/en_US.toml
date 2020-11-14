@@ -171,6 +171,11 @@ not_enough = "Not enough items."
     description = "Looks up someone's profile"
     failed = "Failed to load that profile."
     error = "Error while trying to load that profile."
+    # Starboard
+    [commands.fun.starboard]
+    description = "Star all the important messages."
+    enabled = "Starboard enabled in {0}."
+    disabled = "Starboard is now disabled."
 
 [commands.mod]
     # Prune
