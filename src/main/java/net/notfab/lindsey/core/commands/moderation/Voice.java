@@ -93,6 +93,7 @@ class Voice implements Command {
         HelpPage page = new HelpPage("voice")
             .text("commands.mod.voice.description")
             .usage("L!voice <move/split> <user/channel>")
+            .url("https://github.com/LindseyBot/core/wiki/commands-voice")
             .permission("commands.voice")
             .addExample("L!voice move @lindsey music-02")
             .addExample("L!voice move #music-02 #music-01")

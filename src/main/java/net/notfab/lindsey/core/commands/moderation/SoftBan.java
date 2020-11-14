@@ -76,6 +76,7 @@ public class SoftBan implements Command {
         HelpPage page = new HelpPage("softban")
             .text("commands.mod.softban.description")
             .usage("L!softban <member|id> [reason]")
+            .url("https://github.com/LindseyBot/core/wiki/commands-softban")
             .permission("commands.softban")
             .addExample("L!softban @lindsey")
             .addExample("L!softban @lindsey Not sending images")
