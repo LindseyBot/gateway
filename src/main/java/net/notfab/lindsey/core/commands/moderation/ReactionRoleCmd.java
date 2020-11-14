@@ -83,7 +83,7 @@ public class ReactionRoleCmd implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "search.role", argsToString(args, 2)));
                 return false;
             }
-            String name = args[1].toLowerCase();
+            String name = args[1].toLowerCase().replaceAll("\\s+", "_");
             if (name.length() > 18) {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.mod.reactionroles.failed_name_too_big"));
                 return false;
