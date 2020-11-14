@@ -38,7 +38,7 @@ public class Ban implements Command {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
         } else {
-            Member target = FinderUtil.findMember(args[0], channel.getGuild());
+            Member target = FinderUtil.findMember(args[0], message);
             if (target == null) {
                 msg.send(channel, sender(member) + i18n.get(member, "core.member_nf"));
                 return false;
