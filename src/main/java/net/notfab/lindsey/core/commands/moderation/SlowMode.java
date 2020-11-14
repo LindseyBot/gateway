@@ -63,6 +63,7 @@ public class SlowMode implements Command {
         HelpPage page = new HelpPage("slowmode")
             .text("commands.mod.slowmode.description")
             .usage("L!slowmode <timeInSeconds>")
+            .url("https://github.com/LindseyBot/core/wiki/commands-slowmode")
             .permission("commands.slowmode")
             .addExample("L!slowmode 0")
             .addExample("L!slowmode 60");

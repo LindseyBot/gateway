@@ -21,6 +21,7 @@ examples = "**Examples**:"
 role = "No roles found named `{0}`."
 permission = "No permissions found with name `{0}`."
 channel = "No channel named `{0}` found."
+voice = "No voice channel named `{0}` found."
 member = "No members named `{0}` found."
 
 [parts]
@@ -216,6 +217,12 @@ not_enough = "Not enough items."
     description = "Activates slowmode on this channel."
     active = "Slowmode enabled (T={0}s)"
     invalid = "Invalid max number of seconds for slowmode. Limit {0}s."
+    # Voice
+    [commands.mod.voice]
+    description = "Moves or splits voice members from one channel to another."
+    moving = "Moving members..."
+    splitting = "Splitting members..."
+    permission_move = "No permission to move `{0}`."
 
 # NSFW
 [commands.nsfw]

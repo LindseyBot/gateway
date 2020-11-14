@@ -132,6 +132,7 @@ public class ReactionRoleCmd implements Command {
         HelpPage page = new HelpPage("reactionroles")
             .text("commands.mod.reactionroles.description")
             .usage("L!rroles <list/create/remove> [name] [role]")
+            .url("https://github.com/LindseyBot/core/wiki/commands-reaction-roles")
             .permission("commands.reactionroles")
             .addExample("L!rroles list")
             .addExample("L!rroles create verified Verified")

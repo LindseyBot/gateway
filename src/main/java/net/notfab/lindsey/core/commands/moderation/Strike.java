@@ -89,6 +89,7 @@ public class Strike implements Command {
         HelpPage page = new HelpPage("strike")
             .text("commands.mod.strike.description")
             .usage("L!strike [count] <member> [reason]")
+            .url("https://github.com/LindseyBot/core/wiki/commands-strike")
             .permission("commands.strike")
             .addExample("L!strike 2 @lindsey")
             .addExample("L!strike 2 @lindsey Not sending images")
