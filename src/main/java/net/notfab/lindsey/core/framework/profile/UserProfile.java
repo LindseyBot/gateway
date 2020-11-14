@@ -15,6 +15,7 @@ public class UserProfile {
     private long owner;
 
     private String name;
+    private long lastSeen;
     private Language language = Language.en_US;
 
     private long cookies = 0;
