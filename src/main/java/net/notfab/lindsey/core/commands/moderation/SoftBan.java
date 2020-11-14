@@ -44,9 +44,9 @@ public class SoftBan implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "core.member_nf"));
                 return false;
             }
-            String reason = member.getUser().getName() + ": " + i18n.get(member, "commands.mod.softban.noreason");
+            String reason = i18n.get(member, "commands.mod.softban.noreason");
             if (args.length > 1) {
-                reason = member.getUser().getName() + ": " + argsToString(args, 1);
+                reason = argsToString(args, 1);
             }
             if (!member.canInteract(target) || target.isOwner()
                 || target.hasPermission(Permission.ADMINISTRATOR)
@@ -60,7 +60,7 @@ public class SoftBan implements Command {
                 .openPrivateChannel()
                 .flatMap(dm -> dm.sendMessage(i18n.get(member, "commands.mod.softban.message", member.getGuild().getName(), finalReason)))
                 .queue();
-            target.ban(7, reason)
+            target.ban(7, member.getUser().getName() + ": " + reason)
                 .flatMap(aVoid -> channel
                     .sendMessage(i18n.get(member, "commands.mod.softban.banned", target.getEffectiveName())))
                 .delay(5, TimeUnit.SECONDS)
