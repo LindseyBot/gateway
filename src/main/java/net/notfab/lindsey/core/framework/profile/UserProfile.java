@@ -14,6 +14,7 @@ public class UserProfile {
     @Id
     private long owner;
 
+    private String name;
     private Language language = Language.en_US;
 
     private long cookies = 0;
