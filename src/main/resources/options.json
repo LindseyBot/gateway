@@ -16,5 +16,11 @@
     "type": "TEXT_CHANNEL",
     "description": "options.starboard",
     "default": null
+  },
+  {
+    "name": "playlist",
+    "type": "STRING",
+    "description": "options.playlist",
+    "default": null
   }
 ]

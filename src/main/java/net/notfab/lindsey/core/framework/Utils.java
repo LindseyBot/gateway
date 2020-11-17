@@ -2,12 +2,16 @@ package net.notfab.lindsey.core.framework;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.notfab.lindsey.core.framework.extractors.SCExtractor;
+import net.notfab.lindsey.core.framework.extractors.YTExtractor;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -100,6 +104,21 @@ public class Utils {
 
     public static InputStream toStream(byte[] bytes) {
         return new ByteArrayInputStream(bytes);
+    }
+
+    public static boolean isURL(String string) {
+        try {
+            new URL(string);
+        } catch (MalformedURLException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isSupportedMusicURL(String nameOrURL) {
+        YTExtractor youtube = new YTExtractor();
+        SCExtractor soundCloud = new SCExtractor();
+        return youtube.isSupported(nameOrURL) || soundCloud.isSupported(nameOrURL);
     }
 
 }
