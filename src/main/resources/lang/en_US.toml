@@ -116,6 +116,9 @@ not_enough = "Not enough cookies."
     [commands.economy.leaderboard]
     description = "Lindsey Leaderboards"
     unknown_type = "Unknown Leaderboard Type, available: `{0}`."
+    [commands.economy.blackjack]
+    draw = "draw"
+    description = "Blackjack! also called 21"
 
 [commands.items]
 not_enough = "Not enough items."
