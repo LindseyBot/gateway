@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands.economy;
+package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -49,7 +49,7 @@ public class Slot implements Command {
         return new CommandDescriptor.Builder()
             .name("slot")
             .alias("slotmachine")
-            .module(Modules.ECONOMY)
+            .module(Modules.FUN)
             .permission("commands.slot", "permissions.command")
             .build();
     }
@@ -62,8 +62,8 @@ public class Slot implements Command {
         }
         economy.deduct(member, price);
 
-        String txt = i18n.get(member, "commands.economy.slot.start", member.getEffectiveName()) + "\n" +
-            i18n.get(member, "commands.economy.slot.values", price, getJackpot()) + "\n" +
+        String txt = i18n.get(member, "commands.fun.slot.start", member.getEffectiveName()) + "\n" +
+            i18n.get(member, "commands.fun.slot.values", price, getJackpot()) + "\n" +
             Emotes.Slot.asEmote() + " | " + Emotes.Slot.asEmote() + " | " + Emotes.Slot.asEmote() + "\n \n";
         Message m = channel.sendMessage(txt).complete();
 
@@ -87,14 +87,14 @@ public class Slot implements Command {
             win = getJackpot();
             redis.opsForValue().set("Lindsey:SlotJackpot", "0");
         } else if (prize == 0) {
-            msg.send(channel, i18n.get(member, "commands.economy.slot.lost"));
+            msg.send(channel, i18n.get(member, "commands.fun.lost"));
             return true;
         } else {
             redis.opsForValue().increment("Lindsey:SlotJackpot", (price / 2));
             win = (int) (prize * multiplier);
         }
         economy.pay(member, win);
-        msg.send(channel, i18n.get(member, "commands.economy.slot.win", win));
+        msg.send(channel, i18n.get(member, "commands.economy.win", win));
         return true;
     }
 
@@ -146,7 +146,7 @@ public class Slot implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("slot")
-            .text("commands.economy.slot.description")
+            .text("commands.fun.slot.description")
             .usage("L!slot")
             .permission("commands.slot")
             .addExample("L!slot");

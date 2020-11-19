@@ -70,13 +70,13 @@ public class BlackjackListener extends ListenerAdapter {
             switch (res) {
                 case win -> {
                     economy.pay(member, model.getPrice() * 2);
-                    channel.sendMessage(i18n.get(member, "commands.economy.slot.win", model.getPrice() * 2)).queue();
+                    channel.sendMessage(i18n.get(member, "commands.economy.win", model.getPrice() * 2)).queue();
                 }
                 case draw -> {
                     economy.pay(member, model.getPrice());
-                    channel.sendMessage(i18n.get(member, "commands.economy.blackjack.draw")).queue();
+                    channel.sendMessage(i18n.get(member, "commands.fun.blackjack.draw")).queue();
                 }
-                case lost -> channel.sendMessage(i18n.get(member, "commands.economy.slot.lost")).queue();
+                case lost -> channel.sendMessage(i18n.get(member, "commands.fun.lost")).queue();
             }
         }
     }

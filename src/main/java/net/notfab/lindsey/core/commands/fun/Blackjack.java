@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands.economy;
+package net.notfab.lindsey.core.commands.fun;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -33,26 +33,29 @@ public class Blackjack implements Command {
     @Autowired
     private ExpiringMap<Long, BlackjackModel> cache;
 
-    public static int price = 0;
-
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
             .name("blackjack")
             .alias("21")
-            .module(Modules.ECONOMY)
+            .module(Modules.FUN)
             .permission("commands.blackjack", "permissions.command")
             .build();
     }
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
+        int price;
         if (args.length > 0 && Character.isDigit(args[0].charAt(0))) {
             price = Integer.parseInt(args[0]);
         } else {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
-            return true;
+            return false;
+        }
+        if (Integer.parseInt(args[0]) < 1 || Integer.parseInt(args[0]) > 5000) {
+            msg.send(channel, i18n.get(member, "commands.fun.blackjack.price"));
+            return false;
         }
         if (!economy.has(member, price)) {
             msg.send(channel, i18n.get(member, "commands.economy.not_enough"));
@@ -78,8 +81,8 @@ public class Blackjack implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("blackjack")
-            .text("commands.economy.blackjack.description")
-            .usage("L!blackjack")
+            .text("commands.fun.blackjack.description")
+            .usage("L!blackjack <bet>")
             .permission("commands.blackjack")
             .addExample("L!blackjack 10")
             .addExample("L!21 100");

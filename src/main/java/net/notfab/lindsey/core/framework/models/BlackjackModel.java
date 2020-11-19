@@ -12,19 +12,19 @@ public class BlackjackModel {
 
     @Setter
     @Getter
-    long id;
+    private long id;
 
     @Setter
     @Getter
-    int price;
+    private int price;
 
     private final Random random = new Random();
-    int dealer;
-    int player;
-    int position;
+    private int dealer;
+    private int player;
+    private int position;
 
-    String[] cardsDealer = new String[5];
-    String[] cardsUser = new String[5];
+    private final String[] cardsDealer = new String[5];
+    private final String[] cardsUser = new String[5];
 
     public void start() {
         for (int i = 0; i < 2; i++) {
@@ -76,7 +76,7 @@ public class BlackjackModel {
     }
 
     public Result getResult() {
-        if (dealer < player && player < 22) {
+        if (dealer < player && player < 22 || dealer > 21 && player < 22) {
             return Result.win;
         }
         if (dealer > player || player > 21) {

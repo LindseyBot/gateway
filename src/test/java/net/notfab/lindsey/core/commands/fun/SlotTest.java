@@ -1,5 +1,6 @@
-package net.notfab.lindsey.core.commands.economy;
+package net.notfab.lindsey.core.commands.fun;
 
+import net.notfab.lindsey.core.commands.fun.Slot;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
 import net.notfab.lindsey.core.framework.command.Modules;
 import net.notfab.lindsey.core.framework.command.help.HelpArticle;
@@ -11,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class BlackjackTest {
+class SlotTest {
 
-    private Blackjack command;
+    private Slot command;
 
     @BeforeEach
     void setUp() {
-        command = mock(Blackjack.class);
+        command = mock(Slot.class);
         when(command.getInfo())
                 .thenCallRealMethod();
         when(command.help(null))
@@ -27,8 +28,8 @@ class BlackjackTest {
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("blackjack", info.getName(), "Name must be blackjack");
-        assertEquals(Modules.ECONOMY, info.getModule(), "Module must be economy");
+        assertEquals("slot", info.getName(), "Name must be slot");
+        assertEquals(Modules.FUN, info.getModule(), "Module must be fun");
         assertTrue(info.getPermissions().stream()
                 .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
@@ -36,7 +37,7 @@ class BlackjackTest {
     @Test
     void help() {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("blackjack");
+        HelpPage page = article.get("slot");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }
