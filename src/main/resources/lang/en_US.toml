@@ -176,6 +176,20 @@ not_enough = "Not enough items."
     description = "Star all the important messages."
     enabled = "Starboard enabled in {0}."
     disabled = "Starboard is now disabled."
+    #Lives
+    [commands.lives]
+    title = "Title"
+    category = "Category"
+    viewers = "Viewers"
+    online = "Online"
+    followers = "Followers"
+    language = "Language"
+    tags = "Tags"
+    last = "Last Live"
+    total = "Total Viewers"
+    playing = "Playing"
+    picarto = "Searches for Picarto.tv streamer information"
+    twitch = "Searches for Twitch.tv streamer information"
 
 [commands.mod]
     # Prune
