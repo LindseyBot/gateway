@@ -100,6 +100,7 @@ page = "Page [{0}/{1}]"
 
 [commands.economy]
 not_enough = "Not enough cookies."
+    win = "You win {0} cookies!"
     [commands.economy.cookies]
     description = "Find out how many cookies a user (like yourself) has!"
     self = "You have {0} :cookie:."
@@ -107,12 +108,6 @@ not_enough = "Not enough cookies."
     daily_already = "You already received your daily cookies. Try again in {0}."
     daily = "+{0} :cookie:! Come back tomorrow to start your streak!"
     daily_streak = "+{0} :cookie:! (Streak = {1}) Come back tomorrow for more cookies!"
-    [commands.economy.slot]
-    win = "You win {0} cookies!"
-    description = "Slot machine!"
-    start = "{0} started the slot machine!"
-    values = "Price : {0} | Jackpot: {1}"
-    lost = "You lost."
     [commands.economy.leaderboard]
     description = "Lindsey Leaderboards"
     unknown_type = "Unknown Leaderboard Type, available: `{0}`."
@@ -121,6 +116,7 @@ not_enough = "Not enough cookies."
 not_enough = "Not enough items."
 
 [commands.fun]
+    lost = "You lost."
     # Anime
     [commands.fun.anime]
     request = "Requested by"
@@ -176,6 +172,16 @@ not_enough = "Not enough items."
     description = "Star all the important messages."
     enabled = "Starboard enabled in {0}."
     disabled = "Starboard is now disabled."
+    # BlackJack
+    [commands.fun.blackjack]
+    draw = "draw"
+    description = "Blackjack! also called 21"
+    price = "Bet mus be between 1 and 5000"
+    # Slot
+    [commands.fun.slot]
+    description = "Slot machine!"
+    start = "{0} started the slot machine!"
+    values = "Price : {0} | Jackpot: {1}"
 
 [commands.mod]
     # Prune
