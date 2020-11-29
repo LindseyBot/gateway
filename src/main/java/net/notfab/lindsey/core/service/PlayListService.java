@@ -179,4 +179,9 @@ public class PlayListService {
         repository.save(playList);
     }
 
+    public void setSecurity(PlayList playList, PlayListSecurity security) {
+        playList.setSecurity(security);
+        repository.save(playList);
+    }
+
 }

@@ -288,6 +288,8 @@ shuffle_enabled = "Shuffle mode is now enabled."
 shuffle_disabled = "Shuffle mode is now disabled."
 not_imgur = "Not a valid imgur URL, please grab the direct image link (i.imgur.com/id.png)"
 logo_updated = "Updated the logo for `{0}`."
+not_security = "Unknown security name `{0}`, available are `PUBLIC, SHARED, PRIVATE`."
+security_updated = "Updated security for `{0}` to `{1}`."
 
 # Music
 [commands.music]

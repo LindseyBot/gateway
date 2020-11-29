@@ -15,6 +15,7 @@ import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.menu.Menu;
 import net.notfab.lindsey.core.framework.models.Curator;
 import net.notfab.lindsey.core.framework.models.PlayList;
+import net.notfab.lindsey.core.framework.models.PlayListSecurity;
 import net.notfab.lindsey.core.service.PlayListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -145,6 +146,26 @@ public class PlayListCmd implements Command {
                 service.setLogo(playList, url);
                 msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.logo_updated", playList.getName()));
                 return true;
+            } else if (args[0].equalsIgnoreCase("security")) {
+                // security <name> <security>
+                PlayList playList = service.findByName(member.getUser(), args[1]);
+                if (playList == null) {
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[1]));
+                    return true;
+                }
+                if (playList.getOwner() != member.getUser().getIdLong()) {
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
+                    return true;
+                }
+                Optional<PlayListSecurity> oSecurity = PlayListSecurity.find(args[2]);
+                if (oSecurity.isEmpty()) {
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_security"));
+                    return false;
+                }
+                service.setSecurity(playList, oSecurity.get());
+                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.security_updated",
+                    playList.getName(), oSecurity.get().name()));
+                return true;
             }
         } else if (args.length == 4) {
             PlayList playList = this.service.findByName(member.getUser(), args[0]);
@@ -185,7 +206,7 @@ public class PlayListCmd implements Command {
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("playlist")
             .text("commands.playlist.description")
-            .usage("L!pl <list|show|create|delete|shuffle|logo|name> [name|curators] [true|false|add|remove] [user]")
+            .usage("L!pl <list|show|create|delete|shuffle|logo|security|name> [name|curators] [true|false|add|remove|security] [user]")
             .permission("commands.playlist")
             .addExample("L!pl list")
             .addExample("L!pl show")
@@ -194,6 +215,7 @@ public class PlayListCmd implements Command {
             .addExample("L!pl shuffle edm true")
             .addExample("L!pl shuffle edm false")
             .addExample("L!pl logo edm <https://i.imgur.com/YcBNYVh.png>")
+            .addExample("L!pl security edm PUBLIC")
             .addExample("L!pl edm curators add lindsey")
             .addExample("L!pl edm curators remove lindsey");
         return HelpArticle.of(page);
