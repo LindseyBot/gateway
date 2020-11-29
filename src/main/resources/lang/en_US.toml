@@ -9,6 +9,7 @@ member_nf = "Member not found"
 help_nf = "No help pages found"
 not_nsfw = "This channel isn't nsfw"
 not_number = "`{0}` is not a number"
+not_boolean = "`{0}` is not a boolean. (Must be true/false)"
 
 [help]
 title = "Help for `{0}`:"
@@ -273,8 +274,20 @@ rule34 = "Searches for an image on Rule34"
 
 # PlayList
 [commands.playlist]
+description = "Manage your playlists."
 no_active = "No active playlists. (Try using `L!playlist use`)"
 locked = "Missing permissions to edit this playlist."
+not_found = "No playlists named `{0}` found."
+curator_added = "Added `{0}` as curator on `{1}`."
+curator_removed = "Removed `{0}` as curator from `{1}`."
+limit_reached = "You have reached the playlist limit. [{0}/{1}]"
+created = "Playlist `{0}` created. "
+deleted = "Playlist `{0}` deleted."
+no_songs = "No songs in this playlist yet."
+shuffle_enabled = "Shuffle mode is now enabled."
+shuffle_disabled = "Shuffle mode is now disabled."
+not_imgur = "Not a valid imgur URL, please grab the direct image link (i.imgur.com/id.png)"
+logo_updated = "Updated the logo for `{0}`."
 
 # Music
 [commands.music]

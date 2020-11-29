@@ -2,15 +2,15 @@ package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.notfab.lindsey.core.framework.models.PlayList;
-import net.notfab.lindsey.core.framework.models.PlayListCursor;
-import net.notfab.lindsey.core.framework.models.PlayListSecurity;
-import net.notfab.lindsey.core.framework.models.Song;
+import net.notfab.lindsey.core.framework.models.*;
 import net.notfab.lindsey.core.framework.options.Option;
 import net.notfab.lindsey.core.framework.options.OptionManager;
+import net.notfab.lindsey.core.framework.profile.GuildProfile;
+import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.core.repositories.mongo.PlaylistRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,10 +21,12 @@ public class PlayListService {
 
     private final PlaylistRepository repository;
     private final OptionManager options;
+    private final ProfileManager profiles;
 
-    public PlayListService(PlaylistRepository repository, OptionManager options) {
+    public PlayListService(PlaylistRepository repository, OptionManager options, ProfileManager profiles) {
         this.repository = repository;
         this.options = options;
+        this.profiles = profiles;
     }
 
     public Optional<PlayList> findActive(Guild guild) {
@@ -48,9 +50,10 @@ public class PlayListService {
         }
         PlayList playList = new PlayList();
         playList.setId(UUID.randomUUID().toString());
-        playList.setName(name);
         playList.setOwner(owner.getIdLong());
+        playList.setName(name);
         playList.setShuffle(false);
+        playList.setLogoUrl("https://i.imgur.com/YcBNYVh.png");
         playList.setSecurity(PlayListSecurity.PRIVATE);
         return repository.save(playList);
     }
@@ -105,14 +108,16 @@ public class PlayListService {
         if (playList.getSecurity() == PlayListSecurity.PUBLIC) {
             return true;
         }
-        return playList.getCurators().contains(user.getIdLong());
+        return playList.getCurators().stream()
+            .anyMatch(curator -> curator.getId() == user.getIdLong());
     }
 
-    public Song findNextSong(PlayList playList) {
+    public Song findNextSong(PlayList playList, long guild) {
         if (playList.getSongs().isEmpty()) {
             return null;
         }
-        PlayListCursor cursor = playList.getCursor();
+        GuildProfile profile = profiles.getGuild(guild);
+        PlayListCursor cursor = profile.getCursor();
         if (cursor == null) {
             cursor = new PlayListCursor();
             cursor.setPosition(-1);
@@ -125,7 +130,7 @@ public class PlayListService {
         return playList.getSongs().get(position);
     }
 
-    public boolean updateCursor(PlayList playList, Song song) {
+    public boolean updateCursor(PlayList playList, Song song, long guild) {
         PlayListCursor cursor = PlayListCursor.fromSong(song);
         int position = -1;
         for (int i = 0; i < playList.getSongs().size(); i++) {
@@ -139,9 +144,39 @@ public class PlayListService {
             return false;
         }
         cursor.setPosition(position);
-        playList.setCursor(cursor);
-        repository.save(playList);
+
+        GuildProfile profile = profiles.getGuild(guild);
+        profile.setCursor(cursor);
+        profiles.save(profile);
         return true;
+    }
+
+    public void addCurator(PlayList playList, Curator user) {
+        if (playList.getCurators().stream()
+            .noneMatch(curator -> curator.getId() == user.getId())) {
+            playList.getCurators().add(user);
+            repository.save(playList);
+        }
+    }
+
+    public void delCurator(PlayList playList, long userId) {
+        playList.getCurators()
+            .removeIf(curator -> curator.getId() == userId);
+        repository.save(playList);
+    }
+
+    public List<PlayList> findAllByOwner(long userId) {
+        return repository.findAllByOwner(userId);
+    }
+
+    public void setShuffle(PlayList playList, boolean shuffle) {
+        playList.setShuffle(shuffle);
+        repository.save(playList);
+    }
+
+    public void setLogo(PlayList playList, String url) {
+        playList.setLogoUrl(url);
+        repository.save(playList);
     }
 
 }

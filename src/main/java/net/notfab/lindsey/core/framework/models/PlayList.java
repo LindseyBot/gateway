@@ -19,12 +19,12 @@ public class PlayList {
     private long owner;
     private String name;
     private boolean shuffle;
-    private PlayListCursor cursor;
+    private String logoUrl;
 
     @Enumerated(EnumType.STRING)
     private PlayListSecurity security = PlayListSecurity.PUBLIC;
 
     private List<Song> songs = new ArrayList<>();
-    private List<Long> curators = new ArrayList<>();
+    private List<Curator> curators = new ArrayList<>();
 
 }

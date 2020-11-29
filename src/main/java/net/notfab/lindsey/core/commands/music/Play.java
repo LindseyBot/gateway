@@ -89,8 +89,8 @@ public class Play implements Command {
 
         Song song;
         if (args.length == 0) {
-            song = playlists.findNextSong(playList);
-            if (song == null || !playlists.updateCursor(playList, song)) {
+            song = playlists.findNextSong(playList, member.getGuild().getIdLong());
+            if (song == null || !playlists.updateCursor(playList, song, member.getGuild().getIdLong())) {
                 // Failed to start playing (No songs found)
                 msg.send(channel, sender(member) + i18n.get(member, "commands.music.play.failed_songs"));
                 return true;

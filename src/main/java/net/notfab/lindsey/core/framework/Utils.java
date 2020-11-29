@@ -14,8 +14,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -119,6 +122,20 @@ public class Utils {
         YTExtractor youtube = new YTExtractor();
         SCExtractor soundCloud = new SCExtractor();
         return youtube.isSupported(nameOrURL) || soundCloud.isSupported(nameOrURL);
+    }
+
+    public static Optional<Boolean> parseBoolean(String argument) {
+        return switch (argument.toLowerCase()) {
+            case "true", "t", "yes", "y", "enable", "e", "enabled", "1", "allow" -> Optional.of(true);
+            case "false", "f", "no", "n", "disable", "d", "disabled", "0", "deny" -> Optional.of(false);
+            default -> Optional.empty();
+        };
+    }
+
+    public static boolean isImgur(String url) {
+        Pattern pattern = Pattern.compile("i\\.imgur\\.com/(\\w+)\\.(\\w+)$");
+        Matcher matcher = pattern.matcher(url);
+        return matcher.find();
     }
 
 }
