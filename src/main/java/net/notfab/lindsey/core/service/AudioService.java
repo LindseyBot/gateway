@@ -20,9 +20,11 @@ public class AudioService {
     private final AudioPlayerManager playerManager;
     private final Map<Long, AudioPlayer> playerMap = new HashMap<>();
     private final Map<Long, PlaybackListener> listenerMap = new HashMap<>();
+    private final PlayListService playlists;
 
-    public AudioService(AudioPlayerManager playerManager) {
+    public AudioService(AudioPlayerManager playerManager, PlayListService playlists) {
         this.playerManager = playerManager;
+        this.playlists = playlists;
     }
 
     /**
@@ -105,7 +107,7 @@ public class AudioService {
         if (hasPlayer(guild)) {
             return this.playerMap.get(guild);
         }
-        PlaybackListener listener = new PlaybackListener(guild, this);
+        PlaybackListener listener = new PlaybackListener(guild, this, this.playlists);
         listenerMap.put(guild, listener);
 
         AudioPlayer player = this.playerManager.createPlayer();

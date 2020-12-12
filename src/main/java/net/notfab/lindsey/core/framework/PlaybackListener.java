@@ -6,15 +6,18 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.notfab.lindsey.core.service.AudioService;
+import net.notfab.lindsey.core.service.PlayListService;
 
 public class PlaybackListener extends AudioEventAdapter {
 
     private final AudioService service;
     private final long guild;
+    private final PlayListService playlists;
 
-    public PlaybackListener(long guild, AudioService service) {
+    public PlaybackListener(long guild, AudioService service, PlayListService playlists) {
         this.guild = guild;
         this.service = service;
+        this.playlists = playlists;
     }
 
     @Override

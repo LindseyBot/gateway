@@ -2,6 +2,7 @@ package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.models.*;
 import net.notfab.lindsey.core.framework.options.Option;
 import net.notfab.lindsey.core.framework.options.OptionManager;
@@ -89,6 +90,14 @@ public class PlayListService {
     }
 
     public Song findSong(PlayList playList, String name) {
+        Optional<Integer> oPos = Utils.safeInt(name);
+        if (oPos.isPresent()) {
+            int pos = oPos.get();
+            if (pos > playList.getSongs().size() || pos < 1) {
+                return null;
+            }
+            return playList.getSongs().get(pos -1);
+        }
         Song fake = new Song();
         fake.setUrl(name);
         fake.setName(name);

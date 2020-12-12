@@ -118,6 +118,38 @@ public class Utils {
         return true;
     }
 
+    public static boolean isNumber(String arg) {
+        return isLong(arg) || isDouble(arg);
+    }
+
+    public static boolean isLong(String arg) {
+        try {
+            if (arg == null) return false;
+            Long.parseLong(arg);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    public static boolean isDouble(String arg) {
+        try {
+            if (arg == null) return false;
+            Double.parseDouble(arg);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    public static Optional<Integer> safeInt(String msg) {
+        try {
+            return Optional.of(Integer.parseInt(msg));
+        } catch (NumberFormatException ex) {
+            return Optional.empty();
+        }
+    }
+
     public static boolean isSupportedMusicURL(String nameOrURL) {
         YTExtractor youtube = new YTExtractor();
         SCExtractor soundCloud = new SCExtractor();
