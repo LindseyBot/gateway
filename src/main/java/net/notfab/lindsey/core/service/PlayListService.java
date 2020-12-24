@@ -4,10 +4,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.models.*;
-import net.notfab.lindsey.core.framework.options.Option;
-import net.notfab.lindsey.core.framework.options.OptionManager;
-import net.notfab.lindsey.core.framework.profile.GuildProfile;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.framework.profile.ServerProfile;
 import net.notfab.lindsey.core.repositories.mongo.PlaylistRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,27 +19,30 @@ import java.util.stream.Stream;
 public class PlayListService {
 
     private final PlaylistRepository repository;
-    private final OptionManager options;
     private final ProfileManager profiles;
 
-    public PlayListService(PlaylistRepository repository, OptionManager options, ProfileManager profiles) {
+    public PlayListService(PlaylistRepository repository, ProfileManager profiles) {
         this.repository = repository;
-        this.options = options;
         this.profiles = profiles;
     }
 
     public Optional<PlayList> findActive(Guild guild) {
-        Option option = options.find("playlist");
-        String uuid = options.get(option, guild);
-        if (uuid == null) {
-            return Optional.empty();
-        }
-        return repository.findById(uuid);
+        return this.findActive(guild.getIdLong());
     }
 
-    public void setActive(Guild guild, String uuid) {
-        Option option = options.find("playlist");
-        options.set(option, guild, uuid);
+    public Optional<PlayList> findActive(long guildId) {
+        ServerProfile profile = profiles.getGuild(guildId);
+        return Optional.ofNullable(profile.getActivePlayList());
+    }
+
+    public void setActive(Guild guild, PlayList playList) {
+        this.setActive(guild.getIdLong(), playList);
+    }
+
+    public void setActive(long guild, PlayList playList) {
+        ServerProfile profile = profiles.getGuild(guild);
+        profile.setActivePlayList(playList);
+        profiles.save(profile);
     }
 
     public PlayList create(User owner, String name) {
@@ -96,7 +97,7 @@ public class PlayListService {
             if (pos > playList.getSongs().size() || pos < 1) {
                 return null;
             }
-            return playList.getSongs().get(pos -1);
+            return playList.getSongs().get(pos - 1);
         }
         Song fake = new Song();
         fake.setUrl(name);
@@ -125,7 +126,7 @@ public class PlayListService {
         if (playList.getSongs().isEmpty()) {
             return null;
         }
-        GuildProfile profile = profiles.getGuild(guild);
+        ServerProfile profile = profiles.getGuild(guild);
         PlayListCursor cursor = profile.getCursor();
         if (cursor == null) {
             cursor = new PlayListCursor();
@@ -154,7 +155,7 @@ public class PlayListService {
         }
         cursor.setPosition(position);
 
-        GuildProfile profile = profiles.getGuild(guild);
+        ServerProfile profile = profiles.getGuild(guild);
         profile.setCursor(cursor);
         profiles.save(profile);
         return true;

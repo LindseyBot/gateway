@@ -8,7 +8,6 @@ import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.models.PlayList;
-import net.notfab.lindsey.core.framework.options.OptionManager;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.core.service.AudioService;
 import net.notfab.lindsey.core.service.PlayListService;
@@ -21,9 +20,6 @@ public class TestCommand implements Command {
 
     @Autowired
     private ProfileManager profiles;
-
-    @Autowired
-    private OptionManager options;
 
     @Autowired
     private Messenger msg;
@@ -51,7 +47,7 @@ public class TestCommand implements Command {
         if (playList == null) {
             playList = playListService.create(member.getUser(), "test");
         }
-        playListService.setActive(member.getGuild(), playList.getId());
+        playListService.setActive(member.getGuild(), playList);
         return false;
     }
 

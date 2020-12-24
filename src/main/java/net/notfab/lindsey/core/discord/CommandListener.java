@@ -8,8 +8,8 @@ import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandManager;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
-import net.notfab.lindsey.core.framework.profile.GuildProfile;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.framework.profile.ServerProfile;
 import net.notfab.lindsey.core.service.IgnoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ public class CommandListener extends ListenerAdapter {
         } else if (message.startsWith(self.getAsMention()) || message.startsWith("<@!119482224713269248>")) {
             return "@" + self.getEffectiveName();
         } else {
-            GuildProfile profile = profiles.get(guild);
+            ServerProfile profile = profiles.get(guild);
             String prefix = profile.getPrefix();
             if (prefix == null || prefix.isBlank()) {
                 prefix = "L!";

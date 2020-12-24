@@ -4,9 +4,8 @@ import com.moandjiezana.toml.Toml;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.notfab.lindsey.core.framework.options.Option;
-import net.notfab.lindsey.core.framework.options.OptionManager;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.framework.profile.ServerProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +20,6 @@ public class Translator {
 
     @Autowired
     private ProfileManager profiles;
-
-    @Autowired
-    private OptionManager options;
 
     private static InputStream getLanguage(String language) {
         return Translator.class.getResourceAsStream("/lang/" + language + ".toml");
@@ -54,14 +50,12 @@ public class Translator {
     }
 
     public String get(Guild guild, String message, Object... args) {
-        Option option = this.options.find("language");
+        ServerProfile profile = profiles.get(guild);
         Language language;
-        try {
-            String languageName = this.options.get(option, guild);
-            language = Language.valueOf(languageName);
-        } catch (IllegalArgumentException ex) {
-            this.options.set(option, guild, null);
+        if (profile.getLanguage() == null) {
             language = Language.en_US;
+        } else {
+            language = profile.getLanguage();
         }
         return get(language, message, args);
     }
