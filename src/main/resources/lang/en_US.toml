@@ -9,6 +9,7 @@ member_nf = "Member not found"
 help_nf = "No help pages found"
 not_nsfw = "This channel isn't nsfw"
 not_number = "`{0}` is not a number"
+not_boolean = "`{0}` is not a boolean. (Must be true/false)"
 
 [help]
 title = "Help for `{0}`:"
@@ -40,6 +41,8 @@ keeproles = "[Keep Roles] Added {0} roles back."
 [options]
 keeproles = "Readds roles when a member joins"
 language = "Server language, used for audit reasons, modlog, etc.."
+starboard = "Starboard channel"
+playlist = "Active playlist id"
 [options.embed]
 title = "Option `{0}`:"
 type = "**Type**:"
@@ -274,3 +277,51 @@ rule34 = "Searches for an image on Rule34"
     type = "Type"
     description = "Pokemon Wiki."
     404 = "Pokemon Not Found!"
+
+# PlayList
+[commands.playlist]
+description = "Manage your playlists."
+no_active = "No active playlists. (Try using `L!playlist use`)"
+locked = "Missing permissions to edit this playlist."
+not_found = "No playlists named `{0}` found."
+curator_added = "Added `{0}` as curator on `{1}`."
+curator_removed = "Removed `{0}` as curator from `{1}`."
+limit_reached = "You have reached the playlist limit. [{0}/{1}]"
+created = "Playlist `{0}` created. "
+deleted = "Playlist `{0}` deleted."
+no_songs = "No songs in this playlist yet."
+shuffle_enabled = "Shuffle mode is now enabled."
+shuffle_disabled = "Shuffle mode is now disabled."
+not_imgur = "Not a valid imgur URL, please grab the direct image link (i.imgur.com/id.png)"
+logo_updated = "Updated the logo for `{0}`."
+not_security = "Unknown security name `{0}`, available are `PUBLIC, SHARED, PRIVATE`."
+security_updated = "Updated security for `{0}` to `{1}`."
+active = "PlayList `{0}` is now active."
+
+# Music
+[commands.music]
+    # Connect
+    [commands.music.connect]
+    description = "Makes Lindsey connect to a voice channel."
+    not_in_vc = "No channels specified and you are not in a voice channel."
+    failed = "Failed to join voice channel (No permission? Channel is full?)"
+    connected = "Connected to `{0}`."
+    [commands.music.disconnect]
+    description = "Stops the playback and disconnects from the current voice channel."
+    failed = "Not currently connected."
+    disconnected = "Disconnected. Requested by `{0}`."
+    [commands.music.add]
+    description = "Adds a song (or list of songs) to the playlist"
+    not_supported = "This provider is not supported."
+    failed = "Failed to load track. Reason: `{0}`."
+    added_multiple = "Added {0} songs to the playlist."
+    added_one = "Added {0} to the playlist."
+    [commands.music.remove]
+    description = "Removes all songs from the playlist that match the input."
+    removed = "Removed {0} songs from the playlist."
+    [commands.music.play]
+    description = "Plays a specific song, or skips to the next one."
+    not_found = "No songs named `{0}` found."
+    failed_voice = "Failed to start playback. No voice connection active."
+    failed_songs = "Failed to start playback. No songs found."
+    failed_internal = "Faield to start playback. Internal error."

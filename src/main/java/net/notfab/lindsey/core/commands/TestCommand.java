@@ -7,9 +7,11 @@ import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
-import net.notfab.lindsey.core.framework.options.OptionManager;
-import net.notfab.lindsey.core.framework.profile.GuildProfile;
+import net.notfab.lindsey.core.framework.models.PlayList;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.service.AudioService;
+import net.notfab.lindsey.core.service.PlayListService;
+import net.notfab.lindsey.core.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +22,16 @@ public class TestCommand implements Command {
     private ProfileManager profiles;
 
     @Autowired
-    private OptionManager options;
+    private Messenger msg;
 
     @Autowired
-    private Messenger msg;
+    private AudioService audio;
+
+    @Autowired
+    private SongService songs;
+
+    @Autowired
+    private PlayListService playListService;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -35,10 +43,11 @@ public class TestCommand implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
-        GuildProfile profile = profiles.get(message.getGuild());
-        System.out.println("Prefix: " + profile.getPrefix());
-        profile.setPrefix("!");
-        profiles.save(profile);
+        PlayList playList = playListService.findByName(member.getUser(), "test");
+        if (playList == null) {
+            playList = playListService.create(member.getUser(), "test");
+        }
+        playListService.setActive(member.getGuild(), playList);
         return false;
     }
 

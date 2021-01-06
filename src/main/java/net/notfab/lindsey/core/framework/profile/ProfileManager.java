@@ -65,14 +65,14 @@ public class ProfileManager {
         }
     }
 
-    public GuildProfile get(Guild guild) {
+    public ServerProfile get(Guild guild) {
         return this.getGuild(guild.getIdLong());
     }
 
-    public GuildProfile getGuild(long id) {
-        Optional<GuildProfile> guild = this.guildRepository.findById(id);
+    public ServerProfile getGuild(long id) {
+        Optional<ServerProfile> guild = this.guildRepository.findById(id);
         if (guild.isEmpty()) {
-            GuildProfile settings = new GuildProfile();
+            ServerProfile settings = new ServerProfile();
             settings.setOwner(id);
             return settings;
         } else {
@@ -80,7 +80,7 @@ public class ProfileManager {
         }
     }
 
-    public void save(GuildProfile profile) {
+    public void save(ServerProfile profile) {
         guildRepository.save(profile);
     }
 

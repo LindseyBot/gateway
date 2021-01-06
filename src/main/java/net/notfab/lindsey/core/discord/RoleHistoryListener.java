@@ -10,11 +10,10 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.options.Option;
-import net.notfab.lindsey.core.framework.options.OptionManager;
 import net.notfab.lindsey.core.framework.profile.MemberProfile;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.core.framework.profile.member.RoleHistory;
+import net.notfab.lindsey.core.service.KeepRoleService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -26,14 +25,14 @@ import java.util.stream.Collectors;
 public class RoleHistoryListener extends ListenerAdapter {
 
     private final ProfileManager profiles;
-    private final OptionManager options;
     private final Translator i18n;
+    private final KeepRoleService keepRoleService;
 
-    public RoleHistoryListener(Lindsey lindsey, ProfileManager profiles, OptionManager options, Translator i18n) {
+    public RoleHistoryListener(Lindsey lindsey, ProfileManager profiles, Translator i18n, KeepRoleService keepRoleService) {
         lindsey.addEventListener(this);
         this.profiles = profiles;
-        this.options = options;
         this.i18n = i18n;
+        this.keepRoleService = keepRoleService;
     }
 
     @Override
@@ -56,8 +55,7 @@ public class RoleHistoryListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        Option option = this.options.find("keeproles");
-        boolean isToKeepRoles = this.options.get(option, event.getGuild());
+        boolean isToKeepRoles = this.keepRoleService.isActive(event.getGuild());
         if (!isToKeepRoles) {
             return;
         }

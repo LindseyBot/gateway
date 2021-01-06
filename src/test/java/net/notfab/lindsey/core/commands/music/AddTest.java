@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands.config;
+package net.notfab.lindsey.core.commands.music;
 
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
 import net.notfab.lindsey.core.framework.command.Modules;
@@ -8,28 +8,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class OptionsTest {
+class AddTest {
 
-    private Options command;
+    private Add command;
 
     @BeforeEach
     void setUp() {
-        command = mock(Options.class);
+        command = mock(Add.class);
         when(command.getInfo())
             .thenCallRealMethod();
-        when(command.help(any()))
+        when(command.help(null))
             .thenCallRealMethod();
     }
 
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("options", info.getName(), "Name must be options");
-        assertEquals(Modules.CORE, info.getModule(), "Module must be core");
+        assertEquals("add", info.getName(), "Name must be add");
+        assertEquals(Modules.MUSIC, info.getModule(), "Module must be Music");
         assertTrue(info.getPermissions().stream()
             .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
@@ -37,7 +36,7 @@ class OptionsTest {
     @Test
     void help() {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("options");
+        HelpPage page = article.get("add");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }

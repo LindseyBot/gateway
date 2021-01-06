@@ -2,7 +2,6 @@ package net.notfab.lindsey.core.discord;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -12,8 +11,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
 import net.notfab.lindsey.core.framework.GFXUtils;
 import net.notfab.lindsey.core.framework.Utils;
-import net.notfab.lindsey.core.framework.options.Option;
-import net.notfab.lindsey.core.framework.options.OptionManager;
 import net.notfab.lindsey.core.framework.profile.guild.Starboard;
 import net.notfab.lindsey.core.service.StarboardService;
 import org.jetbrains.annotations.NotNull;
@@ -26,12 +23,10 @@ import java.util.Collections;
 public class StarboardListener extends ListenerAdapter {
 
     private final StarboardService service;
-    private final OptionManager options;
 
-    public StarboardListener(Lindsey lindsey, StarboardService service, OptionManager options) {
+    public StarboardListener(Lindsey lindsey, StarboardService service) {
         lindsey.addEventListener(this);
         this.service = service;
-        this.options = options;
     }
 
     @Override
@@ -49,7 +44,7 @@ public class StarboardListener extends ListenerAdapter {
             return;
         }
 
-        TextChannel starboardChannel = this.getStarboardChannel(channel.getGuild());
+        TextChannel starboardChannel = service.getChannel(channel.getGuild());
         if (starboardChannel == null) {
             return;
         }
@@ -85,16 +80,6 @@ public class StarboardListener extends ListenerAdapter {
                 starboard.setStarboardMessageId(msg.getIdLong());
                 service.save(starboard);
             }, Utils.noop());
-        }
-    }
-
-    private TextChannel getStarboardChannel(Guild guild) {
-        Option option = options.find("starboard");
-        try {
-            return options.get(option, guild);
-        } catch (IllegalArgumentException ex) {
-            options.set(option, guild, null);
-            return null;
         }
     }
 
