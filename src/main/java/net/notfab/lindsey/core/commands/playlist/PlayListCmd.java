@@ -102,6 +102,20 @@ public class PlayListCmd implements Command {
                 }
                 msg.send(channel, this.createDetail(member, playList));
                 return true;
+            } else if (args[0].equalsIgnoreCase("use")) {
+                // use <name>
+                PlayList playList = service.findByName(member.getUser(), args[1]);
+                if (playList == null) {
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[1]));
+                    return true;
+                }
+                if (!service.hasPermission(playList, member.getUser())) {
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
+                    return true;
+                }
+                this.service.setActive(member.getGuild(), playList);
+                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.active", playList.getName()));
+                return true;
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("shuffle")) {
@@ -206,11 +220,12 @@ public class PlayListCmd implements Command {
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("playlist")
             .text("commands.playlist.description")
-            .usage("L!pl <list|show|create|delete|shuffle|logo|security|name> [name|curators] [true|false|add|remove|security] [user]")
+            .usage("L!pl <list|show|create|use|delete|shuffle|logo|security|name> [name|curators] [true|false|add|remove|security] [user]")
             .permission("commands.playlist")
             .addExample("L!pl list")
             .addExample("L!pl show")
             .addExample("L!pl create edm")
+            .addExample("L!pl use edm")
             .addExample("L!pl delete edm")
             .addExample("L!pl shuffle edm true")
             .addExample("L!pl shuffle edm false")

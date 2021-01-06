@@ -290,6 +290,7 @@ not_imgur = "Not a valid imgur URL, please grab the direct image link (i.imgur.c
 logo_updated = "Updated the logo for `{0}`."
 not_security = "Unknown security name `{0}`, available are `PUBLIC, SHARED, PRIVATE`."
 security_updated = "Updated security for `{0}` to `{1}`."
+active = "PlayList `{0}` is now active."
 
 # Music
 [commands.music]

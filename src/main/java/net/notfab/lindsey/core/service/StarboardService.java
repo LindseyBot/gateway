@@ -4,7 +4,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.framework.profile.ServerProfile;
 import net.notfab.lindsey.core.framework.profile.guild.Starboard;
 import net.notfab.lindsey.core.repositories.mongo.StarboardRepository;
 import org.jetbrains.annotations.NotNull;
@@ -51,8 +50,12 @@ public class StarboardService {
     }
 
     public TextChannel getChannel(Guild guild) {
-        ServerProfile profile = this.profiles.get(guild);
-        return guild.getTextChannelById(profile.getStarboardChannelId());
+        Long channel = this.profiles.get(guild).getStarboardChannelId();
+        if (channel == null) {
+            return null;
+        } else {
+            return guild.getTextChannelById(channel);
+        }
     }
 
 
