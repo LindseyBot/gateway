@@ -103,7 +103,7 @@ public class Add implements Command {
 
     @Override
     public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("play")
+        HelpPage page = new HelpPage("add")
             .text("commands.music.add.description")
             .usage("L!add <name or URL>")
             .permission("commands.add")
