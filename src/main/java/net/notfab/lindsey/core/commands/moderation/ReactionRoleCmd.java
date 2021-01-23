@@ -9,8 +9,8 @@ import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.menu.Menu;
-import net.notfab.lindsey.core.framework.profile.guild.ReactionRole;
 import net.notfab.lindsey.core.service.ReactionRoleService;
+import net.notfab.lindsey.shared.entities.ReactionRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

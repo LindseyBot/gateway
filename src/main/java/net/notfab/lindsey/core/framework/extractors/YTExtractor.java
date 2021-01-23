@@ -1,6 +1,6 @@
 package net.notfab.lindsey.core.framework.extractors;
 
-import net.notfab.lindsey.core.framework.models.SongSource;
+import net.notfab.lindsey.shared.enums.SongSource;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;

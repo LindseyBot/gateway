@@ -1,6 +1,6 @@
 package net.notfab.lindsey.core.repositories.mongo;
 
-import net.notfab.lindsey.core.framework.profile.guild.ReactionRole;
+import net.notfab.lindsey.shared.entities.ReactionRole;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

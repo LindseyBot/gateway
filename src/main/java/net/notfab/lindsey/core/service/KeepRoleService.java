@@ -2,7 +2,7 @@ package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.framework.profile.ServerProfile;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import org.springframework.stereotype.Service;
 
 @Service

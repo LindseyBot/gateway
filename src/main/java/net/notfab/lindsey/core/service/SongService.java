@@ -11,8 +11,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.sedmelluq.discord.lavaplayer.track.info.AudioTrackInfoBuilder;
 import net.notfab.lindsey.core.framework.AudioLoadResult;
 import net.notfab.lindsey.core.framework.extractors.Extractor;
-import net.notfab.lindsey.core.framework.models.Song;
-import net.notfab.lindsey.core.framework.models.SongSource;
+import net.notfab.lindsey.shared.entities.playlist.Song;
+import net.notfab.lindsey.shared.enums.SongSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

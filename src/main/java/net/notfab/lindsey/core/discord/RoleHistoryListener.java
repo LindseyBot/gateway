@@ -10,10 +10,10 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.profile.MemberProfile;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.framework.profile.member.RoleHistory;
 import net.notfab.lindsey.core.service.KeepRoleService;
+import net.notfab.lindsey.shared.entities.profile.MemberProfile;
+import net.notfab.lindsey.shared.entities.profile.member.RoleHistory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

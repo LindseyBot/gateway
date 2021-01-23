@@ -1,7 +1,7 @@
 package net.notfab.lindsey.core.repositories.mongo;
 
-import net.notfab.lindsey.core.framework.leaderboard.Leaderboard;
-import net.notfab.lindsey.core.framework.leaderboard.LeaderboardType;
+import net.notfab.lindsey.shared.entities.leaderboard.Leaderboard;
+import net.notfab.lindsey.shared.enums.LeaderboardType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;

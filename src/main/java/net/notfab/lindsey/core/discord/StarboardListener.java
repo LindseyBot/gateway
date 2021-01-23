@@ -11,8 +11,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
 import net.notfab.lindsey.core.framework.GFXUtils;
 import net.notfab.lindsey.core.framework.Utils;
-import net.notfab.lindsey.core.framework.profile.guild.Starboard;
 import net.notfab.lindsey.core.service.StarboardService;
+import net.notfab.lindsey.shared.entities.Starboard;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

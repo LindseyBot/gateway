@@ -7,11 +7,11 @@ import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
-import net.notfab.lindsey.core.framework.models.PlayList;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.core.service.AudioService;
 import net.notfab.lindsey.core.service.PlayListService;
 import net.notfab.lindsey.core.service.SongService;
+import net.notfab.lindsey.shared.entities.playlist.PlayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -7,7 +7,7 @@ import net.jodah.expiringmap.ExpirationListener;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.lindsey.core.Lindsey;
-import net.notfab.lindsey.core.framework.profile.MemberProfile;
+import net.notfab.lindsey.shared.entities.profile.MemberProfile;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

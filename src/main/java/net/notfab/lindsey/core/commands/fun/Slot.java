@@ -14,7 +14,7 @@ import net.notfab.lindsey.core.framework.economy.EconomyService;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.leaderboard.LeaderboardService;
-import net.notfab.lindsey.core.framework.leaderboard.LeaderboardType;
+import net.notfab.lindsey.shared.enums.LeaderboardType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;

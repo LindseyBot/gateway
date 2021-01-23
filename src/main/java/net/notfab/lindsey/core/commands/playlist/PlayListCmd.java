@@ -13,10 +13,10 @@ import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.menu.Menu;
-import net.notfab.lindsey.core.framework.models.Curator;
-import net.notfab.lindsey.core.framework.models.PlayList;
-import net.notfab.lindsey.core.framework.models.PlayListSecurity;
 import net.notfab.lindsey.core.service.PlayListService;
+import net.notfab.lindsey.shared.entities.playlist.Curator;
+import net.notfab.lindsey.shared.entities.playlist.PlayList;
+import net.notfab.lindsey.shared.enums.PlayListSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

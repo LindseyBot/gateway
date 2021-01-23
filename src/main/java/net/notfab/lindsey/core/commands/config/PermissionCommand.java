@@ -9,8 +9,8 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.permissions.MemberPermission;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
+import net.notfab.lindsey.shared.entities.permissions.MemberPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

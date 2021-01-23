@@ -12,7 +12,7 @@ import net.notfab.lindsey.core.framework.economy.EconomyService;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.framework.profile.UserProfile;
+import net.notfab.lindsey.shared.entities.profile.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
