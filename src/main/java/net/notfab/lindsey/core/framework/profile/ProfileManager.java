@@ -3,6 +3,9 @@ package net.notfab.lindsey.core.framework.profile;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.notfab.lindsey.shared.entities.profile.MemberProfile;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.entities.profile.UserProfile;
 import org.jetbrains.annotations.NotNull;
 
 public interface ProfileManager {

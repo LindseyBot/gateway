@@ -6,6 +6,9 @@ import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.lindsey.core.repositories.mongo.MemberProfileRepository;
 import net.notfab.lindsey.core.repositories.mongo.ServerProfileRepository;
 import net.notfab.lindsey.core.repositories.mongo.UserProfileRepository;
+import net.notfab.lindsey.shared.entities.profile.MemberProfile;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.entities.profile.UserProfile;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 

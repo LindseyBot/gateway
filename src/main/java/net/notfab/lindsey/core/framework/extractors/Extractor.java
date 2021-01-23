@@ -1,6 +1,6 @@
 package net.notfab.lindsey.core.framework.extractors;
 
-import net.notfab.lindsey.core.framework.models.SongSource;
+import net.notfab.lindsey.shared.enums.SongSource;
 
 public interface Extractor {
 

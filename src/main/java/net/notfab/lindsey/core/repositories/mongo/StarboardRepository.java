@@ -1,6 +1,6 @@
 package net.notfab.lindsey.core.repositories.mongo;
 
-import net.notfab.lindsey.core.framework.profile.guild.Starboard;
+import net.notfab.lindsey.shared.entities.Starboard;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package net.notfab.lindsey.core.repositories.mongo;
 
-import net.notfab.lindsey.core.framework.models.PlayList;
+import net.notfab.lindsey.shared.entities.playlist.PlayList;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

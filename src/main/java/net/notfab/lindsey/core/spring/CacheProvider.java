@@ -3,9 +3,9 @@ package net.notfab.lindsey.core.spring;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.lindsey.core.framework.models.BlackjackModel;
-import net.notfab.lindsey.core.framework.profile.MemberProfile;
-import net.notfab.lindsey.core.framework.profile.ServerProfile;
-import net.notfab.lindsey.core.framework.profile.UserProfile;
+import net.notfab.lindsey.shared.entities.profile.MemberProfile;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.entities.profile.UserProfile;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 

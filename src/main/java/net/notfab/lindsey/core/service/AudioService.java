@@ -13,10 +13,10 @@ import net.notfab.lindsey.core.framework.AudioPlayerSendHandler;
 import net.notfab.lindsey.core.framework.PlaybackListener;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.models.PlayList;
-import net.notfab.lindsey.core.framework.models.PlayListCursor;
-import net.notfab.lindsey.core.framework.models.Song;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.shared.entities.playlist.PlayList;
+import net.notfab.lindsey.shared.entities.playlist.PlayListCursor;
+import net.notfab.lindsey.shared.entities.playlist.Song;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

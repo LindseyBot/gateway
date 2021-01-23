@@ -3,10 +3,14 @@ package net.notfab.lindsey.core.service;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.framework.Utils;
-import net.notfab.lindsey.core.framework.models.*;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.framework.profile.ServerProfile;
 import net.notfab.lindsey.core.repositories.mongo.PlaylistRepository;
+import net.notfab.lindsey.shared.entities.playlist.Curator;
+import net.notfab.lindsey.shared.entities.playlist.PlayList;
+import net.notfab.lindsey.shared.entities.playlist.PlayListCursor;
+import net.notfab.lindsey.shared.entities.playlist.Song;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.enums.PlayListSecurity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

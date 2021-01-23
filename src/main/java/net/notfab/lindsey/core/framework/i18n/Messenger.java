@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.notfab.lindsey.core.framework.Emotes;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.framework.profile.ServerProfile;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import org.springframework.stereotype.Service;
 
 @Service

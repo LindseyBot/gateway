@@ -1,6 +1,6 @@
 package net.notfab.lindsey.core.framework.extractors;
 
-import net.notfab.lindsey.core.framework.models.SongSource;
+import net.notfab.lindsey.shared.enums.SongSource;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

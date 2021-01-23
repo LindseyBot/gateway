@@ -15,12 +15,11 @@ import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.inventory.InventoryService;
 import net.notfab.lindsey.core.framework.inventory.Item;
-import net.notfab.lindsey.core.framework.inventory.ItemMeta;
-import net.notfab.lindsey.core.framework.inventory.enums.Flags;
 import net.notfab.lindsey.core.framework.inventory.enums.Items;
 import net.notfab.lindsey.core.framework.inventory.enums.Type;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.framework.profile.UserProfile;
+import net.notfab.lindsey.shared.entities.profile.UserProfile;
+import net.notfab.lindsey.shared.enums.Flags;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -145,6 +144,7 @@ public class Profile implements Command {
         templateGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // -- Add Header
+        /*
         {
             Items background = profile.getBackground();
             if (background != null) {
@@ -157,7 +157,7 @@ public class Profile implements Command {
                     templateGraphics.drawImage(bufferedImage, 0, 0, null);
                 }
             }
-        }
+        }*/
 
         // -- Add profile picture
         {

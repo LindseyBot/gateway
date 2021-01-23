@@ -6,7 +6,7 @@ plugins {
 
 group = 'net.notfab.lindsey'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '14'
+sourceCompatibility = '15'
 
 configurations {
     compileOnly {
@@ -15,12 +15,19 @@ configurations {
 }
 
 repositories {
-    mavenCentral()
+    mavenLocal()
     jcenter()
     maven { url "https://maven.notfab.net/Hosted" }
     maven { url "https://dl.bintray.com/kodehawa/maven" }
     maven { url "https://dl.bintray.com/sedmelluq/com.sedmelluq" }
     maven { url "https://jitpack.io" }
+    maven {
+        url "https://maven.pkg.github.com/LindseyBot/shared"
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
 }
 
 bootJar {
@@ -35,6 +42,7 @@ dependencies {
     // Framework
     compile group: 'net.dv8tion', name: 'JDA', version: '4.2.0_207'
     compile group: 'net.jodah', name: 'expiringmap', version: '0.5.8'
+    compile group: 'net.notfab.lindsey', name: 'shared', version: '0.1'
 
     // Data
     compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'

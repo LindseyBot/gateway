@@ -6,8 +6,8 @@ import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEve
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
-import net.notfab.lindsey.core.framework.profile.guild.ReactionRole;
 import net.notfab.lindsey.core.service.ReactionRoleService;
+import net.notfab.lindsey.shared.entities.ReactionRole;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
