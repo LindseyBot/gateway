@@ -4,18 +4,16 @@ import lombok.Data;
 import net.notfab.lindsey.core.framework.i18n.Language;
 import net.notfab.lindsey.core.framework.models.PlayList;
 import net.notfab.lindsey.core.framework.models.PlayListCursor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Lazy
-@RedisHash("Lindsey:Profile")
+@Document(collection = "ServerProfiles")
 public class ServerProfile {
 
     @Id
-    private long owner;
+    private String owner;
 
     private String prefix;
     private PlayListCursor cursor;

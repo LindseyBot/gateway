@@ -5,8 +5,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.repositories.mongo.MemberProfileRepository;
-import net.notfab.lindsey.core.repositories.redis.ServerProfileRepository;
-import net.notfab.lindsey.core.repositories.redis.UserProfileRepository;
+import net.notfab.lindsey.core.repositories.mongo.ServerProfileRepository;
+import net.notfab.lindsey.core.repositories.mongo.UserProfileRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -55,10 +55,10 @@ public class ProfileManager {
     }
 
     public UserProfile getUser(long id) {
-        Optional<UserProfile> user = this.userRepository.findById(id);
+        Optional<UserProfile> user = this.userRepository.findById(String.valueOf(id));
         if (user.isEmpty()) {
             UserProfile settings = new UserProfile();
-            settings.setOwner(id);
+            settings.setOwner(String.valueOf(id));
             return settings;
         } else {
             return user.get();
@@ -70,10 +70,10 @@ public class ProfileManager {
     }
 
     public ServerProfile getGuild(long id) {
-        Optional<ServerProfile> guild = this.guildRepository.findById(id);
+        Optional<ServerProfile> guild = this.guildRepository.findById(String.valueOf(id));
         if (guild.isEmpty()) {
             ServerProfile settings = new ServerProfile();
-            settings.setOwner(id);
+            settings.setOwner(String.valueOf(id));
             return settings;
         } else {
             return guild.get();
