@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ServerProfile {
 
     @Id
-    private String owner;
+    private String id;
 
     private String prefix;
     private PlayListCursor cursor;

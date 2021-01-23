@@ -171,11 +171,11 @@ public class Profile implements Command {
         // -- Add account ribbon
         {
             BufferedImage image = null;
-            if (profile.getOwner() == 87166524837613568L) {
+            if ("87166524837613568".equals(profile.getId())) {
                 image = ImageIO.read(this.getResource("ribbons/developer.png"));
-            } else if (profile.getOwner() == 119566649731842049L) {
+            } else if ("119566649731842049".equals(profile.getId())) {
                 image = ImageIO.read(this.getResource("ribbons/designer.png"));
-            } else if (profile.getOwner() == 119482224713269248L) {
+            } else if ("119482224713269248".equals(profile.getId())) {
                 image = ImageIO.read(this.getResource("ribbons/official.png"));
             }
             if (image != null) {
@@ -204,7 +204,7 @@ public class Profile implements Command {
          * 8: 536, 223
          */
         {
-            List<Items> badges = inventory.findAllByType(profile.getOwner(), Type.BADGE)
+            List<Items> badges = inventory.findAllByType(Long.parseLong(profile.getId()), Type.BADGE)
                 .stream()
                 .map(Item::getModel)
                 .collect(Collectors.toList());

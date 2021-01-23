@@ -15,7 +15,7 @@ import javax.persistence.Enumerated;
 public class UserProfile {
 
     @Id
-    private String owner;
+    private String id;
 
     private String name;
     private long lastSeen;
