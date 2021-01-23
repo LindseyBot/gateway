@@ -122,6 +122,16 @@ public class Utils {
         return isLong(arg) || isDouble(arg);
     }
 
+    public static boolean isInt(String arg) {
+        try {
+            if (arg == null) return false;
+            Integer.parseInt(arg);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
     public static boolean isLong(String arg) {
         try {
             if (arg == null) return false;

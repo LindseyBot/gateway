@@ -23,6 +23,7 @@ import net.notfab.lindsey.core.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -47,7 +48,7 @@ public class Play implements Command {
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
             .name("play")
-            .alias("start")
+            .alias("start", "skip")
             .permission("commands.play", "permissions.command")
             .module(Modules.MUSIC)
             .build();
@@ -87,7 +88,7 @@ public class Play implements Command {
             return true;
         }
 
-        Song song;
+        Song song = null;
         if (args.length == 0) {
             song = playlists.findNextSong(playList, member.getGuild().getIdLong());
             if (song == null) {
@@ -97,15 +98,21 @@ public class Play implements Command {
             }
         } else {
             String nameOrURL = this.argsToString(args, 0);
-            if (Utils.isURL(nameOrURL)) {
+            if (Utils.isInt(nameOrURL)) {
+                int pos = Integer.parseInt(nameOrURL);
+                List<Song> songList = playList.getSongs();
+                if (songList.size() >= pos) {
+                    song = playList.getSongs().get(pos - 1);
+                }
+            } else if (Utils.isURL(nameOrURL)) {
                 if (!Utils.isSupportedMusicURL(nameOrURL)) {
                     // Not supported
                     msg.send(channel, sender(member) + i18n.get(member, "commands.music.add.not_supported"));
                     return false;
                 }
                 nameOrURL = songs.normalize(nameOrURL);
+                song = playlists.findSong(playList, nameOrURL);
             }
-            song = playlists.findSong(playList, nameOrURL);
             if (song == null) {
                 // Song not found
                 msg.send(channel, sender(member) + i18n.get(member, "commands.music.play.not_found", nameOrURL));

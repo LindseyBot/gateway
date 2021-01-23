@@ -50,7 +50,10 @@ public enum Emotes {
     CopThink("141555945586163712", "775361985944485898", "copthink"),
     Crown_1("141555945586163712", "777197766362791987", "crown1"),
     Crown_2("141555945586163712", "777197766697943060", "crown2"),
-    Crown_3("141555945586163712", "777197766669369346", "crown3");
+    Crown_3("141555945586163712", "777197766669369346", "crown3"),
+
+    // Emojis
+    MUSIC_LOGO("notes", "\uD83C\uDFB6");
 
     @Getter
     private final String guild;
@@ -60,6 +63,8 @@ public enum Emotes {
     private final String name;
     @Getter
     private boolean animated = false;
+    @Getter
+    private boolean emoji = false;
 
     Emotes(String guild, String id, String name, boolean animated) {
         this.guild = guild;
@@ -74,12 +79,27 @@ public enum Emotes {
         this.name = name;
     }
 
+    Emotes(String name, String utf8) {
+        this.guild = null;
+        this.id = utf8;
+        this.name = name;
+        this.emoji = true;
+    }
+
     public String asEmote() {
-        return "<" + (isAnimated() ? "a" : "") + ":" + this.getName() + ":" + this.getId() + ">";
+        if (isEmoji()) {
+            return this.id;
+        } else {
+            return "<" + (isAnimated() ? "a" : "") + ":" + this.getName() + ":" + this.getId() + ">";
+        }
     }
 
     public String asReaction() {
-        return this.getName() + ":" + this.getId();
+        if (isEmoji()) {
+            return this.id;
+        } else {
+            return this.getName() + ":" + this.getId();
+        }
     }
 
 }

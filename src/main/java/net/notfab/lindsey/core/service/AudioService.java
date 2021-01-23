@@ -3,16 +3,25 @@ package net.notfab.lindsey.core.service;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import net.notfab.lindsey.core.framework.AudioPlayerSendHandler;
 import net.notfab.lindsey.core.framework.PlaybackListener;
+import net.notfab.lindsey.core.framework.i18n.Messenger;
+import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.framework.models.PlayList;
+import net.notfab.lindsey.core.framework.models.PlayListCursor;
+import net.notfab.lindsey.core.framework.models.Song;
+import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AudioService {
@@ -21,10 +30,21 @@ public class AudioService {
     private final Map<Long, AudioPlayer> playerMap = new HashMap<>();
     private final Map<Long, PlaybackListener> listenerMap = new HashMap<>();
     private final PlayListService playlists;
+    private final ShardManager shardManager;
+    private final Messenger msg;
+    private final Translator i18n;
+    private final SongService songs;
+    private final ProfileManager profiles;
 
-    public AudioService(AudioPlayerManager playerManager, PlayListService playlists) {
+    public AudioService(AudioPlayerManager playerManager, PlayListService playlists,
+                        ShardManager shardManager, Messenger msg, Translator i18n, SongService songs, ProfileManager profiles) {
         this.playerManager = playerManager;
         this.playlists = playlists;
+        this.shardManager = shardManager;
+        this.msg = msg;
+        this.i18n = i18n;
+        this.songs = songs;
+        this.profiles = profiles;
     }
 
     /**
@@ -107,7 +127,7 @@ public class AudioService {
         if (hasPlayer(guild)) {
             return this.playerMap.get(guild);
         }
-        PlaybackListener listener = new PlaybackListener(guild, this, this.playlists);
+        PlaybackListener listener = new PlaybackListener(guild, this);
         listenerMap.put(guild, listener);
 
         AudioPlayer player = this.playerManager.createPlayer();
@@ -119,6 +139,61 @@ public class AudioService {
 
     private boolean hasPlayer(long guild) {
         return this.playerMap.containsKey(guild);
+    }
+
+    public void onStarted(long guildId, AudioTrack track) {
+        Guild guild = this.shardManager.getGuildById(guildId);
+        if (guild == null) {
+            return;
+        }
+        Optional<PlayList> oPlayList = playlists.findActive(guildId);
+        if (oPlayList.isEmpty()) {
+            // No playlist active
+            return;
+        }
+        PlayListCursor cursor = this.profiles.get(guild).getCursor();
+        if (cursor == null) {
+            return;
+        }
+        this.msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.playing", cursor.getPosition(), track.getInfo().title));
+    }
+
+    public void onFinished(long guildId, AudioTrackEndReason reason) {
+        Guild guild = this.shardManager.getGuildById(guildId);
+        if (guild == null) {
+            return;
+        }
+        if (reason != AudioTrackEndReason.REPLACED) {
+            // Ignored because was replaced
+            return;
+        }
+        if (!reason.mayStartNext) {
+            // Internal error?
+            this.msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.failed_internal"));
+            return;
+        }
+        Optional<PlayList> oPlayList = playlists.findActive(guildId);
+        if (oPlayList.isEmpty()) {
+            // No playlist active
+            this.msg.sendMusic(guildId, i18n.get(guild, "commands.playlist.no_active"));
+            return;
+        }
+        Song song = playlists.findNextSong(oPlayList.get(), guildId);
+        if (song == null) {
+            // No songs left
+            this.msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.failed_songs"));
+            return;
+        }
+        if (!playlists.updateCursor(oPlayList.get(), song, guildId)) {
+            // Failed to update cursor
+            this.msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.failed_internal"));
+            return;
+        }
+        AudioTrack track = songs.toAudioTrack(song);
+        if (!this.play(guild, track)) {
+            // Failed to start playing (No voice connection)
+            msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.failed_voice"));
+        }
     }
 
 }

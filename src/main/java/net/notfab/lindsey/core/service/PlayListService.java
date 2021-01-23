@@ -134,7 +134,7 @@ public class PlayListService {
         }
         // TODO: Shuffle mode
         int position = cursor.getPosition() + 1;
-        if (position > playList.getSongs().size()) {
+        if (position >= playList.getSongs().size()) {
             position = 0;
         }
         return playList.getSongs().get(position);

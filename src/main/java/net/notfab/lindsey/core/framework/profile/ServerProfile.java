@@ -24,5 +24,6 @@ public class ServerProfile {
 
     private boolean keepRolesEnabled;
     private Long starboardChannelId;
+    private Long musicChannelId;
 
 }
