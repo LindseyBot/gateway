@@ -53,7 +53,8 @@ public enum Emotes {
     Crown_3("141555945586163712", "777197766669369346", "crown3"),
 
     // Emojis
-    MUSIC_LOGO("notes", "\uD83C\uDFB6");
+    MUSIC_LOGO("notes", "\uD83C\uDFB6"),
+    CLOWN("clown", "\uD83E\uDD21");
 
     @Getter
     private final String guild;

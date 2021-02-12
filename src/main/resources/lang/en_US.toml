@@ -63,6 +63,11 @@ page = "Page [{0}/{1}]"
     title = "{0} Leaderboard"
     line = "{0}#{1} - {2} - {3}"
 
+[automod]
+    [automod.antiad]
+    ban = "Banned {0} for advertising."
+    warn = "Hey {0}, advertising is not allowed here."
+
 [commands.core]
     # Help
     [commands.core.help]
