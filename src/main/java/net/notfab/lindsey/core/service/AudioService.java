@@ -163,7 +163,7 @@ public class AudioService {
         if (guild == null) {
             return;
         }
-        if (reason != AudioTrackEndReason.REPLACED) {
+        if (reason == AudioTrackEndReason.REPLACED) {
             // Ignored because was replaced
             return;
         }
