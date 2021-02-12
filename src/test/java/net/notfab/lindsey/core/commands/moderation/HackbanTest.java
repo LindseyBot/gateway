@@ -30,7 +30,7 @@ class HackbanTest {
         assertEquals("hackban", info.getName(), "Name must be hackban");
         assertEquals(Modules.MODERATION, info.getModule(), "Module must be Moderation");
         assertTrue(info.getPermissions().stream()
-                .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
+                .anyMatch(perm -> perm.getName().equals("commands.ban")), "Must use shared ban permission");
     }
 
     @Test
@@ -38,7 +38,7 @@ class HackbanTest {
         HelpArticle article = command.help(null);
         HelpPage page = article.get("hackban");
         assertNotNull(page, "Help page must not be null");
-        assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
+        assertEquals("commands.ban", page.getPermission(), "Permission must be shared");
     }
 
 }
