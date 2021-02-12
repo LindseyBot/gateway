@@ -198,6 +198,9 @@ not_enough = "Not enough items."
     noreason = "No reason specified."
     banned = "Banned {0}."
     interact = "No permission to ban {0}."
+    # Ban
+    [commands.mod.hackban]
+    description = "Bans a user by id, not caring if the user was ever part of the guild."
     # Multiban
     [commands.mod.multiban]
     description = "Bans a list of members from the guild, deleting all messages from that user for the past 7 days."
