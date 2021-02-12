@@ -96,6 +96,7 @@ public class Top implements Command {
 
             UserProfile profile = profiles.getUser(leaderboard.getUser());
             text.append(i18n.get(member, "embeds.leaderboard.line", crown, position, profile.getName(), leaderboard.getCount()));
+            text.append("\n");
             position++;
         }
         EmbedBuilder builder = new EmbedBuilder();

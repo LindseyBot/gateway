@@ -52,7 +52,7 @@ public class LeaderboardService {
     }
 
     public Page<Leaderboard> getLeaderboard(LeaderboardType type, int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "count"));
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "count"));
         return repository.findAllByType(type, pageable);
     }
 

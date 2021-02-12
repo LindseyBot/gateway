@@ -37,10 +37,10 @@ bootJar {
 dependencies {
     compile 'org.jsoup:jsoup:1.11.3'
     compile 'net.kodehawa:imageboard-api:2.4'
-    compile group: 'com.github.Devoxin', name: 'lavaplayer', version: '1.3.60'
 
     // Framework
-    compile group: 'net.dv8tion', name: 'JDA', version: '4.2.0_207'
+    compile group: 'net.dv8tion', name: 'JDA', version: '4.2.0_228'
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.67'
     compile group: 'net.jodah', name: 'expiringmap', version: '0.5.8'
     compile group: 'net.notfab.lindsey', name: 'shared', version: '0.1'
 

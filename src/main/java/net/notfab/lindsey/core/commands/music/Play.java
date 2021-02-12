@@ -14,11 +14,13 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.core.service.AudioService;
 import net.notfab.lindsey.core.service.PlayListService;
 import net.notfab.lindsey.core.service.SongService;
 import net.notfab.lindsey.shared.entities.playlist.PlayList;
 import net.notfab.lindsey.shared.entities.playlist.Song;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import net.notfab.lindsey.shared.enums.PlayListSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,6 +45,9 @@ public class Play implements Command {
 
     @Autowired
     private PlayListService playlists;
+
+    @Autowired
+    private ProfileManager profiles;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -124,6 +129,14 @@ public class Play implements Command {
             msg.send(channel, sender(member) + i18n.get(member, "commands.music.play.failed_internal"));
             return true;
         }
+
+        {
+            // TODO: Remove once web is up
+            ServerProfile profile = this.profiles.get(member.getGuild());
+            profile.setMusicChannelId(channel.getIdLong());
+            this.profiles.save(profile);
+        }
+
         AudioTrack track = songs.toAudioTrack(song);
         if (!audio.play(member.getGuild(), track)) {
             // Failed to start playing (No voice connection)

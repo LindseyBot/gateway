@@ -9,6 +9,7 @@ import net.kodehawa.lib.imageboards.entities.BoardImage;
 import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
+import net.notfab.lindsey.core.framework.command.Modules;
 import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
@@ -39,6 +40,7 @@ public class E926 implements Command {
         return new CommandDescriptor.Builder()
             .name("e926")
             .alias("safefurry")
+            .module(Modules.NSFW)
             .permission("commands.e926", "permissions.command")
             .build();
     }
