@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.repositories.mongo;
+package net.notfab.lindsey.core.repositories.sql;
 
 import net.notfab.lindsey.shared.entities.ReactionRole;
 import org.springframework.data.jpa.repository.JpaRepository;
