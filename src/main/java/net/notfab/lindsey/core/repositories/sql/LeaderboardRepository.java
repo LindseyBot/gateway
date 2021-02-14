@@ -1,13 +1,17 @@
-package net.notfab.lindsey.core.repositories.mongo;
+package net.notfab.lindsey.core.repositories.sql;
 
 import net.notfab.lindsey.shared.entities.leaderboard.Leaderboard;
 import net.notfab.lindsey.shared.enums.LeaderboardType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LeaderboardRepository extends MongoRepository<Leaderboard, String> {
+import java.util.Optional;
+
+public interface LeaderboardRepository extends JpaRepository<Leaderboard, Long> {
 
     Page<Leaderboard> findAllByType(LeaderboardType type, Pageable pageable);
+
+    Optional<Leaderboard> findByTypeAndUser(LeaderboardType type, long user);
 
 }

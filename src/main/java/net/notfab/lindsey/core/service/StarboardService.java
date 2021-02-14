@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.repositories.mongo.StarboardRepository;
+import net.notfab.lindsey.core.repositories.sql.StarboardRepository;
 import net.notfab.lindsey.shared.entities.Starboard;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -28,11 +28,11 @@ public class StarboardService {
         if (message.getChannel().getId().equals(starboardChannel.getId())) {
             oStarboard = repository.findByStarboardMessageId(message.getIdLong());
         } else {
-            oStarboard = repository.findById(message.getId());
+            oStarboard = repository.findById(message.getIdLong());
         }
         if (oStarboard.isEmpty()) {
             Starboard starboard = new Starboard();
-            starboard.setId(message.getId());
+            starboard.setId(message.getIdLong());
             starboard.setChannelId(message.getChannel().getIdLong());
             starboard.setGuildId(message.getGuild().getIdLong());
             return starboard;
