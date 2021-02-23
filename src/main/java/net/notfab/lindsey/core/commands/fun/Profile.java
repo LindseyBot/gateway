@@ -13,13 +13,16 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.inventory.InventoryService;
-import net.notfab.lindsey.core.framework.inventory.Item;
-import net.notfab.lindsey.core.framework.inventory.enums.Items;
-import net.notfab.lindsey.core.framework.inventory.enums.Type;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.service.InventoryService;
+import net.notfab.lindsey.core.service.ItemService;
+import net.notfab.lindsey.shared.entities.items.Background;
+import net.notfab.lindsey.shared.entities.items.Badge;
+import net.notfab.lindsey.shared.entities.items.ItemReference;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
+import net.notfab.lindsey.shared.entities.profile.user.Customization;
 import net.notfab.lindsey.shared.enums.Flags;
+import net.notfab.lindsey.shared.utils.Assets;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -38,9 +41,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.AttributedString;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -54,6 +57,9 @@ public class Profile implements Command {
 
     @Autowired
     private InventoryService inventory;
+
+    @Autowired
+    private ItemService items;
 
     @Autowired
     private ProfileManager profiles;
@@ -143,21 +149,19 @@ public class Profile implements Command {
         templateGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         templateGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        Customization customization = profile.getCustomization();
+
         // -- Add Header
-        /*
-        {
-            Items background = profile.getBackground();
-            if (background != null) {
-                ItemMeta meta = background.getMetadata();
-                if (meta != null && meta.getFontColor() != null) {
-                    fontColor = GFXUtils.getColor(meta.getFontColor());
-                }
-                BufferedImage bufferedImage = background.getImage();
+        if (customization != null) {
+            Background reference = this.getBackground(user.getIdLong(), customization);
+            if (reference != null) {
+                fontColor = GFXUtils.getColor(reference.getFontColor());
+                BufferedImage bufferedImage = Assets.getImage(reference.getAssetUrl());
                 if (bufferedImage != null) {
                     templateGraphics.drawImage(bufferedImage, 0, 0, null);
                 }
             }
-        }*/
+        }
 
         // -- Add profile picture
         {
@@ -203,14 +207,11 @@ public class Profile implements Command {
          * 7: 464, 223
          * 8: 536, 223
          */
-        {
-            List<Items> badges = inventory.findAllByType(Long.parseLong(profile.getId()), Type.BADGE)
-                .stream()
-                .map(Item::getModel)
-                .collect(Collectors.toList());
+        if (customization != null && customization.getBadges() != null) {
+            List<Badge> badges = this.getBadges(user.getIdLong(), customization.getBadges());
             for (int i = 0; i < (Math.min(badges.size(), 8)); i++) {
-                Items badge = badges.get(i);
-                templateGraphics.drawImage(badge.getImage(), 32 + (72 * i), 223, null);
+                Badge badge = badges.get(i);
+                templateGraphics.drawImage(Assets.getImage(badge.getAssetUrl()), 32 + (72 * i), 223, null);
             }
         }
 
@@ -279,6 +280,31 @@ public class Profile implements Command {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    private Background getBackground(long userId, Customization customization) {
+        Long backgroundId = customization.getBackground();
+        if (backgroundId == null) {
+            return null;
+        }
+        ItemReference reference = this.inventory.get(userId, backgroundId);
+        if (reference == null || reference.getCount() != 1) {
+            customization.setBackground(null);
+            return null;
+        }
+        return this.items.getBackground(reference.getItemId());
+    }
+
+    private List<Badge> getBadges(long userId, List<Long> badges) {
+        List<Badge> found = new ArrayList<>();
+        for (Long id : badges) {
+            ItemReference reference = this.inventory.get(userId, id);
+            if (reference == null) {
+                continue;
+            }
+            found.add(this.items.getBadge(reference.getItemId()));
+        }
+        return found;
     }
 
 }
