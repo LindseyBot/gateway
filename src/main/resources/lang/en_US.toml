@@ -190,6 +190,20 @@ not_enough = "Not enough items."
     description = "Slot machine!"
     start = "{0} started the slot machine!"
     values = "Price : {0} | Jackpot: {1}"
+    #Lives
+    [commands.lives]
+    title = "Title"
+    category = "Category"
+    viewers = "Viewers"
+    online = "Online"
+    followers = "Followers"
+    language = "Language"
+    tags = "Tags"
+    last = "Last Live"
+    total = "Total Viewers"
+    playing = "Playing"
+    picarto = "Searches for Picarto.tv streamer information"
+    twitch = "Searches for Twitch.tv streamer information"
 
 [commands.mod]
     # Prune
