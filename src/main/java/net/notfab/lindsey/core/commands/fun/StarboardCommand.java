@@ -8,8 +8,8 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.options.Option;
-import net.notfab.lindsey.core.framework.options.OptionManager;
+import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ public class StarboardCommand implements Command {
     private Translator i18n;
 
     @Autowired
-    private OptionManager options;
+    private ProfileManager profiles;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -40,9 +40,10 @@ public class StarboardCommand implements Command {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
         } else {
-            Option option = options.find("starboard");
+            ServerProfile profile = profiles.get(member.getGuild());
             if (args[0].equalsIgnoreCase("OFF")) {
-                options.set(option, channel.getGuild(), null);
+                profile.setStarboardChannelId(null);
+                profiles.save(profile);
                 msg.send(channel, sender(member) + i18n.get(member, "commands.fun.starboard.disabled"));
             } else {
                 TextChannel target = FinderUtil.findTextChannel(argsToString(args, 0), channel.getGuild());
@@ -50,7 +51,8 @@ public class StarboardCommand implements Command {
                     msg.send(channel, sender(member) + i18n.get(member, "search.channel", argsToString(args, 0)));
                     return false;
                 }
-                options.set(option, channel.getGuild(), target.getId());
+                profile.setStarboardChannelId(target.getIdLong());
+                profiles.save(profile);
                 msg.send(channel, sender(member) + i18n.get(member, "commands.fun.starboard.enabled", target.getAsMention()));
             }
         }

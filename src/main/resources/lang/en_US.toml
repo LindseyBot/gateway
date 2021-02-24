@@ -9,6 +9,7 @@ member_nf = "Member not found"
 help_nf = "No help pages found"
 not_nsfw = "This channel isn't nsfw"
 not_number = "`{0}` is not a number"
+not_boolean = "`{0}` is not a boolean. (Must be true/false)"
 
 [help]
 title = "Help for `{0}`:"
@@ -40,6 +41,8 @@ keeproles = "[Keep Roles] Added {0} roles back."
 [options]
 keeproles = "Readds roles when a member joins"
 language = "Server language, used for audit reasons, modlog, etc.."
+starboard = "Starboard channel"
+playlist = "Active playlist id"
 [options.embed]
 title = "Option `{0}`:"
 type = "**Type**:"
@@ -59,6 +62,11 @@ page = "Page [{0}/{1}]"
     [embeds.leaderboard]
     title = "{0} Leaderboard"
     line = "{0}#{1} - {2} - {3}"
+
+[automod]
+    [automod.antiad]
+    ban = "Banned {0} for advertising."
+    warn = "Hey {0}, advertising is not allowed here."
 
 [commands.core]
     # Help
@@ -100,6 +108,7 @@ page = "Page [{0}/{1}]"
 
 [commands.economy]
 not_enough = "Not enough cookies."
+    win = "You win {0} cookies!"
     [commands.economy.cookies]
     description = "Find out how many cookies a user (like yourself) has!"
     self = "You have {0} :cookie:."
@@ -107,12 +116,6 @@ not_enough = "Not enough cookies."
     daily_already = "You already received your daily cookies. Try again in {0}."
     daily = "+{0} :cookie:! Come back tomorrow to start your streak!"
     daily_streak = "+{0} :cookie:! (Streak = {1}) Come back tomorrow for more cookies!"
-    [commands.economy.slot]
-    win = "You win {0} cookies!"
-    description = "Slot machine!"
-    start = "{0} started the slot machine!"
-    values = "Price : {0} | Jackpot: {1}"
-    lost = "You lost."
     [commands.economy.leaderboard]
     description = "Lindsey Leaderboards"
     unknown_type = "Unknown Leaderboard Type, available: `{0}`."
@@ -121,6 +124,7 @@ not_enough = "Not enough cookies."
 not_enough = "Not enough items."
 
 [commands.fun]
+    lost = "You lost."
     # Anime
     [commands.fun.anime]
     request = "Requested by"
@@ -176,6 +180,16 @@ not_enough = "Not enough items."
     description = "Star all the important messages."
     enabled = "Starboard enabled in {0}."
     disabled = "Starboard is now disabled."
+    # BlackJack
+    [commands.fun.blackjack]
+    draw = "draw"
+    description = "Blackjack! also called 21"
+    price = "Bet mus be between 1 and 5000"
+    # Slot
+    [commands.fun.slot]
+    description = "Slot machine!"
+    start = "{0} started the slot machine!"
+    values = "Price : {0} | Jackpot: {1}"
     #Lives
     [commands.lives]
     title = "Title"
@@ -203,6 +217,9 @@ not_enough = "Not enough items."
     noreason = "No reason specified."
     banned = "Banned {0}."
     interact = "No permission to ban {0}."
+    # Ban
+    [commands.mod.hackban]
+    description = "Bans a user by id, not caring if the user was ever part of the guild."
     # Multiban
     [commands.mod.multiban]
     description = "Bans a list of members from the guild, deleting all messages from that user for the past 7 days."
@@ -282,3 +299,52 @@ rule34 = "Searches for an image on Rule34"
     type = "Type"
     description = "Pokemon Wiki."
     404 = "Pokemon Not Found!"
+
+# PlayList
+[commands.playlist]
+description = "Manage your playlists."
+no_active = "No active playlists. (Try using `L!playlist use`)"
+locked = "Missing permissions to edit this playlist."
+not_found = "No playlists named `{0}` found."
+curator_added = "Added `{0}` as curator on `{1}`."
+curator_removed = "Removed `{0}` as curator from `{1}`."
+limit_reached = "You have reached the playlist limit. [{0}/{1}]"
+created = "Playlist `{0}` created. "
+deleted = "Playlist `{0}` deleted."
+no_songs = "No songs in this playlist yet."
+shuffle_enabled = "Shuffle mode is now enabled."
+shuffle_disabled = "Shuffle mode is now disabled."
+not_imgur = "Not a valid imgur URL, please grab the direct image link (i.imgur.com/id.png)"
+logo_updated = "Updated the logo for `{0}`."
+not_security = "Unknown security name `{0}`, available are `PUBLIC, SHARED, PRIVATE`."
+security_updated = "Updated security for `{0}` to `{1}`."
+active = "PlayList `{0}` is now active."
+
+# Music
+[commands.music]
+    # Connect
+    [commands.music.connect]
+    description = "Makes Lindsey connect to a voice channel."
+    not_in_vc = "No channels specified and you are not in a voice channel."
+    failed = "Failed to join voice channel (No permission? Channel is full?)"
+    connected = "Connected to `{0}`."
+    [commands.music.disconnect]
+    description = "Stops the playback and disconnects from the current voice channel."
+    failed = "Not currently connected."
+    disconnected = "Disconnected. Requested by `{0}`."
+    [commands.music.add]
+    description = "Adds a song (or list of songs) to the playlist"
+    not_supported = "This provider is not supported."
+    failed = "Failed to load track. Reason: `{0}`."
+    added_multiple = "Added {0} songs to the playlist."
+    added_one = "Added {0} to the playlist."
+    [commands.music.remove]
+    description = "Removes all songs from the playlist that match the input."
+    removed = "Removed {0} songs from the playlist."
+    [commands.music.play]
+    description = "Plays a specific song, or skips to the next one."
+    not_found = "No songs named `{0}` found."
+    failed_voice = "Failed to start playback. No voice connection active."
+    failed_songs = "Failed to start playback. No songs found."
+    failed_internal = "Failed to start playback. Internal error."
+    playing = "`[{0}]` - {1}"

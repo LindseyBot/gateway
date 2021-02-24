@@ -4,8 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.framework.profile.UserProfile;
-import net.notfab.lindsey.core.repositories.mongo.LeaderboardRepository;
+import net.notfab.lindsey.core.repositories.sql.LeaderboardRepository;
+import net.notfab.lindsey.shared.entities.leaderboard.Leaderboard;
+import net.notfab.lindsey.shared.entities.profile.UserProfile;
+import net.notfab.lindsey.shared.enums.LeaderboardType;
+import net.notfab.lindsey.shared.utils.Snowflake;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,10 +19,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class LeaderboardService {
 
+    private final Snowflake snowflake;
     private final ProfileManager profiles;
     private final LeaderboardRepository repository;
 
-    public LeaderboardService(ProfileManager profiles, LeaderboardRepository repository) {
+    public LeaderboardService(Snowflake snowflake, ProfileManager profiles, LeaderboardRepository repository) {
+        this.snowflake = snowflake;
         this.profiles = profiles;
         this.repository = repository;
     }
@@ -33,9 +38,9 @@ public class LeaderboardService {
     }
 
     public void update(long user, LeaderboardType type) {
-        String id = type.name() + ":" + user;
-        Leaderboard leaderboard = repository.findById(id).orElse(new Leaderboard());
-        leaderboard.setId(id);
+        Leaderboard leaderboard = repository.findByTypeAndUser(type, user)
+            .orElse(new Leaderboard());
+        leaderboard.setId(snowflake.next());
         leaderboard.setType(type);
         leaderboard.setUser(user);
         if (type == LeaderboardType.COOKIES) {
@@ -50,12 +55,12 @@ public class LeaderboardService {
     }
 
     public Page<Leaderboard> getLeaderboard(LeaderboardType type, int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "count"));
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "count"));
         return repository.findAllByType(type, pageable);
     }
 
     public Leaderboard get(long user, LeaderboardType type) {
-        return repository.findById(type.name() + ":" + user)
+        return repository.findByTypeAndUser(type, user)
             .orElse(null);
     }
 

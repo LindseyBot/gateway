@@ -8,7 +8,7 @@ import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.lindsey.core.Lindsey;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.framework.profile.UserProfile;
+import net.notfab.lindsey.shared.entities.profile.UserProfile;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

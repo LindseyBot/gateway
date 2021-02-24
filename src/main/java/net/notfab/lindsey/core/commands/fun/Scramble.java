@@ -10,12 +10,12 @@ import net.notfab.lindsey.core.framework.command.Modules;
 import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.economy.EconomyService;
-import net.notfab.lindsey.core.framework.i18n.Language;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.options.Option;
-import net.notfab.lindsey.core.framework.options.OptionManager;
+import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.core.framework.waiter.Waiter;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.enums.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +46,7 @@ public class Scramble implements Command {
     private Translator i18n;
 
     @Autowired
-    private OptionManager options;
+    private ProfileManager profiles;
 
     @Autowired
     private Messenger msg;
@@ -73,14 +73,12 @@ public class Scramble implements Command {
         }
         String word;
         if (args.length == 0) {
-            Option option = this.options.find("language");
+            ServerProfile profile = profiles.get(member.getGuild());
             Language language;
-            try {
-                String languageName = this.options.get(option, member.getGuild());
-                language = Language.valueOf(languageName);
-            } catch (IllegalArgumentException ex) {
-                this.options.set(option, member.getGuild(), null);
+            if (profile.getLanguage() == null) {
                 language = Language.en_US;
+            } else {
+                language = profile.getLanguage();
             }
             word = getWord(language.name());
         } else {

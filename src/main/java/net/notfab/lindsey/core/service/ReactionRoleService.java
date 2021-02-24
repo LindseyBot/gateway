@@ -9,8 +9,8 @@ import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.profile.guild.ReactionRole;
-import net.notfab.lindsey.core.repositories.mongo.ReactionRoleRepository;
+import net.notfab.lindsey.core.repositories.sql.ReactionRoleRepository;
+import net.notfab.lindsey.shared.entities.ReactionRole;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 

@@ -12,8 +12,8 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.profile.GuildProfile;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +45,7 @@ public class Prefix implements Command {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
         } else {
-            GuildProfile profile = profiles.get(message.getGuild());
+            ServerProfile profile = profiles.get(message.getGuild());
             profile.setPrefix(args[0]);
             profiles.save(profile);
             msg.send(channel, sender(member) + i18n.get(member, "commands.core.prefix.changed", args[0]));

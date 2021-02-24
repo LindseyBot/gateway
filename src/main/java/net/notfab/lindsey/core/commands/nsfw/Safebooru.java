@@ -9,6 +9,7 @@ import net.kodehawa.lib.imageboards.entities.BoardImage;
 import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
+import net.notfab.lindsey.core.framework.command.Modules;
 import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
@@ -38,6 +39,7 @@ public class Safebooru implements Command {
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
             .name("safebooru")
+            .module(Modules.NSFW)
             .permission("commands.safebooru", "permissions.command")
             .build();
     }

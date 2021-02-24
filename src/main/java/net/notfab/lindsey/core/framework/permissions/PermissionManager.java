@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.notfab.lindsey.core.framework.command.CommandManager;
 import net.notfab.lindsey.core.repositories.sql.PermissionRepository;
+import net.notfab.lindsey.shared.entities.permissions.MemberPermission;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

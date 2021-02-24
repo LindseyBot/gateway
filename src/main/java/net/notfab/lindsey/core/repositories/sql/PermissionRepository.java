@@ -1,7 +1,7 @@
 package net.notfab.lindsey.core.repositories.sql;
 
-import net.notfab.lindsey.core.framework.permissions.MemberPermission;
-import net.notfab.lindsey.core.framework.permissions.PermissionId;
+import net.notfab.lindsey.shared.entities.permissions.MemberPermission;
+import net.notfab.lindsey.shared.entities.permissions.PermissionId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
