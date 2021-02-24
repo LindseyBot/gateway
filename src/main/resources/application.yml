@@ -37,6 +37,8 @@ spring:
     username: root
     password: root
     driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      max-lifetime: 480000
   jpa:
     database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
