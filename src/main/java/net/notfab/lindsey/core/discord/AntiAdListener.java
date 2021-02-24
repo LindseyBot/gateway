@@ -53,6 +53,9 @@ public class AntiAdListener extends ListenerAdapter {
             return;
         }
         ServerProfile profile = profiles.get(event.getGuild());
+        if (profile.getAutoMod() == null) {
+            return;
+        }
         AntiAd settings = profile.getAutoMod()
             .getAntiAd();
         if (!settings.isEnabled()) {

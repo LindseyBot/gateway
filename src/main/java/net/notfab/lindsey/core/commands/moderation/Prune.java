@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 @Component
@@ -81,9 +82,11 @@ public class Prune implements Command {
             });
         }
         int finalI = i;
-        channel.deleteMessages(del).queue(d -> {
-            msg.send(channel, finalI - 1 + i18n.get(member, "commands.mod.prune.del"));
-        });
+        channel.deleteMessages(del)
+            .flatMap(ignored -> channel.sendMessage(finalI - 1 + i18n.get(member, "commands.mod.prune.del")))
+            .delay(5, TimeUnit.SECONDS)
+            .flatMap(Message::delete)
+            .queue();
         return true;
     }
 
