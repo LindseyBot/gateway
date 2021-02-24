@@ -3,6 +3,8 @@ bot:
   integrations:
     rapidapi: ''
     kitsu: ''
+    twitchClient: ''
+    twitchKey: ''
 spring:
   datasource:
     url: jdbc:h2:mem:lindsey
@@ -30,6 +32,8 @@ bot:
   integrations:
     rapidapi: ''
     kitsu: ''
+    twitchClient: ''
+    twitchKey: ''
 spring:
   profiles: prod
   datasource:
