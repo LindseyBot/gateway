@@ -95,7 +95,7 @@ public class Scramble implements Command {
         waiter.forMessage((m) -> m.getContentRaw().equalsIgnoreCase(word) && m.getTextChannel().equals(channel), TimeUnit.SECONDS.toMillis(60)).success((m) -> {
             long seconds = 60 - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - time);
             int prize = (int) ((seconds * forSecond) + (word.length() * forCharacter));
-            msg.send(channel, i18n.get(member, "commands.economy.slot.win", prize));
+            msg.send(channel, "**" + member.getEffectiveName() + "**: " + i18n.get(member, "commands.economy.slot.win", prize));
             economy.pay(member, basePrize + prize);
             active.remove(id);
         }).timeout(() -> {
