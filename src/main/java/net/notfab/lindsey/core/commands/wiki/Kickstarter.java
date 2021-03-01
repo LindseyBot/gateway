@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.notfab.lindsey.core.framework.GFXUtils;
 import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
@@ -18,8 +19,6 @@ import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.awt.Color;
 
 @Component
 public class Kickstarter implements Command {
@@ -63,7 +62,7 @@ public class Kickstarter implements Command {
         String currency = obj.getString("currency_symbol");
         embed.setTitle(obj.getString("name"), obj.getJSONObject("urls").getJSONObject("web").getString("project"));
         embed.setDescription(obj.getString("blurb"));
-        embed.setFooter(i18n.get(member, "commands.fun.anime.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+        embed.setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
             member.getUser().getEffectiveAvatarUrl());
         embed.setImage(obj.getJSONObject("photo").getString("full"));
         embed.addField(i18n.get(member, "commands.wiki.crowdfunding.backers"), Integer.toString(obj.getInt("backers_count")), true);
@@ -77,9 +76,9 @@ public class Kickstarter implements Command {
         embed.addField(i18n.get(member, "commands.wiki.crowdfunding.city"), obj.getJSONObject("location").getString("displayable_name"), true);
         embed.addField(i18n.get(member, "commands.wiki.crowdfunding.category"), obj.getJSONObject("category").getString("name"), true);
         if (obj.getString("state").equals("live")) {
-            embed.setColor(Color.GREEN);
+            embed.setColor(GFXUtils.GREEN);
         } else {
-            embed.setColor(Color.RED);
+            embed.setColor(GFXUtils.RED);
         }
         msg.send(channel, embed.build());
         return true;
@@ -91,7 +90,7 @@ public class Kickstarter implements Command {
             .text("commands.wiki.crowdfunding.description")
             .usage("L!kickstarter <name>")
             .permission("commands.kickstarter")
-            .addExample("L!kickstarter exemple");
+            .addExample("L!kickstarter ouya");
         return HelpArticle.of(page);
     }
 

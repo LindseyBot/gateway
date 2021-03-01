@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.notfab.lindsey.core.framework.GFXUtils;
 import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
@@ -18,7 +19,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.awt.Color;
 import java.io.IOException;
 
 @Component
@@ -83,16 +83,16 @@ public class Catarse implements Command {
         if (!obj.isNull("headline")) {
             embed.setDescription(obj.getString("headline"));
         }
-        embed.setFooter(i18n.get(member, "commands.fun.anime.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+        embed.setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
             member.getUser().getEffectiveAvatarUrl());
         embed.setImage(obj.getString("project_img"));
         if (obj.getBoolean("open_for_contributions")) {
-            embed.setColor(Color.YELLOW);
+            embed.setColor(GFXUtils.YELLOW);
         } else {
             if (obj.getFloat("progress") > 99.99) {
-                embed.setColor(Color.GREEN);
+                embed.setColor(GFXUtils.GREEN);
             } else {
-                embed.setColor(Color.RED);
+                embed.setColor(GFXUtils.RED);
             }
         }
         if (!obj.isNull("headline")) {

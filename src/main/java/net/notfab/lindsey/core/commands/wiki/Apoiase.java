@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.notfab.lindsey.core.framework.GFXUtils;
 import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
@@ -18,8 +19,6 @@ import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.awt.Color;
 
 @Component
 public class Apoiase implements Command {
@@ -81,7 +80,7 @@ public class Apoiase implements Command {
         if (!campaigns.getJSONObject("about").isNull("slogan")) {
             embed.setDescription(campaigns.getJSONObject("about").getString("slogan"));
         }
-        embed.setFooter(i18n.get(member, "commands.fun.anime.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+        embed.setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
             member.getUser().getEffectiveAvatarUrl());
         embed.setImage(campaigns.getJSONObject("about").getString("photo"));
         embed.addField(i18n.get(member, "commands.wiki.crowdfunding.category"), campaigns.getJSONArray("categories").getString(0), true);
@@ -93,9 +92,9 @@ public class Apoiase implements Command {
         embed.addField(i18n.get(member, "commands.wiki.crowdfunding.city"), state.getString("city") + " - " + state.getString("state"), true);
         embed.addField(i18n.get(member, "core.nsfw"), Boolean.toString(nsfw), true);
         if (campaigns.getString("status").equals("published")) {
-            embed.setColor(java.awt.Color.GREEN);
+            embed.setColor(GFXUtils.GREEN);
         } else {
-            embed.setColor(Color.RED);
+            embed.setColor(GFXUtils.RED);
         }
         msg.send(channel, embed.build());
         return true;
