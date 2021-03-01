@@ -16,6 +16,8 @@ public class GFXUtils {
 
     public static Color RED = new Color(210, 47, 47);
     public static Color BLUE = new Color(27, 137, 255);
+    public static Color YELLOW = new Color(255, 255, 0);
+    public static Color GREEN = new Color(0, 204, 0);
 
     /**
      * Crops an image by using the given rectangle (new Rectangle(startX, startY, width, height).
