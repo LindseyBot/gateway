@@ -257,8 +257,13 @@ not_enough = "Not enough items."
     description = "Strikes a user (warnings/punishments)"
     noreason = "No reason specified"
     interact = "This user is immune to strikes."
-    message = "You have received a strike in **{0}**. You now have a total of **{2}** strike(s).\nReason: `{1}`."
+    message = "You have received a strike in **{0}**.\nReason: `{1}`."
     striked = "User striked. Total strikes `{0}` [+{1}]."
+    # Strikes
+    [commands.mod.strikes]
+    description = "Lists a user's strike history."
+    history = "**{0}** was last striked in `{1}` by `{2}`, this user has `{3}` strikes."
+    empty = "**{0}** has a clean record in this server."
     # Softban
     [commands.mod.softban]
     description = "Softbans (ban+unban) a member from the guild, deleting all messages from that user for the past 7 days."

@@ -4,18 +4,20 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.command.*;
 import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.shared.entities.profile.MemberProfile;
+import net.notfab.lindsey.shared.entities.profile.member.Strike;
+import net.notfab.lindsey.shared.repositories.sql.StrikeRepository;
+import net.notfab.lindsey.shared.utils.Snowflake;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Strike implements Command {
+public class StrikeCmd implements Command {
 
     @Autowired
     private Messenger msg;
@@ -24,7 +26,10 @@ public class Strike implements Command {
     private Translator i18n;
 
     @Autowired
-    private ProfileManager profiles;
+    private StrikeRepository repository;
+
+    @Autowired
+    private Snowflake snowflake;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -44,7 +49,7 @@ public class Strike implements Command {
         } else {
             int count;
             Member target;
-            String reason = i18n.get(member, "commands.mod.strike.noreason");
+            String reason = null;
             try {
                 count = Integer.parseInt(args[0]);
                 target = FinderUtil.findMember(args[1], message);
@@ -69,17 +74,26 @@ public class Strike implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.mod.strike.interact"));
                 return false;
             }
-            MemberProfile profile = profiles.get(target);
-            profile.setStrikes(profile.getStrikes() + count);
-            profiles.save(profile);
+            Strike strike = new Strike();
+            strike.setId(this.snowflake.next());
+            strike.setAdmin(member.getIdLong());
+            strike.setGuild(member.getGuild().getIdLong());
+            strike.setUser(target.getIdLong());
+            strike.setCount(count);
+            strike.setReason(reason);
+            this.repository.save(strike);
 
-            Member finalTarget = target;
-            String finalReason = reason;
+            if (reason == null) {
+                reason = i18n.get(member, "commands.mod.strike.noreason");
+            }
+
+            String dmMsg = i18n.get(target, "commands.mod.strike.message", member.getGuild().getName(), reason);
             target.getUser().openPrivateChannel()
-                .queue(dm -> dm.sendMessage(i18n.get(finalTarget, "commands.mod.strike.message", member.getGuild().getName(),
-                    finalReason, profile.getStrikes())).queue());
+                .flatMap(dm -> dm.sendMessage(dmMsg))
+                .queue(Utils.noop(), Utils.noop());
 
-            msg.send(channel, sender(member) + i18n.get(member, "commands.mod.strike.striked", profile.getStrikes(), count));
+            int strikes = this.repository.sumByUserAndGuild(target.getIdLong(), member.getGuild().getIdLong());
+            msg.send(channel, sender(member) + i18n.get(member, "commands.mod.strike.striked", strikes, count));
         }
         return true;
     }

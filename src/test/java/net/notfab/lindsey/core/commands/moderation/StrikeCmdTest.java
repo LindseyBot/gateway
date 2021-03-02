@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class StrikeTest {
+class StrikeCmdTest {
 
-    private Strike command;
+    private StrikeCmd command;
 
     @BeforeEach
     void setUp() {
-        command = mock(Strike.class);
+        command = mock(StrikeCmd.class);
         when(command.getInfo())
             .thenCallRealMethod();
         when(command.help(null))
