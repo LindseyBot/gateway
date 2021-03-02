@@ -66,8 +66,8 @@ public class PlayListCmd implements Command {
             } else if (args[0].equalsIgnoreCase("list")) {
                 // list
                 List<MessageEmbed> pages = this.createList(member, service.findAllByOwner(member.getUser().getIdLong()));
-                if(pages.isEmpty()){
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_playlist"));
+                if (pages.isEmpty()) {
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.no_playlist"));
                     return false;
                 }
                 Menu.create(channel, pages);
