@@ -68,7 +68,7 @@ page = "Page [{0}/{1}]"
 
 [automod]
     [automod.antiad]
-    ban = "Banned {0} for advertising."
+    reason = "Advertising"
     warn = "Hey {0}, advertising is not allowed here."
 
 [commands.core]
