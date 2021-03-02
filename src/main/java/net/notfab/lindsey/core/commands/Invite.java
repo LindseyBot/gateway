@@ -28,7 +28,7 @@ public class Invite implements Command {
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
             .name("invite")
-            .module(Modules.FUN)
+            .module(Modules.CORE)
             .permission("commands.invite", "permissions.command")
             .build();
     }
@@ -52,7 +52,7 @@ public class Invite implements Command {
         HelpPage page = new HelpPage("invite")
             .text("commands.core.invite.description")
             .usage("L!invite")
-            .permission("commands.core.invite.description");
+            .permission("commands.invite");
         return HelpArticle.of(page);
     }
 
