@@ -47,10 +47,8 @@ public class MyAnimeList implements Command {
             article.send(channel, member, args, msg, i18n);
             return false;
         }
-
         OkHttpClient client = new OkHttpClient();
         EmbedBuilder embed = new EmbedBuilder();
-
         Request request = new Request.Builder()
             .url("https://api.jikan.moe/v3/search/anime?q=" + Arrays.toString(args))
             .get()
@@ -62,9 +60,7 @@ public class MyAnimeList implements Command {
             msg.send(channel, i18n.get(member, "commands.fun.anime.404"));
             return true;
         }
-
         JSONObject anime = obj.getJSONArray("results").getJSONObject(0);
-
         String rate = "";
         if (!anime.isNull("rated")) {
             rate = anime.getString("rated");
@@ -74,21 +70,16 @@ public class MyAnimeList implements Command {
             msg.send(channel, i18n.get(member, "core.not_nsfw"));
             return false;
         }
-
         embed.setTitle(anime.getString("title"), anime.getString("url"));
-
         if (!anime.isNull("synopsis")) {
             embed.setDescription(anime.getString("synopsis"));
         }
-
         if (!anime.isNull("image_url")) {
             embed.setThumbnail(anime.getString("image_url"));
         }
-
         if (!anime.isNull("type")) {
             embed.addField(i18n.get(member, "commands.fun.anime.type"), anime.getString("type"), true);
         }
-
         if (!anime.isNull("airing")) {
             if (anime.getBoolean("airing")) {
                 embed.addField(i18n.get(member, "commands.fun.anime.status"), i18n.get(member, "commands.fun.anime.airing"), true);
@@ -96,28 +87,22 @@ public class MyAnimeList implements Command {
                 embed.addField(i18n.get(member, "commands.fun.anime.status"), i18n.get(member, "commands.fun.anime.finished"), true);
             }
         }
-
         if (!anime.isNull("episodes")) {
             embed.addField(i18n.get(member, "commands.fun.anime.episodes"), Integer.toString(anime.getInt("episodes")), true);
         }
-
         if (!anime.isNull("score")) {
             embed.addField(i18n.get(member, "commands.fun.anime.score"), Integer.toString(anime.getInt("score")), true);
         }
-
         if (!anime.isNull("members")) {
             embed.addField(i18n.get(member, "commands.fun.anime.members"), Integer.toString(anime.getInt("members")), true);
         }
-
         if (!anime.isNull("start_date")) {
             embed.addField(i18n.get(member, "commands.fun.anime.first"), anime.getString("start_date").substring(0, 10), true);
         }
-
         if (!anime.isNull("end_date")) {
             embed.addField(i18n.get(member, "commands.fun.anime.last"), anime.getString("end_date").substring(0, 10), true);
         }
-
-        embed.setFooter(i18n.get(member, "commands.fun.anime.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+        embed.setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
             member.getUser().getEffectiveAvatarUrl());
 
         msg.send(channel, embed.build());

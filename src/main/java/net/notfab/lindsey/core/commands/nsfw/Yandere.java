@@ -102,7 +102,7 @@ public class Yandere implements Command {
         EmbedBuilder embed = new EmbedBuilder()
             .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
             .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
-            .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+            .setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
                 member.getUser().getEffectiveAvatarUrl())
             .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
             .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
@@ -114,7 +114,7 @@ public class Yandere implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("yandere")
-            .text("commands.nsfw.description.yandere")
+            .text("commands.nsfw.description")
             .usage("L!yandere [tag] [rating]")
             .permission("commands.yandere")
             .addExample("L!yandere")

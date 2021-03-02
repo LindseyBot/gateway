@@ -77,7 +77,6 @@ public class E621 implements Command {
                             break;
                     }
                 }
-
                 DefaultImageBoards.E621.search(args[0], r).async(furryImages -> {
                     BoardImage image = furryImages.get(random.nextInt(furryImages.size()));
                     try {
@@ -98,7 +97,7 @@ public class E621 implements Command {
         EmbedBuilder embed = new EmbedBuilder()
             .setTitle(i18n.get(member, "commands.nsfw.load"), image.getURL())
             .setDescription("**" + i18n.get(member, "commands.nsfw.tags") + "**:" + image.getTags())
-            .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+            .setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
                 member.getUser().getEffectiveAvatarUrl())
             .addField(i18n.get(member, "commands.nsfw.rating"), image.getRating().toString(), true)
             .addField(i18n.get(member, "commands.nsfw.size"), image.getWidth() + "x" + image.getHeight(), true)
@@ -110,7 +109,7 @@ public class E621 implements Command {
     @Override
     public HelpArticle help(Member member) {
         HelpPage page = new HelpPage("e621")
-            .text("commands.nsfw.description.e621")
+            .text("commands.nsfw.description")
             .usage("L!e621 [tag] [rating]")
             .permission("commands.e621")
             .addExample("L!e621")

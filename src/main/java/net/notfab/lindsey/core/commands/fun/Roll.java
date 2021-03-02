@@ -44,7 +44,7 @@ public class Roll implements Command {
             try {
                 msg.send(channel, i18n.get(member, "commands.fun.roll.roll") + "** " + random.nextInt(Integer.parseInt(args[0])) + "**");
             } catch (IllegalArgumentException ex) {
-                msg.send(channel, "**" + args[0] + "** " + i18n.get(member, "commands.fun.roll.nanumber"));
+                msg.send(channel, "**" + args[0] + "** " + i18n.get(member, "core.not_number",""));
             }
         }
         return false;
