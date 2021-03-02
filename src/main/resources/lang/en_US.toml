@@ -108,6 +108,15 @@ page = "Page [{0}/{1}]"
     [commands.core.prefix]
     description = "Allows you to customize the bot's prefix."
     changed = "Prefix changed to `{0}`."
+    # Invite
+    [commands.core.invite]
+    description = "Displays invite links for Lindsey."
+    title = "Invite Links"
+    all = "All Features"
+    music = "Music Only"
+    mod = "Moderation"
+    minimal = "Minimal"
+    site = "More Options"
 
 [commands.economy]
 not_enough = "Not enough cookies."
