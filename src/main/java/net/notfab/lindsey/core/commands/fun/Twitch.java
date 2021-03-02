@@ -84,7 +84,7 @@ public class Twitch implements Command {
                 .addField(i18n.get(member, "commands.lives.language"), obj.getString("broadcaster_language"), true)
                 .addField(i18n.get(member, "commands.lives.title"), obj.getString("title"), false)
                 .setColor(Color.gray)
-                .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+                .setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
                     member.getUser().getEffectiveAvatarUrl());
             msg.send(channel, embed.build());
             return true;
@@ -100,7 +100,7 @@ public class Twitch implements Command {
             .addField(i18n.get(member, "commands.lives.viewers"), String.valueOf(obj.getInt("viewer_count")), true)
             .addField(i18n.get(member, "commands.lives.title"), obj.getString("title"), true)
             .setColor(Color.red)
-            .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+            .setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
                 member.getUser().getEffectiveAvatarUrl());
         msg.send(channel, embed.build());
         return true;

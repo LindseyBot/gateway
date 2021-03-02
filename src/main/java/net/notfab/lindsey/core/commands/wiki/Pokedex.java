@@ -46,7 +46,6 @@ public class Pokedex implements Command {
             article.send(channel, member, args, msg, i18n);
             return true;
         }
-
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
             .url("https://pokeapi.co/api/v2/pokemon/" + args[0])
@@ -60,19 +59,17 @@ public class Pokedex implements Command {
             msg.send(channel, i18n.get(member, "commands.wiki.pokedex.404"));
             return true;
         }
-
         JSONObject obj = new JSONObject(str);
         JSONArray types = obj.getJSONArray("types");
         String name = obj.getString("name");
-
         EmbedBuilder embed = new EmbedBuilder()
             .setTitle(name.substring(0, 1).toUpperCase() + name.substring(1))
             .addField(i18n.get(member, "commands.wiki.pokedex.id"), Integer.toString(obj.getInt("id")), true)
             .addField(i18n.get(member, "commands.wiki.pokedex.height"), Double.toString((double) obj.getInt("height") / 10), true)
             .addField(i18n.get(member, "commands.wiki.pokedex.weight"), Double.toString((double) obj.getInt("weight") / 10), true)
             .setThumbnail(obj.getJSONObject("sprites").getString("front_default"))
-            .setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
-                member.getUser().getEffectiveAvatarUrl());
+            .setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
+            member.getUser().getEffectiveAvatarUrl());
         if (types.length() == 1) {
             embed.addField(i18n.get(member, "commands.wiki.pokedex.type"), types.getJSONObject(0).getJSONObject("type").getString("name"), true);
         } else {

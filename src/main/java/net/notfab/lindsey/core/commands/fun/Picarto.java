@@ -46,7 +46,6 @@ public class Picarto implements Command {
             article.send(channel, member, args, msg, i18n);
             return false;
         }
-
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
             .url("https://api.picarto.tv/v1/channel/name/" + args[0])
@@ -63,7 +62,6 @@ public class Picarto implements Command {
         EmbedBuilder embed = new EmbedBuilder();
         String title = obj.getString("name");
         embed.setThumbnail(obj.getString("avatar"));
-
         if (obj.getBoolean("online")) {
             title = title + " - Online";
             embed.addField(i18n.get(member, "commands.lives.title"), obj.getString("title"), true);
@@ -83,7 +81,7 @@ public class Picarto implements Command {
         embed.addField(i18n.get(member, "commands.lives.followers"), String.valueOf(obj.getInt("followers")), true);
         embed.addField(i18n.get(member, "commands.lives.language"), obj.getJSONArray("languages").getJSONObject(0).getString("name"), true);
         embed.addField(i18n.get(member, "commands.lives.tags"), obj.getJSONArray("tags").toString(), true);
-        embed.setFooter(i18n.get(member, "commands.nsfw.request") + " " + member.getEffectiveName() + "#" + member.getUser().getDiscriminator(),
+        embed.setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
             member.getUser().getEffectiveAvatarUrl());
 
         msg.send(channel, embed.build());

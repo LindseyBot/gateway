@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands.fun;
+package net.notfab.lindsey.core.commands;
 
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
 import net.notfab.lindsey.core.framework.command.Modules;
@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class NekoTest {
+class InviteTest {
 
-    private Neko command;
+    private Invite command;
 
     @BeforeEach
     void setUp() {
-        command = mock(Neko.class);
+        command = mock(Invite.class);
         when(command.getInfo())
                 .thenCallRealMethod();
         when(command.help(null))
@@ -27,8 +27,8 @@ class NekoTest {
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("neko", info.getName(), "Name must be neko");
-        assertEquals(Modules.FUN, info.getModule(), "Module must be fun");
+        assertEquals("invite", info.getName(), "Name must be invite");
+        assertEquals(Modules.CORE, info.getModule(), "Module must be CORE");
         assertTrue(info.getPermissions().stream()
                 .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
     }
@@ -36,8 +36,9 @@ class NekoTest {
     @Test
     void help() {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("neko");
-        assertNotNull(page, "Help page must not be null");
+        HelpPage page = article.get("invite");
+        assertNotNull(page, "invite page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }
+
 }

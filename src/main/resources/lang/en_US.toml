@@ -12,6 +12,7 @@ not_number = "`{0}` is not a number"
 not_boolean = "`{0}` is not a boolean. (Must be true/false)"
 not_found = "`{0}` not found"
 nsfw = "NSFW"
+request = "Requested by {0}"
 
 [help]
 title = "Help for `{0}`:"
@@ -107,6 +108,15 @@ page = "Page [{0}/{1}]"
     [commands.core.prefix]
     description = "Allows you to customize the bot's prefix."
     changed = "Prefix changed to `{0}`."
+    # Invite
+    [commands.core.invite]
+    description = "Displays invite links for Lindsey."
+    title = "Invite Links"
+    all = "All Features"
+    music = "Music Only"
+    mod = "Moderation"
+    minimal = "Minimal"
+    site = "More Options"
 
 [commands.economy]
 not_enough = "Not enough cookies."
@@ -129,7 +139,6 @@ not_enough = "Not enough items."
     lost = "You lost."
     # Anime
     [commands.fun.anime]
-    request = "Requested by"
     status = "Status"
     episodes = "Episodes"
     rating = "Rating"
@@ -159,7 +168,6 @@ not_enough = "Not enough items."
     # Roll
     [commands.fun.roll]
     roll = "rolled"
-    nanumber = "not a number"
     description = "Rolls a random number."
     [commands.fun.quote]
     description = "Quote is a simple command which generates a random quote every time that it is called."
@@ -225,7 +233,6 @@ not_enough = "Not enough items."
     # Multiban
     [commands.mod.multiban]
     description = "Bans a list of members from the guild, deleting all messages from that user for the past 7 days."
-    banned = "Banned {0}."
     member_nf = "{0} not found"
     ban = "Banned {0} users"
     audit = "{0} - Multiban"
@@ -275,18 +282,10 @@ not_enough = "Not enough items."
 [commands.nsfw]
 load = "Click here if image doesn't load"
 tags = "Tags"
-request = "Requested by "
 rating = "Rating"
 size = "Size"
 score = "Score"
-[commands.nsfw.description]
-rule34 = "Searches for an image on Rule34"
-    danbooru = "Searches for an image on Danbooru"
-    gelbooru = "Searches for an image on Gelbooru"
-    konachan = "Searches for an image on Konachan"
-    Safebooru = "Searches for an image on e926"
-    e621 = "Searches for an image on e621"
-    e926 = "Searches for an image on e926"
+description = "Searches for an image"
 # WIKI
 [commands.wiki]
     #Hearthstone
@@ -327,6 +326,7 @@ description = "Manage your playlists."
 no_active = "No active playlists. (Try using `L!playlist use`)"
 locked = "Missing permissions to edit this playlist."
 not_found = "No playlists named `{0}` found."
+no_playlist = "No playlists found."
 curator_added = "Added `{0}` as curator on `{1}`."
 curator_removed = "Removed `{0}` as curator from `{1}`."
 limit_reached = "You have reached the playlist limit. [{0}/{1}]"
@@ -340,6 +340,10 @@ logo_updated = "Updated the logo for `{0}`."
 not_security = "Unknown security name `{0}`, available are `PUBLIC, SHARED, PRIVATE`."
 security_updated = "Updated security for `{0}` to `{1}`."
 active = "PlayList `{0}` is now active."
+songs = "Songs"
+security = "Security"
+curators = "Curators"
+shuffle = "Shuffle"
 
 # Music
 [commands.music]

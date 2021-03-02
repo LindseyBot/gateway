@@ -10,17 +10,22 @@ import net.notfab.lindsey.core.framework.command.CommandDescriptor;
 import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.enums.Language;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static net.notfab.lindsey.core.framework.command.Modules.FUN;
 
@@ -30,10 +35,8 @@ import static net.notfab.lindsey.core.framework.command.Modules.FUN;
 @Component
 public class Quote implements Command {
 
-    private static final String QUOTES_URL = "https://type.fit/api/quotes";
-    private static final OkHttpClient client = new OkHttpClient().newBuilder()
-        .followSslRedirects(true)
-        .build();
+    @Autowired
+    private ProfileManager profiles;
 
     @Autowired
     private Messenger msg;
@@ -49,22 +52,27 @@ public class Quote implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) {
-        try {
-            Request request = new Request.Builder()
-                .url(QUOTES_URL)
-                .addHeader("Accept", "application/json")
-                .addHeader("Content-Type", "application/json")
-                .build();
+        ServerProfile profile = profiles.get(member.getGuild());
+        Language language;
+        if (profile.getLanguage() == null) {
+            language = Language.en_US;
+        } else {
+            language = profile.getLanguage();
+        }
+        List<String> file = getFile(language.name());
+        String strJson = String.join("", file);
+        HashMap<String, String> quote = this.getRandomQuote(strJson);
+        this.sendEmbed(quote, channel);
 
-            Response response = client.newCall(request).execute();
-            String strJson = response.body().string();
-            HashMap<String, String> quote = this.getRandomQuote(strJson);
-            this.sendEmbed(quote, channel);
+        return true;
+    }
 
-            return true;
-        } catch (IOException e) {
-            this.handleError(channel);
-            return false;
+    private static List<String> getFile(String language) {
+        try (InputStream stream = Quote.class.getResourceAsStream("/quotes/" + language + ".json")) {
+            return new BufferedReader(new InputStreamReader(stream))
+                .lines().collect(Collectors.toList());
+        } catch (IOException ex) {
+            return null;
         }
     }
 
@@ -101,15 +109,6 @@ public class Quote implements Command {
         embed.setDescription(quote.get("author"));
 
         msg.send(channel, embed.build());
-    }
-
-    /**
-     * Send a generic message on channel in case of any errors on Command, like API offline.
-     *
-     * @param channel Channel that message will be sent
-     */
-    private void handleError(TextChannel channel) {
-        channel.sendMessage("Today's defeat will be greater tomorrow, don't worry.").queue();
     }
 
     @Override
