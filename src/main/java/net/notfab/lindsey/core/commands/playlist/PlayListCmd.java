@@ -66,6 +66,10 @@ public class PlayListCmd implements Command {
             } else if (args[0].equalsIgnoreCase("list")) {
                 // list
                 List<MessageEmbed> pages = this.createList(member, service.findAllByOwner(member.getUser().getIdLong()));
+                if(pages.isEmpty()){
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_playlist"));
+                    return false;
+                }
                 Menu.create(channel, pages);
                 return true;
             }
@@ -241,12 +245,12 @@ public class PlayListCmd implements Command {
         builder.setThumbnail(playList.getLogoUrl());
         builder.setColor(GFXUtils.getAverageColor(member.getUser().getEffectiveAvatarUrl()));
         builder.setTitle(playList.getName());
-        builder.addField("Songs", playList.getSongs().size() + " - [Link](https://notfab.net/lindsey/playlists/" + playList.getId() + ")", true);
-        builder.addField("Security", playList.getSecurity().name(), true);
-        builder.addField("Curators", String.valueOf(playList.getCurators().size()), true);
-        builder.addField("Shuffle", String.valueOf(playList.isShuffle()), true);
-
-        builder.setFooter("Requested By " + member.getUser().getAsTag(), member.getUser().getEffectiveAvatarUrl());
+        builder.addField(i18n.get(member, "commands.playlist.songs"), playList.getSongs().size() + " - [Link](https://notfab.net/lindsey/playlists/" + playList.getId() + ")", true);
+        builder.addField(i18n.get(member, "commands.playlist.security"), playList.getSecurity().name(), true);
+        builder.addField(i18n.get(member, "commands.playlist.curators"), String.valueOf(playList.getCurators().size()), true);
+        builder.addField(i18n.get(member, "commands.playlist.shuffle"), String.valueOf(playList.isShuffle()), true);
+        builder.setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
+            member.getUser().getEffectiveAvatarUrl());
         builder.setTimestamp(Instant.now());
         return builder.build();
     }
