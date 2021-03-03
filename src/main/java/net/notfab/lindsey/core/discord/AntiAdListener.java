@@ -8,28 +8,36 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
-import net.notfab.lindsey.core.framework.Emotes;
+import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.shared.entities.profile.MemberProfile;
 import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.entities.profile.member.Strike;
 import net.notfab.lindsey.shared.entities.profile.server.AntiAd;
+import net.notfab.lindsey.shared.repositories.sql.StrikeRepository;
+import net.notfab.lindsey.shared.utils.Snowflake;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class AntiAdListener extends ListenerAdapter {
 
+    private final Snowflake snowflake;
     private final ProfileManager profiles;
+    private final StrikeRepository strikeRepository;
     private final Translator i18n;
     private final Set<String> officialInvites = new HashSet<>();
 
-    public AntiAdListener(Lindsey lindsey, ProfileManager profiles, Translator i18n) {
+    public AntiAdListener(Lindsey lindsey, Snowflake snowflake, ProfileManager profiles,
+                          StrikeRepository strikeRepository, Translator i18n) {
         lindsey.addEventListener(this);
+        this.snowflake = snowflake;
         this.profiles = profiles;
+        this.strikeRepository = strikeRepository;
         this.i18n = i18n;
         this.officialInvites.add("discord-api");
         this.officialInvites.add("hypesquad");
@@ -77,28 +85,23 @@ public class AntiAdListener extends ListenerAdapter {
         if (!found) {
             return;
         }
-        MemberProfile memberProfile = this.profiles.get(event.getMember());
-        memberProfile.setStrikes(memberProfile.getStrikes() + 1);
-        this.profiles.save(memberProfile);
-        if (settings.isBan() && memberProfile.getStrikes() >= settings.getStrikes()) {
-            event.getMember().ban(7, "Advertising")
-                .flatMap(aVoid -> event.getChannel()
-                    .sendMessage(i18n.get(event.getGuild(), "automod.antiad.ban", event.getMember().getEffectiveName())))
-                .map(msg -> {
-                    if (event.getGuild().getId().equals("141555945586163712")) {
-                        return msg.addReaction(Emotes.CLOWN.asReaction());
-                    } else {
-                        return msg;
-                    }
-                })
-                .queue();
-        } else {
-            event.getMessage().delete()
-                .reason("Advertising")
-                .flatMap(aVoid -> event.getChannel()
-                    .sendMessage(i18n.get(event.getGuild(), "automod.antiad.warn", event.getMember().getEffectiveName())))
-                .queue();
-        }
+
+        Strike strike = new Strike();
+        strike.setId(snowflake.next());
+        strike.setGuild(event.getGuild().getIdLong());
+        strike.setUser(event.getMember().getIdLong());
+        strike.setAdmin(event.getGuild().getSelfMember().getIdLong());
+        strike.setCount(settings.getStrikes());
+        strike.setReason(i18n.get(event.getGuild(), "automod.antiad.reason"));
+        this.strikeRepository.save(strike);
+
+        event.getMessage().delete()
+            .reason("Advertising")
+            .flatMap(aVoid -> event.getChannel()
+                .sendMessage(i18n.get(event.getGuild(), "automod.antiad.warn", event.getMember().getEffectiveName())))
+            .delay(10, TimeUnit.SECONDS)
+            .flatMap(Message::delete)
+            .queue(Utils.noop(), Utils.noop());
     }
 
     private boolean isOffense(Invite invite, Guild guild) {

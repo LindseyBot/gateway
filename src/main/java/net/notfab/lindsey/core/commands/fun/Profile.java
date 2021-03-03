@@ -20,8 +20,9 @@ import net.notfab.lindsey.shared.entities.items.Background;
 import net.notfab.lindsey.shared.entities.items.Badge;
 import net.notfab.lindsey.shared.entities.items.ItemReference;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
-import net.notfab.lindsey.shared.entities.profile.user.Customization;
+import net.notfab.lindsey.shared.entities.profile.user.UserCustomization;
 import net.notfab.lindsey.shared.enums.Flags;
+import net.notfab.lindsey.shared.repositories.sql.UserCustomizationRepository;
 import net.notfab.lindsey.shared.utils.Assets;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -63,6 +64,9 @@ public class Profile implements Command {
 
     @Autowired
     private ProfileManager profiles;
+
+    @Autowired
+    private UserCustomizationRepository customizationRepository;
 
     @Value("${bot.token}")
     private String token;
@@ -149,10 +153,12 @@ public class Profile implements Command {
         templateGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         templateGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Customization customization = profile.getCustomization();
+        UserCustomization customization = customizationRepository
+            .findById(user.getIdLong())
+            .orElse(new UserCustomization());
 
         // -- Add Header
-        if (customization != null) {
+        {
             Background reference = this.getBackground(user.getIdLong(), customization);
             if (reference != null) {
                 fontColor = GFXUtils.getColor(reference.getFontColor());
@@ -175,11 +181,11 @@ public class Profile implements Command {
         // -- Add account ribbon
         {
             BufferedImage image = null;
-            if ("87166524837613568".equals(profile.getId())) {
+            if (87166524837613568L == profile.getUser()) {
                 image = ImageIO.read(this.getResource("ribbons/developer.png"));
-            } else if ("119566649731842049".equals(profile.getId())) {
+            } else if (119566649731842049L == profile.getUser()) {
                 image = ImageIO.read(this.getResource("ribbons/designer.png"));
-            } else if ("119482224713269248".equals(profile.getId())) {
+            } else if (119482224713269248L == profile.getUser()) {
                 image = ImageIO.read(this.getResource("ribbons/official.png"));
             }
             if (image != null) {
@@ -193,8 +199,9 @@ public class Profile implements Command {
             if (country == null) {
                 country = Flags.Unknown;
             }
-            BufferedImage flag = country.getImage();
-            templateGraphics.drawImage(flag, 168, 39, null);
+            // TODO: Reimplement with assets from CDN
+            // BufferedImage flag = country.getImage();
+            // templateGraphics.drawImage(flag, 168, 39, null);
         }
 
         /* Badges
@@ -282,7 +289,7 @@ public class Profile implements Command {
         }
     }
 
-    private Background getBackground(long userId, Customization customization) {
+    private Background getBackground(long userId, UserCustomization customization) {
         Long backgroundId = customization.getBackground();
         if (backgroundId == null) {
             return null;

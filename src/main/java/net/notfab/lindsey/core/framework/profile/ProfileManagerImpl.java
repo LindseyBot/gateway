@@ -5,10 +5,10 @@ import net.jodah.expiringmap.ExpirationListener;
 import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.lindsey.core.repositories.mongo.MemberProfileRepository;
 import net.notfab.lindsey.core.repositories.mongo.ServerProfileRepository;
-import net.notfab.lindsey.core.repositories.mongo.UserProfileRepository;
 import net.notfab.lindsey.shared.entities.profile.MemberProfile;
 import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
+import net.notfab.lindsey.shared.repositories.sql.UserProfileRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -69,11 +69,11 @@ public class ProfileManagerImpl implements ProfileManager, ExpirationListener<St
         if (this.userProfileCache.containsKey(id)) {
             return this.userProfileCache.get(id);
         }
-        Optional<UserProfile> oProfile = this.userRepository.findById(String.valueOf(id));
+        Optional<UserProfile> oProfile = this.userRepository.findById(id);
         UserProfile profile;
         if (oProfile.isEmpty()) {
             profile = new UserProfile();
-            profile.setId(String.valueOf(id));
+            profile.setUser(id);
         } else {
             profile = oProfile.get();
             this.userProfileCache.put(id, profile);
@@ -107,7 +107,7 @@ public class ProfileManagerImpl implements ProfileManager, ExpirationListener<St
     @Override
     public void save(@NotNull UserProfile profile) {
         userRepository.save(profile);
-        this.userProfileCache.remove(Long.parseLong(profile.getId()));
+        this.userProfileCache.remove(profile.getUser());
     }
 
     @Override
