@@ -10,6 +10,8 @@ import net.notfab.lindsey.shared.rpc.FVoiceChannel;
 import net.notfab.lindsey.shared.rpc.services.RemoteGuilds;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,6 +65,21 @@ public class RemoteGuildsImpl implements RemoteGuilds {
             return channel;
         }).collect(Collectors.toList()));
         return result;
+    }
+
+    @Override
+    public List<FGuild> getDetails(List<Long> ids, long userId) {
+        List<FGuild> guilds = new ArrayList<>();
+        for (Long id : ids) {
+            FGuild guild;
+            try {
+                guild = this.getGuild(id, userId);
+            } catch (IllegalStateException | IllegalArgumentException ex) {
+                continue;
+            }
+            guilds.add(guild);
+        }
+        return guilds;
     }
 
 }
