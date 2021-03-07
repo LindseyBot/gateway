@@ -48,7 +48,7 @@ public class ReferenceCmd implements Command {
             FMember reference = new FMember();
             reference.setId(target.getIdLong());
             reference.setName(target.getUser().getName());
-            reference.setDiscriminator(Integer.parseInt(target.getUser().getDiscriminator()));
+            reference.setDiscrim(target.getUser().getDiscriminator());
             reference.setAvatarUrl(target.getUser().getEffectiveAvatarUrl());
             reference.setGuildId(target.getGuild().getIdLong());
             reference.setGuildName(target.getGuild().getName());
