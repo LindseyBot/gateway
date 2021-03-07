@@ -282,6 +282,10 @@ not_enough = "Not enough items."
     moving = "Moving members..."
     splitting = "Splitting members..."
     permission_move = "No permission to move `{0}`."
+    # Referencing
+    [commands.mod.reference]
+    description = "Creates a reference to a user for use in the control panel."
+    created = "Reference created, use the following ticket on the website: `{0}`"
 
 # NSFW
 [commands.nsfw]
