@@ -13,10 +13,10 @@ import net.notfab.lindsey.core.framework.AudioPlayerSendHandler;
 import net.notfab.lindsey.core.framework.PlaybackListener;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.shared.entities.playlist.PlayList;
-import net.notfab.lindsey.shared.entities.playlist.PlayListCursor;
-import net.notfab.lindsey.shared.entities.playlist.Song;
+import net.notfab.lindsey.shared.entities.music.Track;
+import net.notfab.lindsey.shared.entities.profile.server.MusicSettings;
+import net.notfab.lindsey.shared.repositories.sql.server.MusicSettingsRepository;
+import net.notfab.lindsey.shared.services.PlayListService;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -33,18 +33,19 @@ public class AudioService {
     private final ShardManager shardManager;
     private final Messenger msg;
     private final Translator i18n;
-    private final SongService songs;
-    private final ProfileManager profiles;
+    private final TrackService songs;
+    private final MusicSettingsRepository musicSettings;
 
     public AudioService(AudioPlayerManager playerManager, PlayListService playlists,
-                        ShardManager shardManager, Messenger msg, Translator i18n, SongService songs, ProfileManager profiles) {
+                        ShardManager shardManager, Messenger msg, Translator i18n, TrackService songs,
+                        MusicSettingsRepository musicSettings) {
         this.playerManager = playerManager;
         this.playlists = playlists;
         this.shardManager = shardManager;
         this.msg = msg;
         this.i18n = i18n;
         this.songs = songs;
-        this.profiles = profiles;
+        this.musicSettings = musicSettings;
     }
 
     /**
@@ -146,16 +147,18 @@ public class AudioService {
         if (guild == null) {
             return;
         }
-        Optional<PlayList> oPlayList = playlists.findActive(guildId);
-        if (oPlayList.isEmpty()) {
+        MusicSettings settings = this.musicSettings.findById(guildId)
+            .orElse(new MusicSettings(guildId));
+        if (settings.getActivePlayList() == null) {
             // No playlist active
             return;
         }
-        PlayListCursor cursor = this.profiles.get(guild).getCursor();
-        if (cursor == null) {
+        int cursor = settings.getPosition();
+        Optional<Track> oTrack = this.playlists.getByPos(settings.getActivePlayList(), cursor);
+        if (oTrack.isEmpty()) {
             return;
         }
-        this.msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.playing", cursor.getPosition(), track.getInfo().title));
+        this.msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.playing", cursor + 1, track.getInfo().title));
     }
 
     public void onFinished(long guildId, AudioTrackEndReason reason) {
@@ -172,24 +175,22 @@ public class AudioService {
             this.msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.failed_internal"));
             return;
         }
-        Optional<PlayList> oPlayList = playlists.findActive(guildId);
-        if (oPlayList.isEmpty()) {
+        MusicSettings settings = this.musicSettings.findById(guildId)
+            .orElse(new MusicSettings(guildId));
+        if (settings.getActivePlayList() == null) {
             // No playlist active
             this.msg.sendMusic(guildId, i18n.get(guild, "commands.playlist.no_active"));
             return;
         }
-        Song song = playlists.findNextSong(oPlayList.get(), guildId);
-        if (song == null) {
+        Optional<Track> oTrack = playlists.getNext(settings.getActivePlayList(), settings.getPosition());
+        if (oTrack.isEmpty()) {
             // No songs left
             this.msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.failed_songs"));
             return;
         }
-        if (!playlists.updateCursor(oPlayList.get(), song, guildId)) {
-            // Failed to update cursor
-            this.msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.failed_internal"));
-            return;
-        }
-        AudioTrack track = songs.toAudioTrack(song);
+        settings.setPosition(settings.getPosition() + 1);
+        this.musicSettings.save(settings);
+        AudioTrack track = songs.toAudioTrack(oTrack.get());
         if (!this.play(guild, track)) {
             // Failed to start playing (No voice connection)
             msg.sendMusic(guildId, i18n.get(guild, "commands.music.play.failed_voice"));

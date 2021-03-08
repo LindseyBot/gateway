@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class PlayTest {
+class PlayCmdTest {
 
-    private Play command;
+    private PlayCmd command;
 
     @BeforeEach
     void setUp() {
-        command = mock(Play.class);
+        command = mock(PlayCmd.class);
         when(command.getInfo())
             .thenCallRealMethod();
         when(command.help(null))

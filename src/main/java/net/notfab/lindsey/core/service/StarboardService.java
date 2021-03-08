@@ -3,9 +3,10 @@ package net.notfab.lindsey.core.service;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.core.repositories.sql.StarboardRepository;
 import net.notfab.lindsey.shared.entities.Starboard;
+import net.notfab.lindsey.shared.entities.profile.server.StarboardSettings;
+import net.notfab.lindsey.shared.repositories.sql.server.StarboardSettingsRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,11 @@ import java.util.Optional;
 public class StarboardService {
 
     private final StarboardRepository repository;
-    private final ProfileManager profiles;
+    private final StarboardSettingsRepository settingsRepository;
 
-    public StarboardService(StarboardRepository repository, ProfileManager profiles) {
+    public StarboardService(StarboardRepository repository, StarboardSettingsRepository settingsRepository) {
         this.repository = repository;
-        this.profiles = profiles;
+        this.settingsRepository = settingsRepository;
     }
 
     @NotNull
@@ -50,7 +51,12 @@ public class StarboardService {
     }
 
     public TextChannel getChannel(Guild guild) {
-        Long channel = this.profiles.get(guild).getStarboardChannelId();
+        StarboardSettings settings = this.settingsRepository.findById(guild.getIdLong())
+            .orElse(new StarboardSettings());
+        if (!settings.isEnabled()) {
+            return null;
+        }
+        Long channel = settings.getChannel();
         if (channel == null) {
             return null;
         } else {

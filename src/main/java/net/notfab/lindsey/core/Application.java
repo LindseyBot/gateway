@@ -5,6 +5,9 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.notfab.lindsey.shared.repositories.sql.CuratorRepository;
+import net.notfab.lindsey.shared.repositories.sql.TrackRepository;
+import net.notfab.lindsey.shared.services.PlayListService;
 import net.notfab.lindsey.shared.services.ReferencingService;
 import net.notfab.lindsey.shared.utils.Snowflake;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +60,11 @@ public class Application implements ApplicationRunner {
     @Bean
     public ReferencingService referencingService(StringRedisTemplate redis, ObjectMapper objectMapper) {
         return new ReferencingService(objectMapper, redis);
+    }
+
+    @Bean
+    public PlayListService playListService(StringRedisTemplate redis, TrackRepository repository, CuratorRepository curators) {
+        return new PlayListService(repository, redis, curators);
     }
 
 }

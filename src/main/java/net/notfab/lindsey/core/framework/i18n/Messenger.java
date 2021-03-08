@@ -7,19 +7,19 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.notfab.lindsey.core.framework.Emotes;
-import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.entities.profile.server.MusicSettings;
+import net.notfab.lindsey.shared.repositories.sql.server.MusicSettingsRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Messenger {
 
     private final ShardManager shardManager;
-    private final ProfileManager profileManager;
+    private final MusicSettingsRepository musicSettings;
 
-    public Messenger(ShardManager shardManager, ProfileManager profileManager) {
+    public Messenger(ShardManager shardManager, MusicSettingsRepository musicSettings) {
         this.shardManager = shardManager;
-        this.profileManager = profileManager;
+        this.musicSettings = musicSettings;
     }
 
     public void send(TextChannel channel, String message) {
@@ -49,15 +49,16 @@ public class Messenger {
         if (guild == null) {
             return;
         }
-        ServerProfile profile = this.profileManager.getGuild(guildId);
-        Long channelId = profile.getMusicChannelId();
-        if (channelId == null) {
+        MusicSettings settings = this.musicSettings.findById(guildId)
+            .orElse(new MusicSettings(guildId));
+        if (!settings.isLogTracks()) {
             return;
         }
-        TextChannel channel = guild.getTextChannelById(channelId);
+        TextChannel channel = guild.getTextChannelById(settings.getLogChannel());
         if (channel == null) {
-            profile.setMusicChannelId(null);
-            this.profileManager.save(profile);
+            settings.setLogTracks(false);
+            settings.setLogChannel(null);
+            this.musicSettings.save(settings);
             return;
         }
         this.send(channel, Emotes.MUSIC_LOGO.asEmote() + " " + message);

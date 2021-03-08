@@ -8,10 +8,6 @@ import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.service.AudioService;
-import net.notfab.lindsey.core.service.PlayListService;
-import net.notfab.lindsey.core.service.SongService;
-import net.notfab.lindsey.shared.entities.playlist.PlayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,15 +20,6 @@ public class TestCommand implements Command {
     @Autowired
     private Messenger msg;
 
-    @Autowired
-    private AudioService audio;
-
-    @Autowired
-    private SongService songs;
-
-    @Autowired
-    private PlayListService playListService;
-
     @Override
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
@@ -43,11 +30,6 @@ public class TestCommand implements Command {
 
     @Override
     public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
-        PlayList playList = playListService.findByName(member.getUser(), "test");
-        if (playList == null) {
-            playList = playListService.create(member.getUser(), "test");
-        }
-        playListService.setActive(member.getGuild(), playList);
         return false;
     }
 

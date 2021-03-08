@@ -13,10 +13,13 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.service.PlayListService;
-import net.notfab.lindsey.core.service.SongService;
+import net.notfab.lindsey.core.service.TrackService;
+import net.notfab.lindsey.shared.entities.music.Track;
 import net.notfab.lindsey.shared.entities.playlist.PlayList;
-import net.notfab.lindsey.shared.entities.playlist.Song;
+import net.notfab.lindsey.shared.entities.profile.server.MusicSettings;
+import net.notfab.lindsey.shared.repositories.sql.PlayListRepository;
+import net.notfab.lindsey.shared.repositories.sql.server.MusicSettingsRepository;
+import net.notfab.lindsey.shared.services.PlayListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +27,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
-public class Add implements Command {
+public class AddCmd implements Command {
 
     @Autowired
     private Messenger msg;
@@ -33,10 +36,16 @@ public class Add implements Command {
     private Translator i18n;
 
     @Autowired
-    private SongService songs;
+    private TrackService tracks;
 
     @Autowired
     private PlayListService playlists;
+
+    @Autowired
+    private MusicSettingsRepository musicSettings;
+
+    @Autowired
+    private PlayListRepository repository;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -62,10 +71,10 @@ public class Add implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.music.add.not_supported"));
                 return false;
             }
-            result = songs.loadTrack(nameOrURL);
+            result = tracks.loadTrack(nameOrURL);
         } else {
             // Search
-            result = songs.search(nameOrURL);
+            result = tracks.search(nameOrURL);
         }
 
         if (result.isFailure()) {
@@ -73,22 +82,38 @@ public class Add implements Command {
             return true;
         }
 
-        Optional<PlayList> oPlayList = playlists.findActive(member.getGuild());
-        if (oPlayList.isEmpty()) {
+        MusicSettings settings = this.musicSettings.findById(member.getGuild().getIdLong())
+            .orElse(new MusicSettings(member.getGuild().getIdLong()));
+        if (settings.getActivePlayList() == null) {
             // No active playlist
             msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.no_active"));
             return false;
         }
-        PlayList playList = oPlayList.get();
-        if (!playlists.hasPermission(playList, member.getUser())) {
-            // No permission to modify this PlayList
-            msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
+
+        Optional<PlayList> oPlayList = this.repository.findById(settings.getActivePlayList());
+        if (oPlayList.isEmpty()) {
+            // Deleted playlist
+            settings.setActivePlayList(null);
+            this.musicSettings.save(settings);
+            msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.no_active"));
             return false;
         }
 
-        long total_added = playlists.add(playList, result.getTrackList().stream()
-            .map(track -> songs.createSong(track))
-            .filter(Objects::nonNull).toArray(Song[]::new));
+        PlayList playList = oPlayList.get();
+        if (!this.playlists.canModify(playList, member.getUser().getIdLong())) {
+            // No permission to modify playlist
+            msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
+            // Private playlists are only usable in the owner's guild
+            if (playList.getOwner() != member.getGuild().getOwnerIdLong()) {
+                settings.setActivePlayList(null);
+                this.musicSettings.save(settings);
+            }
+            return true;
+        }
+
+        long total_added = playlists.add(playList.getId(), result.getTrackList().stream()
+            .map(track -> tracks.create(track))
+            .filter(Objects::nonNull).toArray(Track[]::new));
 
         if (total_added == 1) {
             // Added one song

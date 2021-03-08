@@ -35,4 +35,9 @@ public class SCExtractor implements Extractor {
         return SongSource.SoundCloud;
     }
 
+    @Override
+    public String getUrl(String code) {
+        return getSourceName().getBaseURL() + code;
+    }
+
 }

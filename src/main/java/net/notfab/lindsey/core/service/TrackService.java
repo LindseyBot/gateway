@@ -11,17 +11,19 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.sedmelluq.discord.lavaplayer.track.info.AudioTrackInfoBuilder;
 import net.notfab.lindsey.core.framework.AudioLoadResult;
 import net.notfab.lindsey.core.framework.extractors.Extractor;
-import net.notfab.lindsey.shared.entities.playlist.Song;
+import net.notfab.lindsey.shared.entities.music.Track;
 import net.notfab.lindsey.shared.enums.SongSource;
+import net.notfab.lindsey.shared.repositories.sql.TrackRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Service
-public class SongService {
+public class TrackService {
 
     private final AudioPlayerManager playerManager;
     private final List<Extractor> extractors;
@@ -29,13 +31,16 @@ public class SongService {
     private final YoutubeAudioSourceManager youtube;
     private final SoundCloudAudioSourceManager soundCloud;
 
-    public SongService(AudioPlayerManager playerManager, List<Extractor> extractors,
-                       YoutubeAudioSourceManager youtube,
-                       SoundCloudAudioSourceManager soundCloud) {
+    private final TrackRepository repository;
+
+    public TrackService(AudioPlayerManager playerManager, List<Extractor> extractors,
+                        YoutubeAudioSourceManager youtube,
+                        SoundCloudAudioSourceManager soundCloud, TrackRepository repository) {
         this.playerManager = playerManager;
         this.extractors = extractors;
         this.youtube = youtube;
         this.soundCloud = soundCloud;
+        this.repository = repository;
     }
 
     public AudioLoadResult loadTrack(String url) {
@@ -90,60 +95,72 @@ public class SongService {
 
     // ---
 
-    public String normalize(String url) {
+    public String extract(String url) {
         for (Extractor extractor : this.extractors) {
             if (!extractor.isSupported(url) || extractor.isPlaylist(url)) {
                 continue;
             }
-            String identifier = extractor.extract(url);
-            return extractor.getSourceName().getBaseURL() + identifier;
-        }
-        return url;
-    }
-
-    public Song createSong(AudioTrack track) {
-        return this.createSong(track.getInfo());
-    }
-
-    public Song createSong(AudioTrackInfo info) {
-        for (Extractor extractor : this.extractors) {
-            if (!extractor.isSupported(info.uri) || extractor.isPlaylist(info.uri)) {
-                continue;
-            }
-            Song song = new Song();
-            song.setName(info.title);
-            song.setAuthor(info.author);
-            song.setSource(extractor.getSourceName());
-            song.setStream(info.isStream);
-            song.setLength(info.length);
-
-            String identifier = extractor.extract(info.uri);
-            song.setIdentifier(identifier);
-            String url = extractor.getSourceName().getBaseURL() + identifier;
-            song.setUrl(url);
-            return song;
+            return extractor.extract(url);
         }
         return null;
     }
 
-    public AudioTrack toAudioTrack(Song song) {
+    public Track create(AudioTrack track) {
+        return this.create(track.getInfo());
+    }
+
+    public Track create(AudioTrackInfo info) {
+        for (Extractor extractor : this.extractors) {
+            if (!extractor.isSupported(info.uri) || extractor.isPlaylist(info.uri)) {
+                continue;
+            }
+            String code = extractor.extract(info.uri);
+
+            Optional<Track> oTrack = this.repository.findById(code);
+            if (oTrack.isPresent()) {
+                return oTrack.get();
+            }
+            Track track = new Track();
+            track.setCode(code);
+            track.setTitle(info.title);
+            track.setAuthor(info.author);
+            track.setSource(extractor.getSourceName());
+            track.setStream(info.isStream);
+            track.setDuration(info.length);
+            track.setCached(false);
+
+            return this.repository.save(track);
+        }
+        return null;
+    }
+
+    public AudioTrack toAudioTrack(Track track) {
         AudioTrackInfo info = AudioTrackInfoBuilder.empty()
-            .setTitle(song.getName())
-            .setAuthor(song.getAuthor())
-            .setLength(song.getLength())
-            .setIdentifier(song.getIdentifier())
-            .setIsStream(song.isStream())
-            .setUri(song.getUrl())
+            .setTitle(track.getTitle())
+            .setAuthor(track.getAuthor())
+            .setLength(track.getDuration())
+            .setIdentifier(track.getCode())
+            .setIsStream(track.isStream())
+            .setUri(this.getUrl(track))
             .build();
-        if (song.getSource() == SongSource.Youtube) {
-            // Inject cache here
+        if (track.getSource() == SongSource.Youtube) {
             return new YoutubeAudioTrack(info, youtube);
-        } else if (song.getSource() == SongSource.SoundCloud) {
-            // Inject cache here
+        } else if (track.getSource() == SongSource.SoundCloud) {
             return new SoundCloudAudioTrack(info, soundCloud);
         } else {
-            return this.loadTrack(song.getUrl()).getTrackList().get(0);
+            return this.loadTrack(info.uri).getTrackList().get(0);
         }
+    }
+
+    private String getUrl(Track track) {
+        // TODO: cache
+        for (Extractor extractor : this.extractors) {
+            if (extractor.getSourceName() != track.getSource()) {
+                continue;
+            }
+            return extractor.getUrl(track.getCode());
+        }
+        return track.getCode();
     }
 
 }

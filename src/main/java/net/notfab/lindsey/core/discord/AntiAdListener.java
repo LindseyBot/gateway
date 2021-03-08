@@ -10,11 +10,10 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
 import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import net.notfab.lindsey.shared.entities.profile.member.Strike;
 import net.notfab.lindsey.shared.entities.profile.server.AntiAd;
 import net.notfab.lindsey.shared.repositories.sql.StrikeRepository;
+import net.notfab.lindsey.shared.repositories.sql.server.AntiAdRepository;
 import net.notfab.lindsey.shared.utils.Snowflake;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -27,17 +26,17 @@ import java.util.concurrent.TimeUnit;
 public class AntiAdListener extends ListenerAdapter {
 
     private final Snowflake snowflake;
-    private final ProfileManager profiles;
     private final StrikeRepository strikeRepository;
+    private final AntiAdRepository repository;
     private final Translator i18n;
     private final Set<String> officialInvites = new HashSet<>();
 
-    public AntiAdListener(Lindsey lindsey, Snowflake snowflake, ProfileManager profiles,
-                          StrikeRepository strikeRepository, Translator i18n) {
+    public AntiAdListener(Lindsey lindsey, Snowflake snowflake, StrikeRepository strikeRepository,
+                          AntiAdRepository repository, Translator i18n) {
         lindsey.addEventListener(this);
         this.snowflake = snowflake;
-        this.profiles = profiles;
         this.strikeRepository = strikeRepository;
+        this.repository = repository;
         this.i18n = i18n;
         this.officialInvites.add("discord-api");
         this.officialInvites.add("hypesquad");
@@ -60,12 +59,8 @@ public class AntiAdListener extends ListenerAdapter {
         if (event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
             return;
         }
-        ServerProfile profile = profiles.get(event.getGuild());
-        if (profile.getAutoMod() == null) {
-            return;
-        }
-        AntiAd settings = profile.getAutoMod()
-            .getAntiAd();
+        AntiAd settings = this.repository.findById(event.getGuild().getIdLong())
+            .orElse(new AntiAd());
         if (!settings.isEnabled()) {
             return;
         }
@@ -94,6 +89,8 @@ public class AntiAdListener extends ListenerAdapter {
         strike.setCount(settings.getStrikes());
         strike.setReason(i18n.get(event.getGuild(), "automod.antiad.reason"));
         this.strikeRepository.save(strike);
+
+        // TODO: Fire strike event
 
         event.getMessage().delete()
             .reason("Advertising")

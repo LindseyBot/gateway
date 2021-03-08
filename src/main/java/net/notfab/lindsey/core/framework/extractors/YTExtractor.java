@@ -44,4 +44,9 @@ public class YTExtractor implements Extractor {
         return SongSource.Youtube;
     }
 
+    @Override
+    public String getUrl(String code) {
+        return this.getSourceName().getBaseURL() + code;
+    }
+
 }

@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands.playlist;
+package net.notfab.lindsey.core.commands.music;
 
 import net.notfab.lindsey.core.framework.command.CommandDescriptor;
 import net.notfab.lindsey.core.framework.command.Modules;
@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class PlayListCmdTest {
+class AddCmdTest {
 
-    private PlayListCmd command;
+    private AddCmd command;
 
     @BeforeEach
     void setUp() {
-        command = mock(PlayListCmd.class);
+        command = mock(AddCmd.class);
         when(command.getInfo())
             .thenCallRealMethod();
         when(command.help(null))
@@ -27,7 +27,7 @@ class PlayListCmdTest {
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("playlist", info.getName(), "Name must be playlist");
+        assertEquals("add", info.getName(), "Name must be add");
         assertEquals(Modules.MUSIC, info.getModule(), "Module must be Music");
         assertTrue(info.getPermissions().stream()
             .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
@@ -36,7 +36,7 @@ class PlayListCmdTest {
     @Test
     void help() {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("playlist");
+        HelpPage page = article.get("add");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }

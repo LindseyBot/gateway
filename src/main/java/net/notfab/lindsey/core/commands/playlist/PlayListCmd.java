@@ -13,10 +13,15 @@ import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.menu.Menu;
-import net.notfab.lindsey.core.service.PlayListService;
 import net.notfab.lindsey.shared.entities.playlist.Curator;
 import net.notfab.lindsey.shared.entities.playlist.PlayList;
+import net.notfab.lindsey.shared.entities.profile.server.MusicSettings;
 import net.notfab.lindsey.shared.enums.PlayListSecurity;
+import net.notfab.lindsey.shared.repositories.sql.CuratorRepository;
+import net.notfab.lindsey.shared.repositories.sql.PlayListRepository;
+import net.notfab.lindsey.shared.repositories.sql.server.MusicSettingsRepository;
+import net.notfab.lindsey.shared.services.PlayListService;
+import net.notfab.lindsey.shared.utils.Snowflake;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +40,19 @@ public class PlayListCmd implements Command {
     private Translator i18n;
 
     @Autowired
+    private Snowflake snowflake;
+
+    @Autowired
+    private PlayListRepository repository;
+
+    @Autowired
     private PlayListService service;
+
+    @Autowired
+    private MusicSettingsRepository musicSettings;
+
+    @Autowired
+    private CuratorRepository curators;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -56,8 +73,16 @@ public class PlayListCmd implements Command {
         } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("show")) {
                 // show
-                Optional<PlayList> oPlayList = service.findActive(member.getGuild());
+                MusicSettings settings = this.musicSettings.findById(member.getGuild().getIdLong())
+                    .orElse(new MusicSettings(member.getGuild().getIdLong()));
+                if (settings.getActivePlayList() == null) {
+                    // None active
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.no_active"));
+                    return true;
+                }
+                Optional<PlayList> oPlayList = this.repository.findById(settings.getActivePlayList());
                 if (oPlayList.isEmpty()) {
+                    // Deleted
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.no_active"));
                     return true;
                 }
@@ -65,7 +90,7 @@ public class PlayListCmd implements Command {
                 return true;
             } else if (args[0].equalsIgnoreCase("list")) {
                 // list
-                List<MessageEmbed> pages = this.createList(member, service.findAllByOwner(member.getUser().getIdLong()));
+                List<MessageEmbed> pages = this.createList(member, this.repository.findAllByOwner(member.getUser().getIdLong()));
                 if (pages.isEmpty()) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.no_playlist"));
                     return false;
@@ -76,56 +101,64 @@ public class PlayListCmd implements Command {
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("create")) {
                 // create <name>
-                PlayList playList = this.service.create(member.getUser(), args[1]);
-                if (playList == null) {
+                long count = this.repository.countByOwner(member.getIdLong());
+                if (count == 2) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.limit_reached", 2, 2));
-                } else {
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.created", playList.getName()));
                 }
+                PlayList playList = new PlayList();
+                playList.setId(this.snowflake.next());
+                playList.setName(args[1]);
+                playList.setOwner(member.getIdLong());
+                playList.setSecurity(PlayListSecurity.PRIVATE);
+                playList.setShuffle(false);
+                playList.setLogoUrl("https://i.imgur.com/YcBNYVh.png");
+                this.repository.save(playList);
+                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.created", playList.getName()));
                 return true;
             } else if (args[0].equalsIgnoreCase("delete")) {
                 // delete <name>
-                PlayList playList = this.service.findByName(member.getUser(), args[1]);
-                if (playList == null) {
+                Optional<PlayList> oPlayList = this.repository
+                    .findByNameLikeAndOwner("%" + args[1] + "%", member.getUser().getIdLong());
+                if (oPlayList.isEmpty()) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[1]));
                     return false;
                 }
-                if (playList.getOwner() != member.getUser().getIdLong()) {
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
-                } else {
-                    this.service.delete(playList);
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.deleted", playList.getName()));
-                }
+                this.repository.delete(oPlayList.get());
+                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.deleted", oPlayList.get().getName()));
                 return true;
             } else if (args[0].equalsIgnoreCase("show")) {
                 // show <name>
-                PlayList playList = service.findByName(member.getUser(), args[1]);
-                if (playList == null) {
+                Optional<PlayList> oPlayList = this.repository
+                    .findByNameLikeAndOwner("%" + args[1] + "%", member.getUser().getIdLong());
+                if (oPlayList.isEmpty()) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[1]));
-                    return true;
+                    return false;
                 }
-                msg.send(channel, this.createDetail(member, playList));
+                msg.send(channel, this.createDetail(member, oPlayList.get()));
                 return true;
             } else if (args[0].equalsIgnoreCase("use")) {
                 // use <name>
-                PlayList playList = service.findByName(member.getUser(), args[1]);
-                if (playList == null) {
+                Optional<PlayList> oPlayList = this.repository.findTopByNameLike("%" + args[1] + "%");
+                if (oPlayList.isEmpty()) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[1]));
-                    return true;
+                    return false;
                 }
-                if (!service.hasPermission(playList, member.getUser())) {
+                if (!service.canRead(oPlayList.get(), member.getUser().getIdLong())) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
                     return true;
                 }
-                this.service.setActive(member.getGuild(), playList);
-                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.active", playList.getName()));
+                MusicSettings settings = this.musicSettings.findById(member.getGuild().getIdLong())
+                    .orElse(new MusicSettings(member.getGuild().getIdLong()));
+                settings.setActivePlayList(oPlayList.get().getId());
+                this.musicSettings.save(settings);
+                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.active", oPlayList.get().getName()));
                 return true;
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("shuffle")) {
                 // shuffle <name> <true/false>
-                PlayList playList = service.findByName(member.getUser(), args[1]);
-                if (playList == null) {
+                Optional<PlayList> oPlayList = this.repository.findTopByNameLike("%" + args[1] + "%");
+                if (oPlayList.isEmpty()) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[1]));
                     return true;
                 }
@@ -134,11 +167,13 @@ public class PlayListCmd implements Command {
                     msg.send(channel, sender(member) + i18n.get(member, "core.not_boolean", args[2]));
                     return false;
                 }
-                if (!service.hasPermission(playList, member.getUser())) {
+                PlayList playList = oPlayList.get();
+                if (!service.canModify(playList, member.getUser().getIdLong())) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
                     return true;
                 }
-                service.setShuffle(playList, oBoolean.get());
+                playList.setShuffle(oBoolean.get());
+                this.repository.save(playList);
                 if (oBoolean.get()) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.shuffle_enabled"));
                 } else {
@@ -147,12 +182,13 @@ public class PlayListCmd implements Command {
                 return true;
             } else if (args[0].equalsIgnoreCase("logo")) {
                 // logo <name> <url>
-                PlayList playList = service.findByName(member.getUser(), args[1]);
-                if (playList == null) {
+                Optional<PlayList> oPlayList = this.repository.findTopByNameLike("%" + args[1] + "%");
+                if (oPlayList.isEmpty()) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[1]));
                     return true;
                 }
-                if (!service.hasPermission(playList, member.getUser())) {
+                PlayList playList = oPlayList.get();
+                if (!service.canModify(playList, member.getUser().getIdLong())) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
                     return true;
                 }
@@ -161,18 +197,16 @@ public class PlayListCmd implements Command {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_imgur"));
                     return false;
                 }
-                service.setLogo(playList, url);
+                playList.setLogoUrl(url);
+                this.repository.save(playList);
                 msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.logo_updated", playList.getName()));
                 return true;
             } else if (args[0].equalsIgnoreCase("security")) {
                 // security <name> <security>
-                PlayList playList = service.findByName(member.getUser(), args[1]);
-                if (playList == null) {
+                Optional<PlayList> oPlayList = this.repository
+                    .findByNameLikeAndOwner("%" + args[1] + "%", member.getUser().getIdLong());
+                if (oPlayList.isEmpty()) {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[1]));
-                    return true;
-                }
-                if (playList.getOwner() != member.getUser().getIdLong()) {
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
                     return true;
                 }
                 Optional<PlayListSecurity> oSecurity = PlayListSecurity.find(args[2]);
@@ -180,19 +214,17 @@ public class PlayListCmd implements Command {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_security"));
                     return false;
                 }
-                service.setSecurity(playList, oSecurity.get());
-                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.security_updated",
-                    playList.getName(), oSecurity.get().name()));
+                PlayList playList = oPlayList.get();
+                playList.setSecurity(oSecurity.get());
+                this.repository.save(playList);
+                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.security_updated", playList.getName(),
+                    oSecurity.get().name()));
                 return true;
             }
         } else if (args.length == 4) {
-            PlayList playList = this.service.findByName(member.getUser(), args[0]);
-            if (playList == null) {
-                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[0]));
-                return false;
-            }
-            if (playList.getOwner() != member.getUser().getIdLong()) {
-                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
+            Optional<PlayList> oPlayList = this.repository.findByNameLikeAndOwner("%" + args[1] + "%", member.getIdLong());
+            if (oPlayList.isEmpty()) {
+                msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.not_found", args[1]));
                 return true;
             }
             if (args[1].equalsIgnoreCase("curators")) {
@@ -202,15 +234,21 @@ public class PlayListCmd implements Command {
                     msg.send(channel, sender(member) + i18n.get(member, "core.member_nf"));
                     return false;
                 }
+                Optional<Curator> oCurator = this.curators.findByPlayListAndUserId(oPlayList.get(), target.getIdLong());
                 if (args[2].equalsIgnoreCase("add")) {
-                    service.addCurator(playList, new Curator(target.getIdLong(), target.getUser().getAsTag()));
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.curator_added",
-                        target.getUser().getAsTag()));
+                    if (oCurator.isEmpty()) {
+                        Curator curator = new Curator();
+                        curator.setId(snowflake.next());
+                        curator.setPlayList(oPlayList.get());
+                        curator.setName(target.getUser().getAsTag());
+                        curator.setUserId(target.getIdLong());
+                        this.curators.save(curator);
+                    }
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.curator_added", target.getUser().getAsTag()));
                     return true;
                 } else if (args[2].equalsIgnoreCase("remove")) {
-                    service.delCurator(playList, target.getIdLong());
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.curator_removed",
-                        target.getUser().getAsTag()));
+                    oCurator.ifPresent(curator -> this.curators.delete(curator));
+                    msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.curator_removed", target.getUser().getAsTag()));
                     return true;
                 }
             }
@@ -245,10 +283,15 @@ public class PlayListCmd implements Command {
         builder.setThumbnail(playList.getLogoUrl());
         builder.setColor(GFXUtils.getAverageColor(member.getUser().getEffectiveAvatarUrl()));
         builder.setTitle(playList.getName());
-        builder.addField(i18n.get(member, "commands.playlist.songs"), playList.getSongs().size() + " - [Link](https://notfab.net/lindsey/playlists/" + playList.getId() + ")", true);
+        builder.addField(i18n.get(member, "commands.playlist.songs"), this.service.size(playList.getId())
+            + " - [Link](https://notfab.net/lindsey/playlists/" + playList.getId() + ")", true);
         builder.addField(i18n.get(member, "commands.playlist.security"), playList.getSecurity().name(), true);
-        builder.addField(i18n.get(member, "commands.playlist.curators"), String.valueOf(playList.getCurators().size()), true);
-        builder.addField(i18n.get(member, "commands.playlist.shuffle"), String.valueOf(playList.isShuffle()), true);
+        builder.addField(i18n.get(member, "commands.playlist.curators"), String.valueOf(
+            this.curators.countByPlayList(playList)
+        ), true);
+        builder.addField(i18n.get(member, "commands.playlist.shuffle"), String.valueOf(
+            playList.isShuffle()
+        ), true);
         builder.setFooter(i18n.get(member, "core.request", member.getEffectiveName() + "#" + member.getUser().getDiscriminator()),
             member.getUser().getEffectiveAvatarUrl());
         builder.setTimestamp(Instant.now());

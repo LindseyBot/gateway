@@ -14,22 +14,22 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.core.service.AudioService;
-import net.notfab.lindsey.core.service.PlayListService;
-import net.notfab.lindsey.core.service.SongService;
+import net.notfab.lindsey.core.service.TrackService;
+import net.notfab.lindsey.shared.entities.music.Track;
 import net.notfab.lindsey.shared.entities.playlist.PlayList;
-import net.notfab.lindsey.shared.entities.playlist.Song;
-import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.entities.profile.server.MusicSettings;
 import net.notfab.lindsey.shared.enums.PlayListSecurity;
+import net.notfab.lindsey.shared.repositories.sql.PlayListRepository;
+import net.notfab.lindsey.shared.repositories.sql.server.MusicSettingsRepository;
+import net.notfab.lindsey.shared.services.PlayListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component
-public class Play implements Command {
+public class PlayCmd implements Command {
 
     @Autowired
     private Messenger msg;
@@ -41,13 +41,16 @@ public class Play implements Command {
     private AudioService audio;
 
     @Autowired
-    private SongService songs;
+    private TrackService tracks;
 
     @Autowired
     private PlayListService playlists;
 
     @Autowired
-    private ProfileManager profiles;
+    private MusicSettingsRepository musicSettings;
+
+    @Autowired
+    private PlayListRepository repository;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -75,28 +78,40 @@ public class Play implements Command {
             }
         }
 
-        Optional<PlayList> oPlayList = playlists.findActive(member.getGuild());
-        if (oPlayList.isEmpty()) {
+        MusicSettings settings = this.musicSettings.findById(member.getGuild().getIdLong())
+            .orElse(new MusicSettings(member.getGuild().getIdLong()));
+        if (settings.getActivePlayList() == null) {
             // No active playlist
             msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.no_active"));
             return false;
         }
+
+        Optional<PlayList> oPlayList = this.repository.findById(settings.getActivePlayList());
+        if (oPlayList.isEmpty()) {
+            // Deleted playlist
+            settings.setActivePlayList(null);
+            this.musicSettings.save(settings);
+            msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.no_active"));
+            return false;
+        }
+
         PlayList playList = oPlayList.get();
         if (playList.getSecurity() == PlayListSecurity.PRIVATE
-            && !playlists.hasPermission(playList, member.getUser())) {
+            && !this.playlists.canRead(playList, member.getUser().getIdLong())) {
             // No permission to use this playlist
             msg.send(channel, sender(member) + i18n.get(member, "commands.playlist.locked"));
             // Private playlists are only usable in the owner's guild
-            if (!String.valueOf(playList.getOwner()).equals(member.getGuild().getOwnerId())) {
-                playlists.setActive(member.getGuild(), null);
+            if (playList.getOwner() != member.getGuild().getOwnerIdLong()) {
+                settings.setActivePlayList(null);
+                this.musicSettings.save(settings);
             }
             return true;
         }
 
-        Song song = null;
+        Optional<Track> oTrack;
         if (args.length == 0) {
-            song = playlists.findNextSong(playList, member.getGuild().getIdLong());
-            if (song == null) {
+            oTrack = playlists.getNext(playList.getId(), settings.getPosition());
+            if (oTrack.isEmpty()) {
                 // Failed to start playing (No songs found)
                 msg.send(channel, sender(member) + i18n.get(member, "commands.music.play.failed_songs"));
                 return true;
@@ -105,39 +120,35 @@ public class Play implements Command {
             String nameOrURL = this.argsToString(args, 0);
             if (Utils.isInt(nameOrURL)) {
                 int pos = Integer.parseInt(nameOrURL);
-                List<Song> songList = playList.getSongs();
-                if (songList.size() >= pos) {
-                    song = playList.getSongs().get(pos - 1);
-                }
+                oTrack = playlists.getByPos(playList.getId(), pos);
             } else if (Utils.isURL(nameOrURL)) {
-                if (!Utils.isSupportedMusicURL(nameOrURL)) {
+                nameOrURL = tracks.extract(nameOrURL);
+                if (nameOrURL == null) {
                     // Not supported
                     msg.send(channel, sender(member) + i18n.get(member, "commands.music.add.not_supported"));
                     return false;
                 }
-                nameOrURL = songs.normalize(nameOrURL);
-                song = playlists.findSong(playList, nameOrURL);
+                oTrack = playlists.findByCode(playList.getId(), nameOrURL);
+            } else {
+                oTrack = playlists.findByName(playList.getId(), nameOrURL);
             }
-            if (song == null) {
+            if (oTrack.isEmpty()) {
                 // Song not found
                 msg.send(channel, sender(member) + i18n.get(member, "commands.music.play.not_found", nameOrURL));
                 return true;
             }
         }
-        if (!playlists.updateCursor(playList, song, member.getGuild().getIdLong())) {
-            // Failed to start playing (No songs found)
-            msg.send(channel, sender(member) + i18n.get(member, "commands.music.play.failed_internal"));
-            return true;
-        }
 
+        settings.setPosition(oTrack.get().getPosition());
         {
             // TODO: Remove once web is up
-            ServerProfile profile = this.profiles.get(member.getGuild());
-            profile.setMusicChannelId(channel.getIdLong());
-            this.profiles.save(profile);
+            settings.setLogTracks(true);
+            settings.setLogChannel(channel.getIdLong());
+            this.musicSettings.save(settings);
         }
+        this.musicSettings.save(settings);
 
-        AudioTrack track = songs.toAudioTrack(song);
+        AudioTrack track = tracks.toAudioTrack(oTrack.get());
         if (!audio.play(member.getGuild(), track)) {
             // Failed to start playing (No voice connection)
             msg.send(channel, sender(member) + i18n.get(member, "commands.music.play.failed_voice"));

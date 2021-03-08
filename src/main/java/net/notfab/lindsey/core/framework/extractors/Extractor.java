@@ -12,4 +12,6 @@ public interface Extractor {
 
     SongSource getSourceName();
 
+    String getUrl(String code);
+
 }

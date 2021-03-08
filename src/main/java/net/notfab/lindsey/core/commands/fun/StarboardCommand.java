@@ -8,10 +8,12 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.shared.entities.profile.ServerProfile;
+import net.notfab.lindsey.shared.entities.profile.server.StarboardSettings;
+import net.notfab.lindsey.shared.repositories.sql.server.StarboardSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class StarboardCommand implements Command {
@@ -23,7 +25,7 @@ public class StarboardCommand implements Command {
     private Translator i18n;
 
     @Autowired
-    private ProfileManager profiles;
+    private StarboardSettingsRepository repository;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -40,10 +42,11 @@ public class StarboardCommand implements Command {
             HelpArticle article = this.help(member);
             article.send(channel, member, args, msg, i18n);
         } else {
-            ServerProfile profile = profiles.get(member.getGuild());
+            Optional<StarboardSettings> oSettings = repository.findById(member.getGuild().getIdLong());
             if (args[0].equalsIgnoreCase("OFF")) {
-                profile.setStarboardChannelId(null);
-                profiles.save(profile);
+                if (oSettings.isPresent()) {
+                    repository.deleteById(member.getGuild().getIdLong());
+                }
                 msg.send(channel, sender(member) + i18n.get(member, "commands.fun.starboard.disabled"));
             } else {
                 TextChannel target = FinderUtil.findTextChannel(argsToString(args, 0), channel.getGuild());
@@ -51,8 +54,10 @@ public class StarboardCommand implements Command {
                     msg.send(channel, sender(member) + i18n.get(member, "search.channel", argsToString(args, 0)));
                     return false;
                 }
-                profile.setStarboardChannelId(target.getIdLong());
-                profiles.save(profile);
+                StarboardSettings settings = oSettings
+                    .orElse(new StarboardSettings(member.getGuild().getIdLong()));
+                settings.setChannel(target.getIdLong());
+                this.repository.save(settings);
                 msg.send(channel, sender(member) + i18n.get(member, "commands.fun.starboard.enabled", target.getAsMention()));
             }
         }

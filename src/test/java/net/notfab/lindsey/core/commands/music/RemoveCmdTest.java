@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AddTest {
+class RemoveCmdTest {
 
-    private Add command;
+    private RemoveCmd command;
 
     @BeforeEach
     void setUp() {
-        command = mock(Add.class);
+        command = mock(RemoveCmd.class);
         when(command.getInfo())
             .thenCallRealMethod();
         when(command.help(null))
@@ -27,7 +27,7 @@ class AddTest {
     @Test
     void getInfo() {
         CommandDescriptor info = command.getInfo();
-        assertEquals("add", info.getName(), "Name must be add");
+        assertEquals("remove", info.getName(), "Name must be remove");
         assertEquals(Modules.MUSIC, info.getModule(), "Module must be Music");
         assertTrue(info.getPermissions().stream()
             .anyMatch(perm -> perm.getName().equals("commands." + info.getName())), "Must have permission with command name");
@@ -36,7 +36,7 @@ class AddTest {
     @Test
     void help() {
         HelpArticle article = command.help(null);
-        HelpPage page = article.get("add");
+        HelpPage page = article.get("remove");
         assertNotNull(page, "Help page must not be null");
         assertEquals("commands." + command.getInfo().getName(), page.getPermission(), "Permission must be command name");
     }
