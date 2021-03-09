@@ -1,12 +1,9 @@
 package net.notfab.lindsey.core.service.rpc;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
-import net.notfab.lindsey.shared.rpc.FGuild;
-import net.notfab.lindsey.shared.rpc.FTextChannel;
-import net.notfab.lindsey.shared.rpc.FVoiceChannel;
+import net.notfab.lindsey.shared.rpc.*;
 import net.notfab.lindsey.shared.rpc.services.RemoteGuilds;
 import org.springframework.stereotype.Service;
 
@@ -50,20 +47,21 @@ public class RemoteGuildsImpl implements RemoteGuilds {
         result.setId(id);
         result.setName(guild.getName());
         result.setIconUrl(guild.getIconUrl());
-        result.setTextChannels(guild.getTextChannels().stream().map(ch -> {
-            FTextChannel channel = new FTextChannel();
-            channel.setId(ch.getIdLong());
-            channel.setName(ch.getName());
-            channel.setPosition(ch.getPosition());
-            return channel;
-        }).collect(Collectors.toList()));
-        result.setVoiceChannels(guild.getVoiceChannels().stream().map(ch -> {
-            FVoiceChannel channel = new FVoiceChannel();
-            channel.setId(ch.getIdLong());
-            channel.setName(ch.getName());
-            channel.setPosition(ch.getPosition());
-            return channel;
-        }).collect(Collectors.toList()));
+
+        List<FRole> roles = guild.getRoles().stream()
+            .map(role -> {
+                FRole fRole = new FRole();
+                fRole.setId(role.getIdLong());
+                fRole.setName(role.getName());
+                fRole.setPosition(role.getPosition());
+                return fRole;
+            }).collect(Collectors.toList());
+        result.setRoles(roles);
+
+        List<GuildChannel> topChannels = guild.getChannels().stream()
+            .filter(channel -> channel.getParent() == null)
+            .collect(Collectors.toList());
+        result.setChannels(this.parseChannels(topChannels));
         return result;
     }
 
@@ -80,6 +78,57 @@ public class RemoteGuildsImpl implements RemoteGuilds {
             guilds.add(guild);
         }
         return guilds;
+    }
+
+    private List<FChannel> parseCategory(Category category, int pos) {
+        List<FChannel> channels = new ArrayList<>();
+        for (GuildChannel gChannel : category.getChannels()) {
+            FChannel fChannel = new FChannel();
+            fChannel.setId(gChannel.getIdLong());
+            fChannel.setName(gChannel.getName());
+            fChannel.setPosition(pos++);
+            if (gChannel.getType() == ChannelType.STORE) {
+                fChannel.setType(FChannelType.STORE);
+            } else if (gChannel.getType() == ChannelType.VOICE) {
+                fChannel.setType(FChannelType.VOICE);
+            } else {
+                fChannel.setType(FChannelType.TEXT);
+            }
+            channels.add(fChannel);
+        }
+        return channels;
+    }
+
+    private List<FChannel> parseChannels(List<GuildChannel> guildChannels) {
+        List<FChannel> channels = new ArrayList<>();
+        int pos = 0;
+        for (GuildChannel gChannel : guildChannels) {
+            if (gChannel instanceof Category) {
+                FCategory fCategory = new FCategory();
+                fCategory.setId(gChannel.getIdLong());
+                fCategory.setName(gChannel.getName());
+                fCategory.setPosition(pos);
+                fCategory.setType(FChannelType.CATEGORY);
+                fCategory.setChannels(this.parseCategory((Category) gChannel, pos + 1));
+                channels.add(fCategory);
+                pos = pos + (fCategory.getChannels().size() + 1);
+            } else {
+                FChannel fChannel = new FChannel();
+                fChannel.setId(gChannel.getIdLong());
+                fChannel.setName(gChannel.getName());
+                fChannel.setPosition(pos);
+                if (gChannel.getType() == ChannelType.STORE) {
+                    fChannel.setType(FChannelType.STORE);
+                } else if (gChannel.getType() == ChannelType.VOICE) {
+                    fChannel.setType(FChannelType.VOICE);
+                } else {
+                    fChannel.setType(FChannelType.TEXT);
+                }
+                channels.add(fChannel);
+                pos++;
+            }
+        }
+        return channels;
     }
 
 }
