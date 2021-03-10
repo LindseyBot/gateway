@@ -1,5 +1,6 @@
 package net.notfab.lindsey.core.discord;
 
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -10,21 +11,27 @@ import net.notfab.lindsey.core.Lindsey;
 import net.notfab.lindsey.core.framework.embeds.WebsiteEmbedder;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
+import net.notfab.lindsey.shared.entities.profile.server.BetterEmbedsSettings;
+import net.notfab.lindsey.shared.repositories.sql.BetterEmbedSettingsRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 public class UrlListener extends ListenerAdapter implements ExpirationListener<Long, String> {
 
     private final ProfileManager profiles;
-    private final List<WebsiteEmbedder> lista;
+    private final List<WebsiteEmbedder> embedders;
+    private final BetterEmbedSettingsRepository repository;
 
-    public UrlListener(Lindsey lindsey, ProfileManager profiles, List<WebsiteEmbedder> embedders) {
-        lindsey.addEventListener(this);
+    public UrlListener(Lindsey lindsey, ProfileManager profiles, List<WebsiteEmbedder> embedders,
+                       BetterEmbedSettingsRepository repository) {
         this.profiles = profiles;
-        this.lista = embedders;
+        this.embedders = embedders;
+        this.repository = repository;
+        lindsey.addEventListener(this);
     }
 
     @Override
@@ -35,14 +42,19 @@ public class UrlListener extends ListenerAdapter implements ExpirationListener<L
         if (member == null || event.getAuthor().isBot() || event.isWebhookMessage()) {
             return;
         }
-        for (WebsiteEmbedder embedder : this.lista) {
-            if (!embedder.isSupported(event.getMessage().getContentRaw())) {
+        for (WebsiteEmbedder builder : this.embedders) {
+            if (!builder.isSupported(event.getMessage().getContentRaw())) {
                 continue;
             }
+            BetterEmbedsSettings settings = this.repository.findById(member.getGuild().getIdLong())
+                .orElse(new BetterEmbedsSettings(member.getGuild().getIdLong()));
+            if (!builder.isEnabled(settings)) {
+                return;
+            }
             try {
-                embed = embedder.getEmbed(event.getMessage().getContentRaw(), member, channel.isNSFW());
-            } catch (Exception e) {
-                System.out.println(e);
+                embed = builder.getEmbed(event.getMessage().getContentRaw(), member, channel.isNSFW());
+            } catch (Exception ex) {
+                log.error("Failed to generate better embed", ex);
                 return;
             }
             if (embed == null) {

@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.notfab.lindsey.core.framework.GFXUtils;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.shared.entities.profile.server.BetterEmbedsSettings;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -70,6 +71,11 @@ public class ApoiaseEmbedder implements WebsiteEmbedder {
             embed.setColor(GFXUtils.RED);
         }
         return embed.build();
+    }
+
+    @Override
+    public boolean isEnabled(BetterEmbedsSettings settings) {
+        return settings.isApoiase();
     }
 
 }

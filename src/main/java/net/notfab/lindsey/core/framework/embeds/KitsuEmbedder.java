@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.shared.entities.profile.server.BetterEmbedsSettings;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -108,6 +109,11 @@ public class KitsuEmbedder implements WebsiteEmbedder {
             embed.addField(i18n.get(member, "commands.fun.anime.age"), atr.getString("ageRating") + " - " + atr.getString("ageRatingGuide"), true);
         }
         return embed.build();
+    }
+
+    @Override
+    public boolean isEnabled(BetterEmbedsSettings settings) {
+        return settings.isKitsu();
     }
 
 }
