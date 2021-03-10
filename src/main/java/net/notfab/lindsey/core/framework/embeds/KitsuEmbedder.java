@@ -1,16 +1,8 @@
-package net.notfab.lindsey.core.commands.fun;
+package net.notfab.lindsey.core.framework.embeds;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.notfab.lindsey.core.framework.command.Bundle;
-import net.notfab.lindsey.core.framework.command.Command;
-import net.notfab.lindsey.core.framework.command.CommandDescriptor;
-import net.notfab.lindsey.core.framework.command.Modules;
-import net.notfab.lindsey.core.framework.command.help.HelpArticle;
-import net.notfab.lindsey.core.framework.command.help.HelpPage;
-import net.notfab.lindsey.core.framework.i18n.Messenger;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -20,14 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
-public class Kitsu implements Command {
-
-    private static final OkHttpClient client = new OkHttpClient().newBuilder()
-        .followSslRedirects(true)
-        .build();
+public class KitsuEmbedder implements WebsiteEmbedder {
 
     @Value("${bot.integrations.kitsu}")
     private String key;
@@ -35,29 +25,23 @@ public class Kitsu implements Command {
     @Autowired
     private Translator i18n;
 
-    @Autowired
-    private Messenger msg;
+    private final Pattern pattern = Pattern.compile("^(?:https?://)?(?:www\\.)?(?:kitsu\\.io)(?:/anime)/([\\w-]+)(?:[?\\w.=/\\\\]*)$");
 
     @Override
-    public CommandDescriptor getInfo() {
-        return new CommandDescriptor.Builder()
-            .name("kitsu")
-            .alias("anime")
-            .module(Modules.FUN)
-            .permission("commands.kitsu", "permissions.command")
-            .build();
+    public boolean isSupported(String url) {
+        return pattern.matcher(url).find();
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
-        if (args.length == 0) {
-            HelpArticle article = this.help(member);
-            article.send(channel, member, args, msg, i18n);
-            return false;
+    public MessageEmbed getEmbed(String url, Member member, boolean nsfw) throws IOException {
+        Matcher matcher = this.pattern.matcher(url);
+        if (!matcher.find()) {
+            return null;
         }
-
+        String args = matcher.group(1);
+        OkHttpClient client = new OkHttpClient();
         Request req = new Request.Builder()
-            .url("https://kitsu.io/api/edge/anime?filter[text]=" + Arrays.toString(args))
+            .url("https://kitsu.io/api/edge/anime?filter[slug]=" + args)
             .addHeader("Authorization", "Bearer " + key)
             .get()
             .build();
@@ -68,18 +52,17 @@ public class Kitsu implements Command {
             .getJSONObject("links").getString("self").split("anime/")[1];
         EmbedBuilder embed = new EmbedBuilder();
 
-        boolean nsfw = false;
+        boolean adult = false;
         if (!atr.isNull("nsfw")) {
             if (atr.getBoolean("nsfw")) {
-                nsfw = true;
+                adult = true;
                 embed.addField("NSFW", "Yes", true);
             } else {
                 embed.addField("NSFW", "No", true);
             }
         }
-        if (nsfw && !channel.isNSFW()) {
-            msg.send(channel, i18n.get(member, "core.not_nsfw"));
-            return false;
+        if (adult && !nsfw) {
+            return null;
         }
         if (atr.getJSONObject("titles").has("en")) {
             embed.setTitle(atr.getJSONObject("titles").getString("en") + " - " + atr.getJSONObject("titles").getString("ja_jp"), link);
@@ -124,19 +107,7 @@ public class Kitsu implements Command {
         if (!atr.isNull("ageRating") & !atr.isNull("ageRatingGuide")) {
             embed.addField(i18n.get(member, "commands.fun.anime.age"), atr.getString("ageRating") + " - " + atr.getString("ageRatingGuide"), true);
         }
-        msg.send(channel, embed.build());
-        return true;
-    }
-
-    @Override
-    public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("kitsu")
-            .text("commands.fun.anime.description")
-            .usage("L!kitsu <name>")
-            .permission("commands.kitsu")
-            .addExample("L!kitsu One Piece")
-            .addExample("L!anime konosuba");
-        return HelpArticle.of(page);
+        return embed.build();
     }
 
 }
