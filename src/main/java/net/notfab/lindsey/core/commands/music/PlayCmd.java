@@ -140,12 +140,6 @@ public class PlayCmd implements Command {
         }
 
         settings.setPosition(oTrack.get().getPosition());
-        {
-            // TODO: Remove once web is up
-            settings.setLogTracks(true);
-            settings.setLogChannel(channel.getIdLong());
-            this.musicSettings.save(settings);
-        }
         this.musicSettings.save(settings);
 
         AudioTrack track = tracks.toAudioTrack(oTrack.get());
