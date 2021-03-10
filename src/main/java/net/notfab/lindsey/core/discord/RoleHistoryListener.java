@@ -10,29 +10,34 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.core.service.KeepRoleService;
-import net.notfab.lindsey.shared.entities.profile.MemberProfile;
 import net.notfab.lindsey.shared.entities.profile.member.RoleHistory;
+import net.notfab.lindsey.shared.repositories.sql.RoleHistoryRepository;
+import net.notfab.lindsey.shared.utils.Snowflake;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 public class RoleHistoryListener extends ListenerAdapter {
 
-    private final ProfileManager profiles;
+    private final Snowflake snowflake;
     private final Translator i18n;
     private final KeepRoleService keepRoleService;
+    private final RoleHistoryRepository repository;
 
-    public RoleHistoryListener(Lindsey lindsey, ProfileManager profiles, Translator i18n, KeepRoleService keepRoleService) {
-        lindsey.addEventListener(this);
-        this.profiles = profiles;
+    public RoleHistoryListener(Lindsey lindsey, Snowflake snowflake, Translator i18n,
+                               KeepRoleService keepRoleService, RoleHistoryRepository repository) {
+        this.snowflake = snowflake;
+        this.repository = repository;
         this.i18n = i18n;
         this.keepRoleService = keepRoleService;
+        lindsey.addEventListener(this);
     }
 
     @Override
@@ -59,11 +64,12 @@ public class RoleHistoryListener extends ListenerAdapter {
         if (!isToKeepRoles) {
             return;
         }
-        MemberProfile profile = profiles.get(event.getMember());
-        if (profile.getRoleHistory() == null) {
+        Optional<RoleHistory> oHistory = this.repository
+            .findByUserAndGuild(event.getUser().getIdLong(), event.getGuild().getIdLong());
+        if (oHistory.isEmpty()) {
             return;
         }
-        Set<Role> roles = profile.getRoleHistory().getRoles()
+        Set<Role> roles = oHistory.get().getRoles()
             .stream()
             .map(roleId -> event.getGuild().getRoleById(roleId))
             .filter(Objects::nonNull)
@@ -78,12 +84,25 @@ public class RoleHistoryListener extends ListenerAdapter {
             .stream()
             .map(ISnowflake::getId)
             .collect(Collectors.toSet());
-        MemberProfile profile = profiles.get(member);
-        RoleHistory history = profile.getRoleHistory();
-        history.getRoles().clear();
+        Optional<RoleHistory> oHistory = this.repository
+            .findByUserAndGuild(member.getUser().getIdLong(), member.getGuild().getIdLong());
+        RoleHistory history;
+        if (oHistory.isPresent()) {
+            history = oHistory.get();
+        } else {
+            history = new RoleHistory();
+            history.setId(this.snowflake.next());
+            history.setUser(member.getUser().getIdLong());
+            history.setGuild(member.getGuild().getIdLong());
+        }
+        if (history.getRoles() == null) {
+            history.setRoles(new HashSet<>());
+        } else {
+            history.getRoles().clear();
+        }
         history.getRoles().addAll(roles);
         history.setLastUpdated(System.currentTimeMillis());
-        profiles.save(profile);
+        this.repository.save(history);
     }
 
 }
