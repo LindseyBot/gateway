@@ -29,6 +29,7 @@ public class Calc implements Command {
     public CommandDescriptor getInfo() {
         return new CommandDescriptor.Builder()
             .name("calc")
+            .alias("calculator")
             .module(Modules.FUN)
             .permission("commands.calc", "permissions.command")
             .build();
