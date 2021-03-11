@@ -10,6 +10,7 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.service.ModLogService;
 import net.notfab.lindsey.shared.entities.profile.member.Strike;
 import net.notfab.lindsey.shared.repositories.sql.StrikeRepository;
 import net.notfab.lindsey.shared.utils.Snowflake;
@@ -30,6 +31,9 @@ public class StrikeCmd implements Command {
 
     @Autowired
     private Snowflake snowflake;
+
+    @Autowired
+    private ModLogService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -82,6 +86,8 @@ public class StrikeCmd implements Command {
             strike.setCount(count);
             strike.setReason(reason);
             this.repository.save(strike);
+
+            this.logging.warn(target, member.getIdLong(), reason);
 
             if (reason == null) {
                 reason = i18n.get(member, "commands.mod.strike.noreason");

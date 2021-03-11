@@ -4,11 +4,13 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.command.*;
 import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.service.ModLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,9 @@ public class Ban implements Command {
 
     @Autowired
     private Translator i18n;
+
+    @Autowired
+    private ModLogService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -54,12 +59,20 @@ public class Ban implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.mod.ban.interact", target.getEffectiveName()));
                 return false;
             }
+            String rawReason;
+            if (args.length > 1) {
+                rawReason = argsToString(args, 1);
+            } else {
+                rawReason = null;
+            }
             target.ban(7, reason)
-                .flatMap(aVoid -> channel
-                    .sendMessage(i18n.get(member, "commands.mod.ban.banned", target.getEffectiveName())))
+                .flatMap(aVoid -> {
+                    this.logging.ban(target, member.getIdLong(), rawReason);
+                    return channel.sendMessage(i18n.get(member, "commands.mod.ban.banned", target.getEffectiveName()));
+                })
                 .delay(5, TimeUnit.SECONDS)
                 .flatMap(Message::delete)
-                .queue();
+                .queue(Utils.noop(), Utils.noop());
         }
         return true;
     }

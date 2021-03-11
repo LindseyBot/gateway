@@ -10,6 +10,7 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.service.ModLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,9 @@ public class MultiBan implements Command {
 
     @Autowired
     private Translator i18n;
+
+    @Autowired
+    private ModLogService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -76,7 +80,13 @@ public class MultiBan implements Command {
                         action = action.flatMap(aVoid -> m.ban(7, i18n.get(member, "commands.mod.ban.audit", adminName)));
                     }
                 }
-                action.flatMap(aVoid -> channel.sendMessage(i18n.get(member, "commands.mod.multiban.ban", usersToBan.size())))
+                action
+                    .flatMap(aVoid -> {
+                        for (Member target : usersToBan) {
+                            this.logging.ban(target, member.getIdLong(), "MultiBan (" + usersToBan.size() + " users)");
+                        }
+                        return channel.sendMessage(i18n.get(member, "commands.mod.multiban.ban", usersToBan.size()));
+                    })
                     .delay(5, TimeUnit.SECONDS)
                     .flatMap(Message::delete)
                     .queue();

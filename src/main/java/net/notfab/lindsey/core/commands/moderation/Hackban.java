@@ -12,6 +12,7 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.service.ModLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,9 @@ public class Hackban implements Command {
 
     @Autowired
     private Translator i18n;
+
+    @Autowired
+    private ModLogService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -51,6 +55,12 @@ public class Hackban implements Command {
             if (args.length > 1) {
                 reason = member.getUser().getName() + ": " + argsToString(args, 1);
             }
+            String rawReason;
+            if (args.length > 1) {
+                rawReason = argsToString(args, 1);
+            } else {
+                rawReason = null;
+            }
             Member target = channel.getGuild().retrieveMemberById(args[0])
                 .complete();
             if (target != null) {
@@ -62,15 +72,19 @@ public class Hackban implements Command {
                     return false;
                 }
                 target.ban(7, reason)
-                    .flatMap(aVoid -> channel
-                        .sendMessage(i18n.get(member, "commands.mod.ban.banned", target.getEffectiveName())))
+                    .flatMap(aVoid -> {
+                        this.logging.ban(member, member.getIdLong(), rawReason);
+                        return channel.sendMessage(i18n.get(member, "commands.mod.ban.banned", target.getEffectiveName()));
+                    })
                     .delay(5, TimeUnit.SECONDS)
                     .flatMap(Message::delete)
                     .queue();
             } else {
                 channel.getGuild().ban(args[0], 7, reason)
-                    .flatMap(aVoid -> channel
-                        .sendMessage(i18n.get(member, "commands.mod.ban.banned", args[0])))
+                    .flatMap(aVoid -> {
+                        this.logging.hackban(channel.getGuild(), Long.parseLong(args[0]), member.getIdLong(), rawReason);
+                        return channel.sendMessage(i18n.get(member, "commands.mod.ban.banned", args[0]));
+                    })
                     .delay(5, TimeUnit.SECONDS)
                     .flatMap(Message::delete)
                     .queue();

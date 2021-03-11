@@ -9,6 +9,7 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.service.ModLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,9 @@ public class Prune implements Command {
 
     @Autowired
     private Translator i18n;
+
+    @Autowired
+    private ModLogService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -83,7 +87,10 @@ public class Prune implements Command {
         }
         int finalI = i;
         channel.deleteMessages(del)
-            .flatMap(ignored -> channel.sendMessage(finalI - 1 + i18n.get(member, "commands.mod.prune.del")))
+            .flatMap(ignored -> {
+                this.logging.prune(channel, member.getIdLong(), del.size());
+                return channel.sendMessage(finalI - 1 + i18n.get(member, "commands.mod.prune.del"));
+            })
             .delay(5, TimeUnit.SECONDS)
             .flatMap(Message::delete)
             .queue();

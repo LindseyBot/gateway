@@ -9,6 +9,7 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.service.ModLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,9 @@ public class SoftBan implements Command {
 
     @Autowired
     private Translator i18n;
+
+    @Autowired
+    private ModLogService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -55,6 +59,12 @@ public class SoftBan implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.mod.softban.interact", target.getEffectiveName()));
                 return false;
             }
+            String rawReason;
+            if (args.length > 1) {
+                rawReason = argsToString(args, 1);
+            } else {
+                rawReason = null;
+            }
             String finalReason = reason;
             target.getUser()
                 .openPrivateChannel()
@@ -66,7 +76,7 @@ public class SoftBan implements Command {
                 .delay(5, TimeUnit.SECONDS)
                 .flatMap(Message::delete)
                 .and(member.getGuild().unban(target.getUser()))
-                .queue();
+                .queue((success) -> this.logging.softban(target, member.getIdLong(), rawReason));
         }
         return true;
     }
