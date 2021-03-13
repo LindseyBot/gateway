@@ -200,6 +200,8 @@ not_enough = "Not enough items."
     description = "Slot machine!"
     start = "{0} started the slot machine!"
     values = "Price : {0} | Jackpot: {1}"
+    [commands.fun.calc]
+    description = "Calculates the given mathematical expression."
     #Lives
     [commands.lives]
     title = "Title"
