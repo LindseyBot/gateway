@@ -68,15 +68,15 @@ public class RemoteGuildsImpl implements RemoteGuilds {
     @Override
     public List<FGuild> getDetails(List<Long> ids, long userId) {
         List<FGuild> guilds = new ArrayList<>();
-        for (Long id : ids) {
+        ids.parallelStream().forEach(id -> {
             FGuild guild;
             try {
                 guild = this.getGuild(id, userId);
             } catch (IllegalStateException | IllegalArgumentException ex) {
-                continue;
+                return;
             }
             guilds.add(guild);
-        }
+        });
         return guilds;
     }
 
