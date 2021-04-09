@@ -20,7 +20,7 @@ public class KeepRoleService {
 
     public boolean isActive(long guild) {
         ServerProfile profile = profiles.getGuild(guild);
-        return profile.isKeepRolesEnabled();
+        return false;
     }
 
 }
