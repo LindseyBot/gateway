@@ -139,13 +139,34 @@ public class FinderUtil {
         }
         Guild guild = message.getGuild();
         if (!message.getMentionedMembers().isEmpty()) {
+            String localQuery = query;
+            // -- Fuzzy
+            if (localQuery.startsWith("@")) {
+                localQuery = localQuery.replaceFirst("@", "");
+            }
+            // --
+            int bestScore = 0;
             Member target = null;
             for (Member mentioned : message.getMentionedMembers()) {
                 if (guild.getSelfMember().getId().equals(mentioned.getId())) {
                     continue;
                 }
-                target = mentioned;
-                break;
+                int score = 0;
+                String currentName = mentioned.getEffectiveName();
+                String normalName = mentioned.getUser().getName();
+                if (currentName.equals(localQuery) || normalName.equals(localQuery)) {
+                    score += 4;
+                } else if (currentName.equalsIgnoreCase(localQuery) || normalName.equalsIgnoreCase(localQuery)) {
+                    score += 3;
+                } else if (currentName.startsWith(localQuery) || normalName.startsWith(localQuery)) {
+                    score += 2;
+                } else if (currentName.contains(localQuery) || normalName.contains(localQuery)) {
+                    score++;
+                }
+                if (score > bestScore) {
+                    target = mentioned;
+                    bestScore = score;
+                }
             }
             if (target != null) {
                 return target;

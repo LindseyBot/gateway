@@ -9,10 +9,15 @@ member_nf = "Member not found"
 help_nf = "No help pages found"
 not_nsfw = "This channel isn't nsfw"
 not_number = "`{0}` is not a number"
-not_boolean = "`{0}` is not a boolean. (Must be true/false)"
+not_boolean = "`{0}` is not a boolean. (Must be true/false/yes/no/y/n)"
 not_found = "`{0}` not found"
+not_enum = "`{0}` is not a valid option."
 nsfw = "NSFW"
 request = "Requested by {0}"
+too_small = "`{0}` is too small, must be above `{1}`."
+too_big = "`{0}` is too big, must be below `{1}`."
+invalid_argument = "`{0}` is not valid for `{1}`."
+missing_required = "Missing required argument `{0}`."
 
 [help]
 title = "Help for `{0}`:"
@@ -22,6 +27,7 @@ url = "**Docs**: {0}"
 examples = "**Examples**:"
 
 [search]
+command = "No subcommands named `{0}` found."
 role = "No roles found named `{0}`."
 permission = "No permissions found with name `{0}`."
 channel = "No channel named `{0}` found."
@@ -40,19 +46,6 @@ second = "{0} second"
 
 [features]
 keeproles = "[Keep Roles] Added {0} roles back."
-
-[options]
-keeproles = "Readds roles when a member joins"
-language = "Server language, used for audit reasons, modlog, etc.."
-starboard = "Starboard channel"
-playlist = "Active playlist id"
-[options.embed]
-title = "Option `{0}`:"
-type = "**Type**:"
-default = "**Default**:"
-current = "**Current**:"
-list = "Available options:"
-page = "Page [{0}/{1}]"
 
 [embeds]
     [embeds.ignored]
