@@ -22,6 +22,7 @@ repositories {
     maven { url "https://dl.bintray.com/sedmelluq/com.sedmelluq" }
     maven { url "https://jitpack.io" }
     maven { url 'https://m2.dv8tion.net/releases' }
+    maven { url "https://maven.notfab.net/Hosted" }
     maven {
         url "https://maven.pkg.github.com/LindseyBot/shared"
         credentials {
@@ -38,6 +39,7 @@ bootJar {
 dependencies {
     compile 'org.jsoup:jsoup:1.11.3'
     compile 'net.kodehawa:imageboard-api:2.4'
+    compile 'net.notfab:Eventti:1.3.7'
 
     // Framework
     compile group: 'net.dv8tion', name: 'JDA', version: '4.2.1_254'
@@ -45,7 +47,6 @@ dependencies {
     compile group: 'net.jodah', name: 'expiringmap', version: '0.5.8'
     compile group: 'net.notfab.lindsey', name: 'shared', version: '0.1.24'
     compile group: 'com.github.mpkorstanje', name: 'simmetrics-core', version: '4.1.1'
-    compile group: 'net.notfab', name: 'Eventti', version: '1.3.4'
 
     // Data
     compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'

@@ -3,24 +3,24 @@ package net.notfab.lindsey.core.framework.command.external;
 import lombok.Data;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.notfab.lindsey.shared.entities.commands.CommandData;
 import net.notfab.lindsey.shared.entities.commands.CommandOption;
+import net.notfab.lindsey.shared.entities.commands.CommandRequest;
 
 import java.util.*;
 
 @Data
 public class ExternalParser {
 
-    public static CommandData run(StringBuilder path, List<CommandOption> optList, Deque<String> args,
-                                  Member member, GuildMessageReceivedEvent event) throws BadArgumentException {
-        CommandData data = new CommandData();
-        data.setCommandName(path.toString());
-        data.setGuild(FakeBuilder.toFake(event.getGuild()));
-        data.setMember(FakeBuilder.toFake(member));
-        data.setChannel(FakeBuilder.toFake(event.getChannel()));
+    public static CommandRequest run(StringBuilder path, List<CommandOption> optList, Deque<String> args,
+                                     Member member, GuildMessageReceivedEvent event) throws BadArgumentException {
+        CommandRequest request = new CommandRequest();
+        request.setCommandName(path.toString());
+        request.setGuild(FakeBuilder.toFake(event.getGuild()));
+        request.setMember(FakeBuilder.toFake(member));
+        request.setChannel(FakeBuilder.toFake(event.getChannel()));
         if (optList.isEmpty()) {
-            data.setOptions(new HashMap<>());
-            return data;
+            request.setOptions(new HashMap<>());
+            return request;
         }
         Map<String, Object> opts = new HashMap<>();
         for (int i = 0; i < optList.size(); i++) {
@@ -63,8 +63,8 @@ public class ExternalParser {
                 opts.put(option.getName().toLowerCase(), OptionParser.parse(option, argument, event));
             }
         }
-        data.setOptions(opts);
-        return data;
+        request.setOptions(opts);
+        return request;
     }
 
 

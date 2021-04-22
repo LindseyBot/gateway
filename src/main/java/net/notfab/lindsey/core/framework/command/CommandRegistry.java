@@ -2,86 +2,91 @@ package net.notfab.lindsey.core.framework.command;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import net.jodah.expiringmap.ExpirationPolicy;
-import net.jodah.expiringmap.ExpiringMap;
+import net.notfab.eventti.EventHandler;
+import net.notfab.eventti.Listener;
+import net.notfab.lindsey.core.service.EventService;
+import net.notfab.lindsey.core.spring.config.ControllerProperties;
 import net.notfab.lindsey.shared.entities.commands.ExternalCommand;
+import net.notfab.lindsey.shared.entities.events.CommandCreatedEvent;
+import net.notfab.lindsey.shared.entities.events.CommandRemovedEvent;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
-public class CommandRegistry {
+public class CommandRegistry implements Listener {
 
-    private final JedisPool redis;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final ExpiringMap<String, ExternalCommand> commands = ExpiringMap.builder()
-        .expiration(15, TimeUnit.MINUTES)
-        .expirationPolicy(ExpirationPolicy.ACCESSED)
-        .build();
+    private final OkHttpClient okHttpClient;
+    private final ControllerProperties properties;
+    private final ObjectMapper objectMapper;
+    private final Map<String, ExternalCommand> commands = new HashMap<>();
 
-    private final String COMMAND_REGISTRY_NAME = "Lindsey:Commands";
-    private final String COMMAND_WORKER_NAME = "Lindsey:Workers:Commands";
-
-    public CommandRegistry(JedisPool redis) {
-        this.redis = redis;
+    public CommandRegistry(ControllerProperties properties, EventService events, ObjectMapper objectMapper) {
+        this.properties = properties;
+        this.objectMapper = objectMapper;
+        this.okHttpClient = new OkHttpClient.Builder().build();
+        events.addListener(this);
     }
 
-    // Fired when a worker leaves the network
-    public void onUnregister(ExternalCommand command) {
-        try (Jedis jedis = this.redis.getResource()) {
-            long count = jedis.hincrBy(COMMAND_WORKER_NAME, command.getName(), 0L);
-            if (count == 0) {
-                this.commands.remove(command.getName());
-                command.getAliases().forEach(this.commands::remove);
-            }
-        } catch (Exception ex) {
-            log.error("Failed to unregister command", ex);
+    @EventHandler
+    public void onCreate(CommandCreatedEvent event) {
+        ExternalCommand command = event.getCommand();
+        long before = this.commands.size();
+        this.commands.put(command.getName(), command);
+        if (!command.getAliases().isEmpty()) {
+            command.getAliases().forEach(name -> this.commands.put(name, command));
         }
+        log.info("Registered " + (this.commands.size() - before) + " commands from event.");
     }
 
-    public void register(ExternalCommand command) {
-        List<String> names = new ArrayList<>();
-        names.add(command.getName());
-        names.addAll(command.getAliases());
-        try (Jedis jedis = this.redis.getResource()) {
-            String cmd = objectMapper.writeValueAsString(command);
-            for (String name : names) {
-                jedis.hset(COMMAND_REGISTRY_NAME, name, cmd);
-            }
-            jedis.hincrBy(COMMAND_WORKER_NAME, command.getName(), 1L);
-        } catch (Exception ex) {
-            log.error("Failed to register command", ex);
+    @EventHandler
+    public void onRemove(CommandRemovedEvent event) {
+        for (String name : event.getCommandNames()) {
+            this.commands.remove(name);
         }
+        log.info("Removed " + event.getCommandNames().size() + " commands from event.");
     }
 
-    public boolean exists(String commandName) {
-        return this.get(commandName) != null;
+    @EventListener(ApplicationReadyEvent.class)
+    public void onReady() {
+        Request request = new Request.Builder()
+            .url(this.properties.getUrl() + "/commands")
+            .addHeader("Authorization", "Bearer " + this.properties.getToken())
+            .addHeader("X-Worker-Id", this.properties.getId())
+            .get().build();
+        try {
+            Response response = this.okHttpClient.newCall(request).execute();
+            if (!response.isSuccessful()) {
+                throw new IOException("Invalid response code " + response.code());
+            }
+            try (ResponseBody body = response.body()) {
+                if (body == null) {
+                    throw new IOException("Missing body");
+                }
+                ExternalCommand[] commandList = objectMapper.readValue(body.bytes(), ExternalCommand[].class);
+                for (ExternalCommand command : commandList) {
+                    CommandCreatedEvent event = new CommandCreatedEvent();
+                    event.setCommand(command);
+                    this.onCreate(event);
+                }
+                log.info("Loaded " + commandList.length + " commands with " + (this.commands.size() - commandList.length) + " aliases.");
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed to load commands", ex);
+        }
     }
 
     public ExternalCommand get(String commandName) {
-        commandName = commandName.toLowerCase();
-        if (this.commands.containsKey(commandName)) {
-            return this.commands.get(commandName);
-        }
-        try (Jedis jedis = this.redis.getResource()) {
-            String raw = jedis.hget("Lindsey:Commands", commandName);
-            if (raw == null) {
-                return null;
-            }
-            ExternalCommand cmd = objectMapper.readValue(raw, ExternalCommand.class);
-            this.commands.put(commandName, cmd);
-            for (String alias : cmd.getAliases()) {
-                this.commands.put(alias.toLowerCase(), cmd);
-            }
-            return cmd;
-        } catch (Exception ex) {
-            return null;
-        }
+        return this.commands.get(commandName.toLowerCase());
     }
 
 }
