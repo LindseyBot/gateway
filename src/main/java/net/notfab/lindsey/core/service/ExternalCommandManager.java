@@ -97,6 +97,7 @@ public class ExternalCommandManager {
                 msg.send(event.getChannel(), sender(member) + i18n.get(member, ex.getMessage(), ex.getArgs()));
                 return;
             }
+            request.setCommandPath(path.toString());
             try {
                 CommandResponse response =
                     template.convertSendAndReceiveAsType(RabbitExchange.COMMANDS.getName(), commandName, request, type);
