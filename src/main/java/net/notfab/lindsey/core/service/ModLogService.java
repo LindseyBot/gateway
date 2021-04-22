@@ -24,7 +24,7 @@ public class ModLogService {
     }
 
     public boolean isEnabled(Guild guild) {
-        return this.profiles.get(guild).isModLogEnabled();
+        return false;
     }
 
     public void ban(Member target, long admin, String reason) {

@@ -9,6 +9,7 @@ import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandManager;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.service.ExternalCommandManager;
 import net.notfab.lindsey.core.service.IgnoreService;
 import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import org.slf4j.Logger;
@@ -31,13 +32,17 @@ public class CommandListener extends ListenerAdapter {
     private final PermissionManager permissions;
     private final TaskExecutor threadPool;
     private final IgnoreService ignores;
+    private final ExternalCommandManager externalCommandManager;
 
-    public CommandListener(CommandManager manager, ProfileManager profileManager, PermissionManager permissions, IgnoreService ignores) {
+    public CommandListener(CommandManager manager, ProfileManager profileManager,
+                           PermissionManager permissions, IgnoreService ignores,
+                           ExternalCommandManager externalCommandManager) {
         this.manager = manager;
         this.threadPool = manager.getPool();
         this.profiles = profileManager;
         this.permissions = permissions;
         this.ignores = ignores;
+        this.externalCommandManager = externalCommandManager;
     }
 
     @Override
@@ -69,6 +74,7 @@ public class CommandListener extends ListenerAdapter {
         // -- Execution
         Command command = this.manager.findCommand(commandName);
         if (command == null) {
+            this.externalCommandManager.onCommand(commandName, arguments, member, event);
             return;
         }
         // -- Ignore check

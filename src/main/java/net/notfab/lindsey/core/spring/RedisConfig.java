@@ -15,9 +15,14 @@ public class RedisConfig {
 
     @Bean
     @Primary
-    RedisConnectionFactory redisFactory(RedisProperties properties) {
-        RedisStandaloneConfiguration config =
-            new RedisStandaloneConfiguration(properties.getHost(), properties.getPort());
+    public RedisProperties redisProperties() {
+        return new RedisProperties();
+    }
+
+    @Bean
+    @Primary
+    public RedisConnectionFactory redisFactory(RedisProperties properties) {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(properties.getHost(), properties.getPort());
         if (properties.getPassword() != null && !properties.getPassword().isBlank()) {
             config.setPassword(properties.getPassword());
         }
@@ -25,7 +30,7 @@ public class RedisConfig {
     }
 
     @Bean
-    RedisConnection redisConnection(RedisConnectionFactory factory) {
+    public RedisConnection redisConnection(RedisConnectionFactory factory) {
         return factory.getConnection();
     }
 
@@ -34,12 +39,6 @@ public class RedisConfig {
         RedisTemplate<?, ?> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
         return template;
-    }
-
-    @Bean
-    @Primary
-    public RedisProperties redisProperties() {
-        return new RedisProperties();
     }
 
 }

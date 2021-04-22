@@ -22,6 +22,7 @@ repositories {
     maven { url "https://dl.bintray.com/sedmelluq/com.sedmelluq" }
     maven { url "https://jitpack.io" }
     maven { url 'https://m2.dv8tion.net/releases' }
+    maven { url "https://maven.notfab.net/Hosted" }
     maven {
         url "https://maven.pkg.github.com/LindseyBot/shared"
         credentials {
@@ -43,7 +44,8 @@ dependencies {
     compile group: 'net.dv8tion', name: 'JDA', version: '4.2.1_254'
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.73'
     compile group: 'net.jodah', name: 'expiringmap', version: '0.5.8'
-    compile group: 'net.notfab.lindsey', name: 'shared', version: '0.1.23'
+    compile group: 'net.notfab.lindsey', name: 'shared', version: '0.1.24'
+    compile group: 'net.notfab', name: 'Eventti', version: '1.3.7'
     compile group: 'com.github.mpkorstanje', name: 'simmetrics-core', version: '4.1.1'
 
     // Data

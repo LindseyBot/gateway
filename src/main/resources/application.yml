@@ -5,6 +5,10 @@ bot:
     kitsu: ''
     twitchClient: ''
     twitchKey: ''
+  controller:
+    url: 'http://localhost:8081'
+    token: ''
+    id: 'master'
 spring:
   datasource:
     url: jdbc:h2:mem:lindsey
@@ -17,13 +21,6 @@ spring:
       ddl-auto: update
   redis:
     host: 'localhost'
-  data:
-    mongodb:
-      username: 'root'
-      password: 'root'
-      host: 'localhost'
-      authentication-database: admin
-      database: test
 
 ---
 
@@ -34,6 +31,10 @@ bot:
     kitsu: ''
     twitchClient: ''
     twitchKey: ''
+  controller:
+    url: 'http://localhost:8081'
+    token: ''
+    id: 'master'
 spring:
   profiles: prod
   datasource:
@@ -49,10 +50,3 @@ spring:
       ddl-auto: update
   redis:
     host: 'localhost'
-  data:
-    mongodb:
-      username: 'root'
-      password: 'root'
-      host: 'localhost'
-      authentication-database: admin
-      database: lindsey
