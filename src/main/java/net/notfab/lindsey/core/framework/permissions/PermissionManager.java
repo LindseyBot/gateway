@@ -25,6 +25,38 @@ public class PermissionManager {
         this.repository = repository;
     }
 
+    public boolean hasPermission(Member member, boolean byDefault, String... nodes) {
+        if (member.isOwner()) {
+            return true;
+        }
+        if (member.hasPermission(Permission.ADMINISTRATOR)) {
+            return true;
+        }
+        // --
+        List<Role> list = new ArrayList<>();
+        list.add(member.getGuild().getPublicRole()); // Always add public role
+        list.addAll(member.getRoles());
+        list.sort(Comparator.comparing(Role::getPosition));
+        // --
+        Map<String, MemberPermission> perms = new HashMap<>();
+        for (Role role : list) {
+            for (MemberPermission memberPermission : repository.findAllByRole(role.getIdLong())) {
+                perms.put(memberPermission.getNode(), memberPermission);
+            }
+        }
+        for (String node : nodes) {
+            node = node.toLowerCase();
+            if (perms.containsKey(node)) {
+                if (!perms.get(node).isAllowed()) {
+                    return false;
+                }
+            } else if (!byDefault) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean hasPermission(Member member, String... nodes) {
         if (member.isOwner()) {
             return true;

@@ -21,6 +21,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -84,7 +85,17 @@ public class ExternalCommandManager {
         }
 
         // -- Permission check
-        if (!this.permissions.hasPermission(member, "commands." + path)) {
+        if (!this.permissions.hasPermission(member, !command.isAdminOnly(), "commands." + path)) {
+            return;
+        }
+
+        if (command.isNsfw() && !event.getChannel().isNSFW()) {
+            this.msg.send(event.getChannel(), this.i18n.get(member, "core.not_nsfw"));
+            return;
+        }
+
+        if (command.isDeveloperOnly() && !Arrays.asList(87166524837613568L, 119566649731842049L).contains(member.getIdLong())) {
+            // Dev-only commands
             return;
         }
 
@@ -97,7 +108,7 @@ public class ExternalCommandManager {
                 msg.send(event.getChannel(), sender(member) + i18n.get(member, ex.getMessage(), ex.getArgs()));
                 return;
             }
-            request.setCommandPath(path.toString());
+            request.setCommandPath("commands." + path);
             try {
                 CommandResponse response =
                     template.convertSendAndReceiveAsType(RabbitExchange.COMMANDS.getName(), commandName, request, type);
@@ -108,6 +119,7 @@ public class ExternalCommandManager {
                     event.getMessage().
                         reply(this.i18n.get(member, error.getMessage()))
                         .queue();
+                    return;
                 }
                 event.getChannel()
                     .sendMessage(response.toString())
