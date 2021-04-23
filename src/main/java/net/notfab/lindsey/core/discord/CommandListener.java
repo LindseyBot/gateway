@@ -81,10 +81,9 @@ public class CommandListener extends ListenerAdapter {
         // -- Execution
         Command command = this.manager.findCommand(commandName);
         if (command == null) {
-
-
             return;
         }
+
         // -- Ignore check
         if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
             return;
