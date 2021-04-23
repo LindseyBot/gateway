@@ -155,4 +155,8 @@ public class ExternalCommandManager {
         return command;
     }
 
+    public boolean isCommand(String commandName) {
+        return this.registry.get(commandName) != null;
+    }
+
 }
