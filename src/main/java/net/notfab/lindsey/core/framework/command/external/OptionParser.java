@@ -5,9 +5,9 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.lindseybot.commands.request.CommandOption;
 import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.command.FinderUtil;
-import net.notfab.lindsey.shared.entities.commands.CommandOption;
 
 import java.util.Optional;
 import java.util.regex.Matcher;

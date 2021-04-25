@@ -2,13 +2,13 @@ package net.notfab.lindsey.core.framework.command;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.lindseybot.commands.Command;
+import net.lindseybot.events.CommandCreatedEvent;
+import net.lindseybot.events.CommandRemovedEvent;
 import net.notfab.eventti.EventHandler;
 import net.notfab.eventti.Listener;
 import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.core.spring.config.ControllerProperties;
-import net.notfab.lindsey.shared.entities.commands.ExternalCommand;
-import net.notfab.lindsey.shared.entities.events.CommandCreatedEvent;
-import net.notfab.lindsey.shared.entities.events.CommandRemovedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -28,7 +28,7 @@ public class CommandRegistry implements Listener {
     private final OkHttpClient okHttpClient;
     private final ControllerProperties properties;
     private final ObjectMapper objectMapper;
-    private final Map<String, ExternalCommand> commands = new HashMap<>();
+    private final Map<String, Command> commands = new HashMap<>();
 
     public CommandRegistry(ControllerProperties properties, EventService events, ObjectMapper objectMapper) {
         this.properties = properties;
@@ -39,7 +39,7 @@ public class CommandRegistry implements Listener {
 
     @EventHandler
     public void onCreate(CommandCreatedEvent event) {
-        ExternalCommand command = event.getCommand();
+        Command command = event.getCommand();
         long before = this.commands.size();
         this.commands.put(command.getName(), command);
         if (!command.getAliases().isEmpty()) {
@@ -72,8 +72,8 @@ public class CommandRegistry implements Listener {
                 if (body == null) {
                     throw new IOException("Missing body");
                 }
-                ExternalCommand[] commandList = objectMapper.readValue(body.bytes(), ExternalCommand[].class);
-                for (ExternalCommand command : commandList) {
+                Command[] commandList = objectMapper.readValue(body.bytes(), Command[].class);
+                for (Command command : commandList) {
                     CommandCreatedEvent event = new CommandCreatedEvent();
                     event.setCommand(command);
                     this.onCreate(event);
@@ -85,7 +85,7 @@ public class CommandRegistry implements Listener {
         }
     }
 
-    public ExternalCommand get(String commandName) {
+    public Command get(String commandName) {
         return this.commands.get(commandName.toLowerCase());
     }
 
