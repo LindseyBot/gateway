@@ -121,8 +121,9 @@ public class RemoteGuildsImpl implements RemoteGuilds {
                     fChannel.setType(FChannelType.STORE);
                 } else if (gChannel.getType() == ChannelType.VOICE) {
                     fChannel.setType(FChannelType.VOICE);
-                } else {
+                } else if (gChannel.getType() == ChannelType.TEXT) {
                     fChannel.setType(FChannelType.TEXT);
+                    fChannel.setNsfw(((TextChannel) gChannel).isNSFW());
                 }
                 channels.add(fChannel);
                 pos++;
