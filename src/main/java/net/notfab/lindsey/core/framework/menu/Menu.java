@@ -28,6 +28,24 @@ public class Menu {
 
     // -- Reactions
 
+    public static Menu create(Message message, List<MessageEmbed> pages) {
+        Message msg = message.reply(pages.get(0))
+            .complete();
+        if (pages.size() > 1) {
+            msg.addReaction(Emotes.LeftArrow.asReaction())
+                .queue();
+        }
+        msg.addReaction(Emotes.XCheck.asReaction())
+            .queue();
+        if (pages.size() > 1) {
+            msg.addReaction(Emotes.RightArrow.asReaction())
+                .queue();
+        }
+        Menu menu = new Menu(msg.getIdLong(), message.getChannel().getIdLong(), pages);
+        MenuManager.getInstance().register(menu);
+        return menu;
+    }
+
     public static Menu create(TextChannel channel, List<MessageEmbed> pages) {
         Message message = channel.sendMessage(pages.get(0))
             .complete();

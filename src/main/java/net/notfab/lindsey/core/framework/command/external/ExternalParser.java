@@ -3,8 +3,8 @@ package net.notfab.lindsey.core.framework.command.external;
 import lombok.Data;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.notfab.lindsey.shared.entities.commands.CommandOption;
-import net.notfab.lindsey.shared.entities.commands.CommandRequest;
+import net.lindseybot.commands.request.CommandOption;
+import net.lindseybot.commands.request.CommandRequest;
 
 import java.util.*;
 

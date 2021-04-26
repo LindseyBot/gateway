@@ -36,6 +36,7 @@ public class FakeBuilder {
         fake.setId(channel.getIdLong());
         fake.setName(channel.getName());
         fake.setPosition(channel.getPosition());
+        fake.setNsfw(channel.isNSFW());
         return fake;
     }
 
