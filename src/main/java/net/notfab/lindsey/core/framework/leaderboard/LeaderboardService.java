@@ -40,7 +40,9 @@ public class LeaderboardService {
     public void update(long user, LeaderboardType type) {
         Leaderboard leaderboard = repository.findByTypeAndUser(type, user)
             .orElse(new Leaderboard());
-        leaderboard.setId(snowflake.next());
+        if(leaderboard.getId() == 0){
+            leaderboard.setId(snowflake.next());
+        }
         leaderboard.setType(type);
         leaderboard.setUser(user);
         if (type == LeaderboardType.COOKIES) {

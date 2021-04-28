@@ -52,6 +52,7 @@ public class CommandListener extends ListenerAdapter {
         Set<Long> ids = new HashSet<>();
         ids.add(141555945586163712L);
         ids.add(213044545825406976L);
+        ids.add(382281038547648512L);
         return ids.contains(guild.getIdLong());
     }
 

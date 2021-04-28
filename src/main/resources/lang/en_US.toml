@@ -112,7 +112,7 @@ keeproles = "[Keep Roles] Added {0} roles back."
     site = "More Options"
 
 [commands.economy]
-not_enough = "Not enough cookies."
+    not_enough = "Not enough cookies."
     win = "You win {0} cookies!"
     [commands.economy.cookies]
     description = "Find out how many cookies a user (like yourself) has!"
