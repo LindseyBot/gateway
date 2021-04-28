@@ -45,6 +45,9 @@ public class AntiAdListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         Message message = event.getMessage();
         if (message.getInvites().isEmpty()) {
             return;

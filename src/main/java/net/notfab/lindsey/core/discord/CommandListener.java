@@ -18,7 +18,9 @@ import org.springframework.core.task.TaskExecutor;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,8 +47,19 @@ public class CommandListener extends ListenerAdapter {
         this.externalCommandManager = externalCommandManager;
     }
 
+    // TODO: Remove for prod
+    public static boolean isAllowed(Guild guild) {
+        Set<Long> ids = new HashSet<>();
+        ids.add(141555945586163712L);
+        ids.add(213044545825406976L);
+        return !ids.contains(guild.getIdLong());
+    }
+
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
+        if (!isAllowed(event.getGuild())) {
+            return;
+        }
         Member member = event.getMember();
         if (member == null || event.getAuthor().isBot() || event.isWebhookMessage()) {
             return;

@@ -28,6 +28,9 @@ public class ReactionRoleListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         this.createReactionRole(event);
         List<ReactionRole> roleList = service.findAll(event.getGuild());
         if (roleList.isEmpty()) {
@@ -51,6 +54,9 @@ public class ReactionRoleListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         List<ReactionRole> roleList = service.findAll(event.getGuild());
         if (roleList.isEmpty()) {
             return;

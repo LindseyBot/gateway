@@ -31,11 +31,17 @@ public class StarboardListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         this.handleStarboard(event.getReactionEmote(), event.getChannel(), event.getMessageIdLong());
     }
 
     @Override
     public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         this.handleStarboard(event.getReactionEmote(), event.getChannel(), event.getMessageIdLong());
     }
 

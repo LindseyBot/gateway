@@ -31,6 +31,9 @@ public class UserHistoryListener extends ListenerAdapter implements ExpirationLi
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         String name = event.getAuthor().getAsTag();
         cache.put(event.getAuthor().getIdLong(), name);
     }

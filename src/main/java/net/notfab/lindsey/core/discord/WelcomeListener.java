@@ -25,6 +25,9 @@ public class WelcomeListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         Optional<WelcomeSettings> oSettings = repository.findById(event.getGuild().getIdLong());
         if (oSettings.isEmpty()) {
             return;

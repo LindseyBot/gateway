@@ -36,6 +36,9 @@ public class UrlListener extends ListenerAdapter implements ExpirationListener<L
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         Member member = event.getMember();
         TextChannel channel = event.getChannel();
         MessageEmbed embed;

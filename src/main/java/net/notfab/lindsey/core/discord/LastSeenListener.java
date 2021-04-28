@@ -47,12 +47,18 @@ public class LastSeenListener extends ListenerAdapter implements ExpirationListe
         if (event.isWebhookMessage()) {
             return;
         }
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         memberCache.put(event.getGuild().getId() + ":" + event.getAuthor().getId(), System.currentTimeMillis());
         guildCache.put(event.getGuild().getIdLong(), System.currentTimeMillis());
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         memberCache.put(event.getGuild().getId() + ":" + event.getUser().getId(), System.currentTimeMillis());
         guildCache.put(event.getGuild().getIdLong(), System.currentTimeMillis());
     }

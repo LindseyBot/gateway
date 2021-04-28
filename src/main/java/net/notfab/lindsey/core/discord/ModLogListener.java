@@ -45,18 +45,27 @@ public class ModLogListener extends ListenerAdapter implements ExpirationListene
 
     @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         this.auditLogWait.put(event.getUser().getIdLong(),
             new ReferenceHolder(event.getGuild().getIdLong(), event.getUser().getName()));
     }
 
     @Override
     public void onGuildUnban(@NotNull GuildUnbanEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         this.auditLogWait.put(event.getUser().getIdLong(),
             new ReferenceHolder(event.getGuild().getIdLong(), event.getUser().getName()));
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+        if (!CommandListener.isAllowed(event.getGuild())) {
+            return;
+        }
         this.auditLogWait.put(event.getUser().getIdLong(),
             new ReferenceHolder(event.getGuild().getIdLong(), event.getUser().getName()));
     }
