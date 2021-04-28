@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ master ]
 env:
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: gateway
 jobs:
   build:
     runs-on: ubuntu-latest
