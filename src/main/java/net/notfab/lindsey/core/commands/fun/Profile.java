@@ -71,10 +71,10 @@ public class Profile implements Command {
     @Value("${bot.token}")
     private String token;
 
-    private final Font openSans;
-    private final Font hanSansJP;
-    private final Font hanSansKR;
-    private final Font hanSansCN;
+    private Font openSans;
+    private Font hanSansJP;
+    private Font hanSansKR;
+    private Font hanSansCN;
     private final OkHttpClient okHttpClient;
 
     private final ExpiringMap<Long, byte[]> userImageCache = ExpiringMap.builder()
@@ -87,8 +87,8 @@ public class Profile implements Command {
             hanSansJP = Font.createFont(Font.TRUETYPE_FONT, this.getResource("fonts/SourceHanSansJP-Bold.ttf")).deriveFont(14f);
             hanSansKR = Font.createFont(Font.TRUETYPE_FONT, this.getResource("fonts/SourceHanSansKR-Bold.ttf")).deriveFont(14f);
             hanSansCN = Font.createFont(Font.TRUETYPE_FONT, this.getResource("fonts/SourceHanSansCN-Bold.ttf")).deriveFont(14f);
-        } catch (FontFormatException | IOException e) {
-            throw new IllegalStateException("Failed to initialize fonts");
+        } catch (FontFormatException | IOException ex) {
+            log.error("Failed to initialize fonts", ex);
         }
         this.okHttpClient = new OkHttpClient.Builder()
             .followSslRedirects(true)
