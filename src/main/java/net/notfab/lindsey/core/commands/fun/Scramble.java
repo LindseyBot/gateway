@@ -34,7 +34,7 @@ public class Scramble implements Command {
 
     private final Random random = new Random();
 
-    private List<Long> active = new ArrayList<>();
+    private final List<Long> active = new ArrayList<>();
 
     @Autowired
     private Waiter waiter;
@@ -96,8 +96,8 @@ public class Scramble implements Command {
             long seconds = 60 - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - time);
             int prize = (int) ((seconds * forSecond) + (word.length() * forCharacter));
             active.remove(id);
-            msg.send(channel, "**" + member.getEffectiveName() + "**: " + i18n.get(member, "commands.economy.win", prize));
-            economy.pay(member, basePrize + prize);
+            msg.send(channel, "**" + m.getMember().getEffectiveName() + "**: " + i18n.get(member, "commands.economy.win", prize));
+            economy.pay(m.getMember(), basePrize + prize);
         }).timeout(() -> {
             active.remove(id);
             msg.send(channel, i18n.get(member, "commands.fun.scramble.fail", word));
