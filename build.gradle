@@ -18,8 +18,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url "https://maven.notfab.net/Hosted" }
-    maven { url "https://dl.bintray.com/kodehawa/maven" }
-    maven { url "https://dl.bintray.com/sedmelluq/com.sedmelluq" }
     maven { url "https://jitpack.io" }
     maven { url 'https://m2.dv8tion.net/releases' }
     maven { url "https://maven.notfab.net/Hosted" }
@@ -41,7 +39,7 @@ dependencies {
     compile 'net.kodehawa:imageboard-api:2.4'
 
     // Framework
-    compile group: 'net.dv8tion', name: 'JDA', version: '4.2.1_254'
+    compile group: 'net.dv8tion', name: 'JDA', version: '4.2.1_262'
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.73'
     compile group: 'net.jodah', name: 'expiringmap', version: '0.5.8'
     compile group: 'net.notfab.lindsey', name: 'shared', version: '0.1.28'
