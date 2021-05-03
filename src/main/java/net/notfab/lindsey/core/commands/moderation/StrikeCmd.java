@@ -1,6 +1,5 @@
 package net.notfab.lindsey.core.commands.moderation;
 
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -71,10 +70,7 @@ public class StrikeCmd implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "core.member_nf"));
                 return false;
             }
-            if (!member.canInteract(target) || target.isOwner()
-                || target.hasPermission(Permission.ADMINISTRATOR)
-                || target.getUser().isBot()
-                || !member.hasPermission(Permission.BAN_MEMBERS)) {
+            if (!member.canInteract(target) || Utils.isDiscordModerator(target)) {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.mod.strike.interact"));
                 return false;
             }

@@ -25,6 +25,21 @@ public class EventService {
         this.eventManager = new EventManager();
     }
 
+    /**
+     * Fires an event locally.
+     *
+     * @param event Event to fire.
+     */
+    public void fire(Event event) {
+        this.eventManager.fire(event);
+    }
+
+    /**
+     * Publish an event to the network.
+     *
+     * @param to    RabbitMQ Exchange.
+     * @param event Event.
+     */
     public void publish(String to, Event event) {
         String message;
         try {

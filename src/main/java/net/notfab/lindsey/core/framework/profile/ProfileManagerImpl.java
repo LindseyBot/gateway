@@ -1,7 +1,6 @@
 package net.notfab.lindsey.core.framework.profile;
 
 import lombok.Getter;
-import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.lindsey.shared.entities.profile.MemberProfile;
 import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
@@ -25,20 +24,16 @@ public class ProfileManagerImpl implements ProfileManager {
     private final ServerProfileRepository serverRepository;
     private final MemberProfileRepository memberRepository;
 
-    private final ExpiringMap<Long, UserProfile> userProfileCache;
-    private final ExpiringMap<Long, ServerProfile> serverProfileCache;
-
-    public ProfileManagerImpl(Snowflake snowflake, UserProfileRepository userRepository,
-                              ServerProfileRepository serverRepository,
-                              MemberProfileRepository memberRepository,
-                              ExpiringMap<Long, UserProfile> userProfileCache,
-                              ExpiringMap<Long, ServerProfile> serverProfileCache) {
+    public ProfileManagerImpl(
+        Snowflake snowflake,
+        UserProfileRepository userRepository,
+        ServerProfileRepository serverRepository,
+        MemberProfileRepository memberRepository
+    ) {
         this.snowflake = snowflake;
         this.userRepository = userRepository;
         this.serverRepository = serverRepository;
         this.memberRepository = memberRepository;
-        this.userProfileCache = userProfileCache;
-        this.serverProfileCache = serverProfileCache;
         Instance = this;
     }
 
@@ -60,9 +55,6 @@ public class ProfileManagerImpl implements ProfileManager {
 
     @Override
     public @NotNull UserProfile getUser(long id) {
-        if (this.userProfileCache.containsKey(id)) {
-            return this.userProfileCache.get(id);
-        }
         Optional<UserProfile> oProfile = this.userRepository.findById(id);
         UserProfile profile;
         if (oProfile.isEmpty()) {
@@ -70,16 +62,12 @@ public class ProfileManagerImpl implements ProfileManager {
             profile.setUser(id);
         } else {
             profile = oProfile.get();
-            this.userProfileCache.put(id, profile);
         }
         return profile;
     }
 
     @Override
     public @NotNull ServerProfile getGuild(long id) {
-        if (this.serverProfileCache.containsKey(id)) {
-            return this.serverProfileCache.get(id);
-        }
         Optional<ServerProfile> oProfile = this.serverRepository.findById(id);
         ServerProfile profile;
         if (oProfile.isEmpty()) {
@@ -87,7 +75,6 @@ public class ProfileManagerImpl implements ProfileManager {
             profile.setGuild(id);
         } else {
             profile = oProfile.get();
-            this.serverProfileCache.put(id, profile);
         }
         return profile;
     }
@@ -95,13 +82,11 @@ public class ProfileManagerImpl implements ProfileManager {
     @Override
     public void save(@NotNull ServerProfile profile) {
         serverRepository.save(profile);
-        this.serverProfileCache.remove(profile.getGuild());
     }
 
     @Override
     public void save(@NotNull UserProfile profile) {
         userRepository.save(profile);
-        this.userProfileCache.remove(profile.getUser());
     }
 
     @Override

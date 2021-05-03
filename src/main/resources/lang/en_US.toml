@@ -110,6 +110,8 @@ keeproles = "[Keep Roles] Added {0} roles back."
     mod = "Moderation"
     minimal = "Minimal"
     site = "More Options"
+    [commands.core.dev]
+    description = "Development stuff"
 
 [commands.economy]
     not_enough = "Not enough cookies."

@@ -1,5 +1,6 @@
 package net.notfab.lindsey.core.framework;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.framework.extractors.SCExtractor;
@@ -178,6 +179,16 @@ public class Utils {
         Pattern pattern = Pattern.compile("i\\.imgur\\.com/(\\w+)\\.(\\w+)$");
         Matcher matcher = pattern.matcher(url);
         return matcher.find();
+    }
+
+    public static boolean isDiscordModerator(Member member) {
+        return member.isOwner()
+            || member.hasPermission(Permission.MANAGE_PERMISSIONS)
+            || member.hasPermission(Permission.KICK_MEMBERS)
+            || member.hasPermission(Permission.BAN_MEMBERS)
+            || member.hasPermission(Permission.MANAGE_SERVER)
+            || member.hasPermission(Permission.MESSAGE_MANAGE)
+            || member.hasPermission(Permission.ADMINISTRATOR);
     }
 
 }
