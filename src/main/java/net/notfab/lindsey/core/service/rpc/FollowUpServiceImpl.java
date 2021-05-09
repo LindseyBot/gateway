@@ -118,7 +118,7 @@ public class FollowUpServiceImpl implements FollowUpService {
     }
 
     @Override
-    public long reply(long interaction, Message message) {
+    public long reply(long interaction, Message message, boolean mention) {
         FollowUp followUp = this.find(interaction);
         if (followUp == null) {
             throw new IllegalArgumentException("Unknown interaction (Expired?)");
@@ -133,7 +133,7 @@ public class FollowUpServiceImpl implements FollowUpService {
         }
         long interactionReply = this.snowflake.next();
         channel.retrieveMessageById(followUp.getMessageId())
-            .flatMap(msg -> msg.reply(this.adapter.toMessage(message, guild)))
+            .flatMap(msg -> msg.reply(this.adapter.toMessage(message, guild)).mentionRepliedUser(mention))
             .queue(msg -> this.save(interactionReply, msg), Utils.noop());
         return interactionReply;
     }
