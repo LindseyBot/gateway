@@ -2,9 +2,16 @@ package net.notfab.lindsey.core.service.rpc;
 
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.lindseybot.utils.RabbitUtils;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
 import net.notfab.lindsey.shared.rpc.*;
-import net.notfab.lindsey.shared.rpc.services.RemoteGuilds;
+import net.notfab.lindsey.shared.rpc.services.RemoteGuildsService;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.remoting.service.AmqpInvokerServiceExporter;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,12 +19,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class RemoteGuildsImpl implements RemoteGuilds {
+public class RemoteGuildsServiceImpl implements RemoteGuildsService {
 
     private final ShardManager shardManager;
     private final PermissionManager permissions;
 
-    public RemoteGuildsImpl(ShardManager shardManager, PermissionManager permissions) {
+    public RemoteGuildsServiceImpl(ShardManager shardManager, PermissionManager permissions) {
         this.shardManager = shardManager;
         this.permissions = permissions;
     }
@@ -130,6 +137,47 @@ public class RemoteGuildsImpl implements RemoteGuilds {
             }
         }
         return channels;
+    }
+
+    // -- RabbitMQ RPC Setup
+
+    @Bean(name = "RemoteGuildsQ")
+    public Queue queue() {
+        return new Queue(this.getRabbitName(), false, false, true);
+    }
+
+    @Bean(name = "RemoteGuildsE")
+    public DirectExchange exchange() {
+        return new DirectExchange(this.getRabbitName(), false, true);
+    }
+
+    @Bean(name = "RemoteGuildsB")
+    public Binding binding(@Qualifier("RemoteGuildsQ") Queue queue, @Qualifier("RemoteGuildsE") DirectExchange exchange) {
+        return BindingBuilder.bind(queue)
+            .to(exchange)
+            .withQueueName();
+    }
+
+    @Bean(name = "RemoteGuildsS")
+    public AmqpInvokerServiceExporter exporter(@Qualifier("rpc") AmqpTemplate template) {
+        AmqpInvokerServiceExporter exporter = new AmqpInvokerServiceExporter();
+        exporter.setServiceInterface(RemoteGuildsService.class);
+        exporter.setService(this);
+        exporter.setAmqpTemplate(template);
+        exporter.setMessageConverter(RabbitUtils.jacksonConverter());
+        return exporter;
+    }
+
+    @Bean(name = "RemoteGuildsL")
+    public SimpleMessageListenerContainer listener(
+        ConnectionFactory factory,
+        @Qualifier("RemoteGuildsS") AmqpInvokerServiceExporter exporter,
+        @Qualifier("RemoteGuildsQ") Queue queue
+    ) {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(factory);
+        container.setMessageListener(exporter);
+        container.setQueues(queue);
+        return container;
     }
 
 }
