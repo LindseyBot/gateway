@@ -42,25 +42,16 @@ public class RoleHistoryListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event) {
-        if (!CommandListener.isAllowed(event.getGuild())) {
-            return;
-        }
         this.saveRoles(event.getMember());
     }
 
     @Override
     public void onGuildMemberRoleRemove(@NotNull GuildMemberRoleRemoveEvent event) {
-        if (!CommandListener.isAllowed(event.getGuild())) {
-            return;
-        }
         this.saveRoles(event.getMember());
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        if (!CommandListener.isAllowed(event.getGuild())) {
-            return;
-        }
         if (event.getMember() == null) {
             return;
         }
@@ -69,9 +60,6 @@ public class RoleHistoryListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        if (!CommandListener.isAllowed(event.getGuild())) {
-            return;
-        }
         boolean isToKeepRoles = this.keepRoleService.isActive(event.getGuild());
         if (!isToKeepRoles) {
             return;

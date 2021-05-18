@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class UserHistoryListener extends ListenerAdapter implements ExpirationListener<Long, String> {
+public class UserActivityListener extends ListenerAdapter implements ExpirationListener<Long, String> {
 
     private final ExpiringMap<Long, String> cache = ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.ACCESSED)
@@ -24,16 +24,13 @@ public class UserHistoryListener extends ListenerAdapter implements ExpirationLi
         .build();
     private final ProfileManager profiles;
 
-    public UserHistoryListener(Lindsey lindsey, ProfileManager profiles) {
+    public UserActivityListener(Lindsey lindsey, ProfileManager profiles) {
         lindsey.addEventListener(this);
         this.profiles = profiles;
     }
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if (!CommandListener.isAllowed(event.getGuild())) {
-            return;
-        }
         String name = event.getAuthor().getAsTag();
         cache.put(event.getAuthor().getIdLong(), name);
     }

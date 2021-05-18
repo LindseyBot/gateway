@@ -1,16 +1,17 @@
-package net.notfab.lindsey.core.discord;
+package net.notfab.lindsey.core.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.notfab.lindsey.core.Lindsey;
+import net.notfab.eventti.EventHandler;
+import net.notfab.eventti.Listener;
 import net.notfab.lindsey.core.framework.GFXUtils;
 import net.notfab.lindsey.core.framework.Utils;
+import net.notfab.lindsey.core.framework.events.MessageReactionAddedEvent;
+import net.notfab.lindsey.core.framework.events.MessageReactionRemovedEvent;
+import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.core.service.StarboardService;
 import net.notfab.lindsey.shared.entities.Starboard;
 import org.jetbrains.annotations.NotNull;
@@ -20,29 +21,23 @@ import java.awt.*;
 import java.util.Collections;
 
 @Component
-public class StarboardListener extends ListenerAdapter {
+public class StarboardListener implements Listener {
 
     private final StarboardService service;
 
-    public StarboardListener(Lindsey lindsey, StarboardService service) {
-        lindsey.addEventListener(this);
+    public StarboardListener(EventService events, StarboardService service) {
         this.service = service;
+        events.addListener(this);
     }
 
-    @Override
-    public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-        if (!CommandListener.isAllowed(event.getGuild())) {
-            return;
-        }
-        this.handleStarboard(event.getReactionEmote(), event.getChannel(), event.getMessageIdLong());
+    @EventHandler(ignoreCancelled = true)
+    public void onMessageReactionAddedEvent(@NotNull MessageReactionAddedEvent event) {
+        this.handleStarboard(event.getReaction(), event.getChannel(), event.getMessageId());
     }
 
-    @Override
-    public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
-        if (!CommandListener.isAllowed(event.getGuild())) {
-            return;
-        }
-        this.handleStarboard(event.getReactionEmote(), event.getChannel(), event.getMessageIdLong());
+    @EventHandler(ignoreCancelled = true)
+    public void onMessageReactionRemovedEvent(@NotNull MessageReactionRemovedEvent event) {
+        this.handleStarboard(event.getReaction(), event.getChannel(), event.getMessageId());
     }
 
     private void handleStarboard(MessageReaction.ReactionEmote emote, TextChannel channel, long messageId) {

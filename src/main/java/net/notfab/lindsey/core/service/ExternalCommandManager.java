@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.lindseybot.commands.Command;
 import net.lindseybot.commands.request.CommandOption;
 import net.lindseybot.commands.request.CommandRequest;
@@ -14,6 +13,7 @@ import net.notfab.lindsey.core.framework.DiscordAdapter;
 import net.notfab.lindsey.core.framework.command.CommandRegistry;
 import net.notfab.lindsey.core.framework.command.external.BadArgumentException;
 import net.notfab.lindsey.core.framework.command.external.ExternalParser;
+import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.menu.Menu;
@@ -31,7 +31,6 @@ import java.util.concurrent.Executors;
 @Service
 public class ExternalCommandManager {
 
-    private final IgnoreService ignores;
     private final PermissionManager permissions;
     private final Translator i18n;
     private final Messenger msg;
@@ -42,10 +41,9 @@ public class ExternalCommandManager {
     private final ExecutorService service = Executors.newCachedThreadPool();
     private final ParameterizedTypeReference<CommandResponse> type = ParameterizedTypeReference.forType(CommandResponse.class);
 
-    public ExternalCommandManager(IgnoreService ignores, PermissionManager permissions,
+    public ExternalCommandManager(PermissionManager permissions,
                                   Translator i18n, Messenger msg, CommandRegistry registry,
                                   RabbitTemplate template, DiscordAdapter adapter) {
-        this.ignores = ignores;
         this.permissions = permissions;
         this.i18n = i18n;
         this.msg = msg;
@@ -62,14 +60,9 @@ public class ExternalCommandManager {
      * @param member      Member who executed the command.
      * @param event       The message event.
      */
-    public void onCommand(String commandName, List<String> args, Member member, GuildMessageReceivedEvent event) {
+    public void onCommand(String commandName, List<String> args, Member member, ServerMessageReceivedEvent event) {
         Command command = this.registry.get(commandName);
         if (command == null) {
-            return;
-        }
-
-        // -- Ignore check
-        if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
             return;
         }
 

@@ -98,22 +98,24 @@ public class AutoModService implements Listener {
      * @param message The message to moderate.
      * @param author  The message's author.
      */
-    public void moderate(@NotNull Message message, @NotNull Member author) {
+    public boolean moderate(@NotNull Message message, @NotNull Member author) {
         List<AutoModFeature> features = this.getFeatures(message.getGuild().getIdLong());
+        boolean actionTaken = false;
         for (AutoModFeature feature : features) {
             AutoModerator moderator = this.moderators.get(feature);
             if (moderator == null) {
                 continue;
             }
             try {
-                boolean actionTaken = moderator.moderate(message, author);
+                actionTaken = moderator.moderate(message, author);
                 if (actionTaken) {
-                    return;
+                    break;
                 }
             } catch (Exception ex) {
                 log.error("Failed to auto-moderate message", ex);
             }
         }
+        return actionTaken;
     }
 
 }

@@ -1,84 +1,70 @@
-package net.notfab.lindsey.core.discord;
+package net.notfab.lindsey.core.listeners;
 
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.notfab.eventti.EventHandler;
+import net.notfab.eventti.Listener;
+import net.notfab.eventti.ListenerPriority;
 import net.notfab.lindsey.core.framework.command.Bundle;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.CommandManager;
+import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.core.service.ExternalCommandManager;
-import net.notfab.lindsey.core.service.IgnoreService;
 import net.notfab.lindsey.shared.entities.profile.ServerProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CommandListener extends ListenerAdapter {
+@Slf4j
+@Component
+public class CommandListener implements Listener {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommandListener.class);
     private final Pattern argPattern = Pattern.compile("(?:([^\\s\"]+)|\"((?:\\w+|\\\\\"|[^\"])+)\")");
 
     private final ProfileManager profiles;
     private final CommandManager manager;
     private final PermissionManager permissions;
     private final TaskExecutor threadPool;
-    private final IgnoreService ignores;
     private final ExternalCommandManager externalCommandManager;
 
-    public CommandListener(CommandManager manager, ProfileManager profileManager,
-                           PermissionManager permissions, IgnoreService ignores,
-                           ExternalCommandManager externalCommandManager) {
+    public CommandListener(EventService events, CommandManager manager, ProfileManager profileManager,
+                           PermissionManager permissions, ExternalCommandManager externalCommandManager) {
         this.manager = manager;
         this.threadPool = manager.getPool();
         this.profiles = profileManager;
         this.permissions = permissions;
-        this.ignores = ignores;
         this.externalCommandManager = externalCommandManager;
+        events.addListener(this);
     }
 
-    // TODO: Remove for prod
-    public static boolean isAllowed(Guild guild) {
-        Set<Long> ids = new HashSet<>();
-        ids.add(141555945586163712L);
-        ids.add(213044545825406976L);
-        ids.add(382281038547648512L);
-        return ids.contains(guild.getIdLong());
-    }
-
-    @Override
-    public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
-        if (!isAllowed(event.getGuild())) {
-            return;
-        }
-        Member member = event.getMember();
-        if (member == null || event.getAuthor().isBot() || event.isWebhookMessage()) {
-            return;
-        }
+    @EventHandler(priority = ListenerPriority.HIGHEST)
+    public void onMessageReceived(ServerMessageReceivedEvent event) {
         String rawMessage = event.getMessage().getContentRaw();
         if (rawMessage.split("\\s+").length == 0) {
             return;
         }
+
         String prefix = this.findPrefix(rawMessage.split("\\s+")[0].toLowerCase(), event.getGuild(), event.getGuild().getSelfMember());
         if (prefix == null) {
             return;
         }
+
         // -- Argument Finder
         List<String> arguments = this.getArguments(event.getMessage().getContentDisplay().substring(prefix.length()));
         if (arguments.isEmpty()) {
             event.getChannel().sendMessage("Hmm?").queue();
+            event.setCancelled(true);
             return;
         }
+
         String commandName = arguments.get(0).toLowerCase();
         if (arguments.size() == 1) {
             arguments.clear();
@@ -88,7 +74,8 @@ public class CommandListener extends ListenerAdapter {
 
         // -- Override
         if (this.externalCommandManager.isCommand(commandName)) {
-            this.externalCommandManager.onCommand(commandName, arguments, member, event);
+            event.setCancelled(true);
+            this.externalCommandManager.onCommand(commandName, arguments, event.getMember(), event);
             return;
         }
 
@@ -98,20 +85,18 @@ public class CommandListener extends ListenerAdapter {
             return;
         }
 
-        // -- Ignore check
-        if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
-            return;
-        }
         // -- Permission check
-        if (!this.permissions.hasPermission(member, "commands." + command.getInfo().getName())) {
+        if (!this.permissions.hasPermission(event.getMember(), "commands." + command.getInfo().getName())) {
             return;
         }
+
+        event.setCancelled(true);
         threadPool.execute(() -> {
             try {
                 Bundle bundle = new Bundle();
-                command.execute(member, event.getChannel(), arguments.toArray(new String[0]), event.getMessage(), bundle);
+                command.execute(event.getMember(), event.getChannel(), arguments.toArray(new String[0]), event.getMessage(), bundle);
             } catch (Exception ex) {
-                logger.error("Error during command execution", ex);
+                log.error("Error during command execution", ex);
             }
         });
     }

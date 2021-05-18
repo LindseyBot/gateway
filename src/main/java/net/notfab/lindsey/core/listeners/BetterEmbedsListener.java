@@ -1,15 +1,17 @@
-package net.notfab.lindsey.core.discord;
+package net.notfab.lindsey.core.listeners;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.jodah.expiringmap.ExpirationListener;
-import net.notfab.lindsey.core.Lindsey;
+import net.notfab.eventti.EventHandler;
+import net.notfab.eventti.Listener;
+import net.notfab.eventti.ListenerPriority;
 import net.notfab.lindsey.core.framework.embeds.WebsiteEmbedder;
+import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
 import net.notfab.lindsey.shared.entities.profile.server.BetterEmbedsSettings;
 import net.notfab.lindsey.shared.repositories.sql.BetterEmbedSettingsRepository;
@@ -20,31 +22,30 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class UrlListener extends ListenerAdapter implements ExpirationListener<Long, String> {
+public class BetterEmbedsListener implements Listener, ExpirationListener<Long, String> {
 
     private final ProfileManager profiles;
     private final List<WebsiteEmbedder> embedders;
     private final BetterEmbedSettingsRepository repository;
 
-    public UrlListener(Lindsey lindsey, ProfileManager profiles, List<WebsiteEmbedder> embedders,
-                       BetterEmbedSettingsRepository repository) {
+    public BetterEmbedsListener(EventService events, ProfileManager profiles, List<WebsiteEmbedder> embedders,
+                                BetterEmbedSettingsRepository repository) {
         this.profiles = profiles;
         this.embedders = embedders;
         this.repository = repository;
-        lindsey.addEventListener(this);
+        events.addListener(this);
     }
 
-    @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if (!CommandListener.isAllowed(event.getGuild())) {
-            return;
-        }
+    /**
+     * Fired when a message is received, basic checks have already been done.
+     *
+     * @param event Cancellable event.
+     */
+    @EventHandler(priority = ListenerPriority.HIGH, ignoreCancelled = true)
+    public void onGuildMessageReceived(@NotNull ServerMessageReceivedEvent event) {
         Member member = event.getMember();
         TextChannel channel = event.getChannel();
         MessageEmbed embed;
-        if (member == null || event.getAuthor().isBot() || event.isWebhookMessage()) {
-            return;
-        }
         for (WebsiteEmbedder builder : this.embedders) {
             if (!builder.isSupported(event.getMessage().getContentRaw())) {
                 continue;
@@ -63,6 +64,7 @@ public class UrlListener extends ListenerAdapter implements ExpirationListener<L
             if (embed == null) {
                 return;
             }
+            event.setCancelled(true);
             event.getMessage()
                 .delete()
                 .flatMap((d) -> event.getChannel().sendMessage(embed))

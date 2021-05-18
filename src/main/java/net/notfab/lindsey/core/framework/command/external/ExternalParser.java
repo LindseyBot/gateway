@@ -2,9 +2,9 @@ package net.notfab.lindsey.core.framework.command.external;
 
 import lombok.Data;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.lindseybot.commands.request.CommandOption;
 import net.lindseybot.commands.request.CommandRequest;
+import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 
 import java.util.*;
 
@@ -12,7 +12,7 @@ import java.util.*;
 public class ExternalParser {
 
     public static CommandRequest run(StringBuilder path, List<CommandOption> optList, Deque<String> args,
-                                     Member member, GuildMessageReceivedEvent event) throws BadArgumentException {
+                                     Member member, ServerMessageReceivedEvent event) throws BadArgumentException {
         CommandRequest request = new CommandRequest();
         request.setCommandName(path.toString());
         request.setGuild(FakeBuilder.toFake(event.getGuild()));

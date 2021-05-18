@@ -1,11 +1,12 @@
-package net.notfab.lindsey.core.discord;
+package net.notfab.lindsey.core.listeners;
 
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.notfab.lindsey.core.Lindsey;
+import net.notfab.eventti.EventHandler;
+import net.notfab.eventti.Listener;
 import net.notfab.lindsey.core.framework.PlaceHolderUtils;
 import net.notfab.lindsey.core.framework.Utils;
+import net.notfab.lindsey.core.framework.events.ServerMemberJoinEvent;
+import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.shared.entities.server.WelcomeSettings;
 import net.notfab.lindsey.shared.repositories.sql.WelcomeSettingsRepository;
 import org.jetbrains.annotations.NotNull;
@@ -14,20 +15,17 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class WelcomeListener extends ListenerAdapter {
+public class WelcomeListener implements Listener {
 
     private final WelcomeSettingsRepository repository;
 
-    public WelcomeListener(Lindsey lindsey, WelcomeSettingsRepository repository) {
-        lindsey.addEventListener(this);
+    public WelcomeListener(EventService events, WelcomeSettingsRepository repository) {
         this.repository = repository;
+        events.addListener(this);
     }
 
-    @Override
-    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        if (!CommandListener.isAllowed(event.getGuild())) {
-            return;
-        }
+    @EventHandler(ignoreCancelled = true)
+    public void onServerMemberJoinEvent(@NotNull ServerMemberJoinEvent event) {
         Optional<WelcomeSettings> oSettings = repository.findById(event.getGuild().getIdLong());
         if (oSettings.isEmpty()) {
             return;

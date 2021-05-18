@@ -5,7 +5,7 @@ import net.notfab.lindsey.shared.rpc.*;
 
 public class FakeBuilder {
 
-    protected static FGuild toFake(Guild guild) {
+    public static FGuild toFake(Guild guild) {
         FGuild fake = new FGuild();
         fake.setId(guild.getIdLong());
         fake.setName(guild.getName());
@@ -13,7 +13,7 @@ public class FakeBuilder {
         return fake;
     }
 
-    protected static FRole toFake(Role role) {
+    public static FRole toFake(Role role) {
         FRole fake = new FRole();
         fake.setId(role.getIdLong());
         fake.setName(role.getName());
@@ -21,7 +21,7 @@ public class FakeBuilder {
         return fake;
     }
 
-    protected static FChannel toFake(VoiceChannel channel) {
+    public static FChannel toFake(VoiceChannel channel) {
         FChannel fake = new FChannel();
         fake.setType(FChannelType.VOICE);
         fake.setId(channel.getIdLong());
@@ -30,7 +30,7 @@ public class FakeBuilder {
         return fake;
     }
 
-    protected static FChannel toFake(TextChannel channel) {
+    public static FChannel toFake(TextChannel channel) {
         FChannel fake = new FChannel();
         fake.setType(FChannelType.TEXT);
         fake.setId(channel.getIdLong());
@@ -40,7 +40,7 @@ public class FakeBuilder {
         return fake;
     }
 
-    protected static FMember toFake(Member member) {
+    public static FMember toFake(Member member) {
         FMember fake = new FMember();
         fake.setId(member.getIdLong());
         fake.setName(member.getEffectiveName());

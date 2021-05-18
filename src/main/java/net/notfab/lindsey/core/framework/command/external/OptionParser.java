@@ -4,10 +4,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.lindseybot.commands.request.CommandOption;
 import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.command.FinderUtil;
+import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 public class OptionParser {
 
-    protected static Object parse(CommandOption option, String argument, GuildMessageReceivedEvent event) throws BadArgumentException {
+    protected static Object parse(CommandOption option, String argument, ServerMessageReceivedEvent event) throws BadArgumentException {
         switch (option.getType()) {
             case MEMBER: {
                 Member member = FinderUtil.findMember(argument, event.getMessage());
