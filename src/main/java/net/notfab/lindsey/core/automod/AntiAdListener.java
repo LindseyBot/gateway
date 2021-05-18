@@ -34,6 +34,7 @@ public class AntiAdListener implements AutoModerator {
         this.officialInvites.add("discord-api");
         this.officialInvites.add("discord-townhall");
         this.officialInvites.add("discord-developers");
+        this.officialInvites.add("jake");
     }
 
     @Override
