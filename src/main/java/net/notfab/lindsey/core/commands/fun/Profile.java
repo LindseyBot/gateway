@@ -83,10 +83,14 @@ public class Profile implements Command {
 
     public Profile() {
         try {
-            openSans = Font.createFont(Font.TRUETYPE_FONT, this.getResource("fonts/OpenSans-Bold.ttf")).deriveFont(14f);
-            hanSansJP = Font.createFont(Font.TRUETYPE_FONT, this.getResource("fonts/SourceHanSansJP-Bold.ttf")).deriveFont(14f);
-            hanSansKR = Font.createFont(Font.TRUETYPE_FONT, this.getResource("fonts/SourceHanSansKR-Bold.ttf")).deriveFont(14f);
-            hanSansCN = Font.createFont(Font.TRUETYPE_FONT, this.getResource("fonts/SourceHanSansCN-Bold.ttf")).deriveFont(14f);
+            openSans = Font.createFont(Font.TRUETYPE_FONT, this.getResource("/fonts/OpenSans-Bold.ttf"))
+                .deriveFont(14f);
+            hanSansJP = Font.createFont(Font.TRUETYPE_FONT, this.getResource("/fonts/SourceHanSansJP-Bold.ttf"))
+                .deriveFont(14f);
+            hanSansKR = Font.createFont(Font.TRUETYPE_FONT, this.getResource("/fonts/SourceHanSansKR-Bold.ttf"))
+                .deriveFont(14f);
+            hanSansCN = Font.createFont(Font.TRUETYPE_FONT, this.getResource("/fonts/SourceHanSansCN-Bold.ttf"))
+                .deriveFont(14f);
         } catch (FontFormatException | IOException ex) {
             log.error("Failed to initialize fonts", ex);
         }
@@ -214,7 +218,7 @@ public class Profile implements Command {
          * 7: 464, 223
          * 8: 536, 223
          */
-        if (customization != null && customization.getBadges() != null) {
+        if (customization.getBadges() != null) {
             List<Badge> badges = this.getBadges(user.getIdLong(), customization.getBadges());
             for (int i = 0; i < (Math.min(badges.size(), 8)); i++) {
                 Badge badge = badges.get(i);
