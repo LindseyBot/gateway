@@ -12,7 +12,7 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.service.ModLogService;
+import net.notfab.lindsey.core.service.AuditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ public class Hackban implements Command {
     private Translator i18n;
 
     @Autowired
-    private ModLogService logging;
+    private AuditService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -51,15 +51,11 @@ public class Hackban implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "core.not_number", args[0]));
                 return false;
             }
-            String reason = member.getUser().getName() + ": " + i18n.get(member, "commands.mod.ban.noreason");
+            String reason;
             if (args.length > 1) {
-                reason = member.getUser().getName() + ": " + argsToString(args, 1);
-            }
-            String rawReason;
-            if (args.length > 1) {
-                rawReason = argsToString(args, 1);
+                reason = argsToString(args, 1);
             } else {
-                rawReason = null;
+                reason = i18n.get(member, "commands.mod.ban.noreason");
             }
             Member target = channel.getGuild().retrieveMemberById(args[0])
                 .complete();
@@ -71,18 +67,22 @@ public class Hackban implements Command {
                     msg.send(channel, sender(member) + i18n.get(member, "commands.mod.ban.interact", target.getEffectiveName()));
                     return false;
                 }
-                target.ban(7, reason)
+                target.ban(7, member.getUser().getName() + ": " + reason)
                     .flatMap(aVoid -> {
-                        this.logging.ban(member, member.getIdLong(), rawReason);
+                        this.logging.builder().from(message)
+                            .message(channel.getGuild(), "logs.ban", target.getUser().getAsTag(), target.getId(), reason)
+                            .send();
                         return channel.sendMessage(i18n.get(member, "commands.mod.ban.banned", target.getEffectiveName()));
                     })
                     .delay(5, TimeUnit.SECONDS)
                     .flatMap(Message::delete)
                     .queue();
             } else {
-                channel.getGuild().ban(args[0], 7, reason)
+                channel.getGuild().ban(args[0], 7, member.getUser().getName() + ": " + reason)
                     .flatMap(aVoid -> {
-                        this.logging.hackban(channel.getGuild(), Long.parseLong(args[0]), member.getIdLong(), rawReason);
+                        this.logging.builder().from(message)
+                            .message(channel.getGuild(), "logs.hack_ban", args[0], reason)
+                            .send();
                         return channel.sendMessage(i18n.get(member, "commands.mod.ban.banned", args[0]));
                     })
                     .delay(5, TimeUnit.SECONDS)

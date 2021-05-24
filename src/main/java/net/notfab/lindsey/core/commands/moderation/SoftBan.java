@@ -9,7 +9,7 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.service.ModLogService;
+import net.notfab.lindsey.core.service.AuditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +25,7 @@ public class SoftBan implements Command {
     private Translator i18n;
 
     @Autowired
-    private ModLogService logging;
+    private AuditService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -48,9 +48,11 @@ public class SoftBan implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "core.member_nf"));
                 return false;
             }
-            String reason = i18n.get(member, "commands.mod.softban.noreason");
+            String reason;
             if (args.length > 1) {
                 reason = argsToString(args, 1);
+            } else {
+                reason = i18n.get(member, "commands.mod.softban.noreason");
             }
             if (!member.canInteract(target) || target.isOwner()
                 || target.hasPermission(Permission.ADMINISTRATOR)
@@ -59,16 +61,9 @@ public class SoftBan implements Command {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.mod.softban.interact", target.getEffectiveName()));
                 return false;
             }
-            String rawReason;
-            if (args.length > 1) {
-                rawReason = argsToString(args, 1);
-            } else {
-                rawReason = null;
-            }
-            String finalReason = reason;
             target.getUser()
                 .openPrivateChannel()
-                .flatMap(dm -> dm.sendMessage(i18n.get(member, "commands.mod.softban.message", member.getGuild().getName(), finalReason)))
+                .flatMap(dm -> dm.sendMessage(i18n.get(member, "commands.mod.softban.message", member.getGuild().getName(), reason)))
                 .queue();
             target.ban(7, member.getUser().getName() + ": " + reason)
                 .flatMap(aVoid -> channel
@@ -76,7 +71,11 @@ public class SoftBan implements Command {
                 .delay(5, TimeUnit.SECONDS)
                 .flatMap(Message::delete)
                 .and(member.getGuild().unban(target.getUser()))
-                .queue((success) -> this.logging.softban(target, member.getIdLong(), rawReason));
+                .queue((success) ->
+                    this.logging.builder().from(message)
+                        .message(channel.getGuild(), "logs.soft_ban", target.getUser().getAsTag(), target.getId(), reason)
+                        .send()
+                );
         }
         return true;
     }

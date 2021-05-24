@@ -9,7 +9,7 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.service.ModLogService;
+import net.notfab.lindsey.core.service.AuditService;
 import net.notfab.lindsey.shared.entities.profile.member.Strike;
 import net.notfab.lindsey.shared.repositories.sql.StrikeRepository;
 import net.notfab.lindsey.shared.utils.Snowflake;
@@ -32,7 +32,7 @@ public class StrikeCmd implements Command {
     private Snowflake snowflake;
 
     @Autowired
-    private ModLogService logging;
+    private AuditService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -52,18 +52,22 @@ public class StrikeCmd implements Command {
         } else {
             int count;
             Member target;
-            String reason = null;
+            String reason;
             try {
                 count = Integer.parseInt(args[0]);
                 target = FinderUtil.findMember(args[1], message);
                 if (args.length > 2) {
                     reason = argsToString(args, 2);
+                } else {
+                    reason = i18n.get(member, "commands.mod.strike.noreason");
                 }
             } catch (IllegalArgumentException ex) {
                 count = 1;
                 target = FinderUtil.findMember(args[0], message);
                 if (args.length > 1) {
                     reason = argsToString(args, 1);
+                } else {
+                    reason = i18n.get(member, "commands.mod.strike.noreason");
                 }
             }
             if (target == null) {
@@ -83,11 +87,9 @@ public class StrikeCmd implements Command {
             strike.setReason(reason);
             this.repository.save(strike);
 
-            this.logging.warn(target, member.getIdLong(), reason);
-
-            if (reason == null) {
-                reason = i18n.get(member, "commands.mod.strike.noreason");
-            }
+            this.logging.builder().from(message)
+                .message(channel.getGuild(), "logs.strike", target.getUser().getAsTag(), target.getUser().getId(), reason)
+                .send();
 
             String dmMsg = i18n.get(target, "commands.mod.strike.message", member.getGuild().getName(), reason);
             target.getUser().openPrivateChannel()

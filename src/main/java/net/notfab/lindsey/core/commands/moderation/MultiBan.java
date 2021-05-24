@@ -10,7 +10,7 @@ import net.notfab.lindsey.core.framework.command.help.HelpArticle;
 import net.notfab.lindsey.core.framework.command.help.HelpPage;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.service.ModLogService;
+import net.notfab.lindsey.core.service.AuditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ public class MultiBan implements Command {
     private Translator i18n;
 
     @Autowired
-    private ModLogService logging;
+    private AuditService logging;
 
     @Override
     public CommandDescriptor getInfo() {
@@ -64,10 +64,10 @@ public class MultiBan implements Command {
                 }
                 usersToBan.add(target);
             }
-            if (!usersNotFound.toString().equals("")) {
+            if (!usersNotFound.toString().isEmpty()) {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.mod.multiban.member_nf", usersNotFound.toString()));
             }
-            if (!usersAdmin.toString().equals("")) {
+            if (!usersAdmin.toString().isEmpty()) {
                 msg.send(channel, sender(member) + i18n.get(member, "commands.mod.ban.interact", usersAdmin.toString()));
             }
             if (!usersToBan.isEmpty()) {
@@ -82,8 +82,11 @@ public class MultiBan implements Command {
                 }
                 action
                     .flatMap(aVoid -> {
+                        String reason = "MultiBan (" + usersToBan.size() + " users)";
                         for (Member target : usersToBan) {
-                            this.logging.ban(target, member.getIdLong(), "MultiBan (" + usersToBan.size() + " users)");
+                            this.logging.builder().from(message)
+                                .message(channel.getGuild(), "logs.ban", target.getUser().getAsTag(), target.getId(), reason)
+                                .send();
                         }
                         return channel.sendMessage(i18n.get(member, "commands.mod.multiban.ban", usersToBan.size()));
                     })
