@@ -2,7 +2,7 @@ package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.notfab.lindsey.shared.entities.items.ItemReference;
-import net.notfab.lindsey.shared.repositories.sql.InventoryRepository;
+import net.notfab.lindsey.shared.repositories.sql.items.InventoryRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,7 +35,7 @@ public class InventoryService {
     }
 
     public ItemReference get(long owner, Long itemId) {
-        return this.repository.findByOwnerAndItemId(owner, itemId)
+        return this.repository.findByOwnerAndItem_Id(owner, itemId)
             .orElse(null);
     }
 

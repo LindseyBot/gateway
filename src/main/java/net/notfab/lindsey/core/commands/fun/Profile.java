@@ -299,7 +299,7 @@ public class Profile implements Command {
             customization.setBackground(null);
             return null;
         }
-        return this.items.getBackground(reference.getItemId());
+        return this.items.getBackground(reference.getItem().getId());
     }
 
     private List<Badge> getBadges(long userId, List<Long> badges) {
@@ -309,7 +309,7 @@ public class Profile implements Command {
             if (reference == null) {
                 continue;
             }
-            found.add(this.items.getBadge(reference.getItemId()));
+            found.add(this.items.getBadge(reference.getItem().getId()));
         }
         return found;
     }

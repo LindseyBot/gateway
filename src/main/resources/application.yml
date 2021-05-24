@@ -9,6 +9,10 @@ bot:
     url: 'http://localhost:8080'
     token: ''
     id: 'master'
+  logs:
+    host: ''
+    port: 12201
+    timeout: 5000
 spring:
   datasource:
     url: jdbc:h2:mem:lindsey
