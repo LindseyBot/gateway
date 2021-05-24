@@ -48,11 +48,6 @@ public class AntiAdListener implements AutoModerator {
             return false;
         }
         Guild guild = message.getGuild();
-        AntiAd settings = this.repository.findById(guild.getIdLong())
-            .orElse(new AntiAd());
-        if (!settings.isEnabled()) {
-            return false;
-        }
         boolean found = false;
         for (String inviteCode : message.getInvites()) {
             Invite invite;
@@ -70,6 +65,8 @@ public class AntiAdListener implements AutoModerator {
         if (!found) {
             return false;
         }
+        AntiAd settings = this.repository.findById(guild.getIdLong())
+            .orElse(new AntiAd());
         this.strikes.strike(author, settings.getStrikes(), i18n.get(guild, "automod.antiad.reason"));
         message.delete()
             .reason("Advertising")
