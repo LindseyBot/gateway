@@ -14,6 +14,21 @@
       "name": "bot.integrations.kitsu",
       "type": "java.lang.String",
       "description": "Kitsu API token."
+    },
+    {
+      "name": "app.logs.host",
+      "type": "java.lang.String",
+      "description": "Host for graylog service."
+    },
+    {
+      "name": "app.logs.port",
+      "type": "java.lang.Integer",
+      "description": "Port for GrayLog GELF UDP ingest node."
+    },
+    {
+      "name": "app.logs.timeout",
+      "type": "java.lang.Long",
+      "description": "Timeout in milliseconds for graylog."
     }
   ]
 }

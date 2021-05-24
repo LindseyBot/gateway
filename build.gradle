@@ -38,6 +38,9 @@ dependencies {
     compile 'org.jsoup:jsoup:1.11.3'
     compile 'net.kodehawa:imageboard-api:2.4'
 
+    // Actions
+    implementation group: 'org.mozilla', name: 'rhino', version: '1.7.13'
+
     // Framework
     compile group: 'org.graylog2', name: 'gelfclient', version: '1.5.1'
     compile group: 'net.dv8tion', name: 'JDA', version: '4.2.1_262'
