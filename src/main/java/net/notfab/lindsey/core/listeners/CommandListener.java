@@ -104,7 +104,7 @@ public class CommandListener implements Listener {
     private String findPrefix(String message, Guild guild, Member self) {
         if (message.startsWith("l!")) {
             return "l!";
-        } else if (message.startsWith(self.getAsMention()) || message.startsWith("<@!119482224713269248>")) {
+        } else if (message.startsWith(self.getAsMention()) || message.startsWith("<@!" + self.getIdLong() + ">")) {
             return "@" + self.getEffectiveName();
         } else {
             ServerProfile profile = profiles.get(guild);

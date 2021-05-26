@@ -3,11 +3,13 @@ package net.notfab.lindsey.core.framework;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.ActionRow;
+import net.dv8tion.jda.api.interactions.Component;
+import net.dv8tion.jda.api.interactions.button.ButtonStyle;
+import net.lindseybot.discord.Button;
 import net.lindseybot.discord.Embed;
+import net.lindseybot.discord.MessageComponent;
 import net.lindseybot.enums.MentionType;
 import net.notfab.lindsey.core.framework.i18n.Translator;
 import org.springframework.stereotype.Service;
@@ -34,26 +36,24 @@ public class DiscordAdapter {
         this.DEFAULT_ALLOWED_MENTIONS.add(Message.MentionType.ROLE);
     }
 
-    private String parse(net.lindseybot.discord.Message msg, Member member) {
+    private String getLabel(net.lindseybot.discord.Message msg, ISnowflake snowflake) {
         if (msg.isRaw()) {
             return msg.getName();
-        } else {
+        } else if (snowflake instanceof Member) {
+            Member member = (Member) snowflake;
             return this.i18n.get(member, msg.getName(), msg.getArgs());
-        }
-    }
-
-    private String parse(net.lindseybot.discord.Message msg, Guild guild) {
-        if (msg.isRaw()) {
-            return msg.getName();
-        } else {
+        } else if (snowflake instanceof Guild) {
+            Guild guild = (Guild) snowflake;
             return this.i18n.get(guild, msg.getName(), msg.getArgs());
+        } else {
+            throw new IllegalArgumentException("Unknown snowflake holder");
         }
     }
 
-    public Message toMessage(net.lindseybot.discord.Message msg, Guild guild) {
+    public Message toMessage(net.lindseybot.discord.Message msg, ISnowflake snowflake) {
         MessageBuilder builder = new MessageBuilder();
         if (msg.getName() != null) {
-            builder.setContent(this.parse(msg, guild));
+            builder.setContent(this.getLabel(msg, snowflake));
         }
         if (msg.getAllowedMentions().isEmpty()) {
             builder.setAllowedMentions(DEFAULT_ALLOWED_MENTIONS);
@@ -69,87 +69,51 @@ public class DiscordAdapter {
             builder.setAllowedMentions(types);
         }
         if (msg.getEmbed() != null) {
-            builder.setEmbed(this.buildEmbed(msg.getEmbed(), guild));
+            builder.setEmbed(this.buildEmbed(msg.getEmbed(), snowflake));
         }
-        return builder.build();
-    }
-
-    public Message toMessage(net.lindseybot.discord.Message msg, Member member) {
-        MessageBuilder builder = new MessageBuilder();
-        if (msg.getName() != null) {
-            builder.setContent(this.parse(msg, member));
-        }
-        if (msg.getAllowedMentions().isEmpty()) {
-            builder.setAllowedMentions(DEFAULT_ALLOWED_MENTIONS);
-        } else {
-            List<Message.MentionType> types = new ArrayList<>();
-            for (MentionType type : msg.getAllowedMentions()) {
-                try {
-                    types.add(Message.MentionType.valueOf(type.name()));
-                } catch (IllegalArgumentException ex) {
-                    log.error("Invalid mention type " + type.name());
+        if (!msg.getComponents().isEmpty()) {
+            List<ActionRow> rows = new ArrayList<>();
+            List<Component> components = new ArrayList<>();
+            int i = 0;
+            for (MessageComponent component : msg.getComponents()) {
+                if (component instanceof Button) {
+                    Button model = (Button) component;
+                    components.add(this.createButton(model, snowflake));
+                }
+                i++;
+                if (i % 5 == 0) {
+                    ActionRow row = ActionRow.of(components);
+                    rows.add(row);
+                    components.clear();
+                    i = 0;
                 }
             }
-            builder.setAllowedMentions(types);
-        }
-        if (msg.getEmbed() != null) {
-            builder.setEmbed(this.buildEmbed(msg.getEmbed(), member));
-        }
-        return builder.build();
-    }
-
-    public MessageEmbed buildEmbed(Embed request, Guild guild) {
-        EmbedBuilder builder = new EmbedBuilder();
-        if (request.getTitle() != null) {
-            String text = this.parse(request.getTitle(), guild);
-            builder.setTitle(text, request.getUrl());
-        }
-        if (request.getColor() != null) {
-            builder.setColor(request.getColor());
-        }
-        if (request.getDescription() != null) {
-            String text = this.parse(request.getDescription(), guild);
-            builder.setDescription(text);
-        }
-        if (request.getImage() != null) {
-            builder.setImage(request.getImage());
-        }
-        if (request.getThumbnail() != null) {
-            builder.setThumbnail(request.getThumbnail());
-        }
-        if (request.getTimestamp() != null) {
-            OffsetDateTime time = OffsetDateTime.ofInstant(Instant.ofEpochMilli(request.getTimestamp()), ZoneOffset.UTC);
-            builder.setTimestamp(time);
-        }
-        if (request.getAuthor() != null) {
-            String name = this.parse(request.getAuthor().getName(), guild);
-            builder.setAuthor(name, request.getAuthor().getUrl(), request.getAuthor().getIcon());
-        }
-        if (request.getFooter() != null) {
-            String text = this.parse(request.getFooter().getText(), guild);
-            builder.setFooter(text, request.getFooter().getIcon());
-        }
-        if (!request.getFields().isEmpty()) {
-            for (Embed.Field field : request.getFields()) {
-                String name = this.parse(field.getName(), guild);
-                String value = this.parse(field.getValue(), guild);
-                builder.addField(name, value, field.isInline());
+            if (!components.isEmpty()) {
+                ActionRow row = ActionRow.of(components);
+                rows.add(row);
             }
+            builder.setActionRows(rows);
         }
         return builder.build();
     }
 
-    public MessageEmbed buildEmbed(Embed request, Member member) {
+    private net.dv8tion.jda.api.interactions.button.Button createButton(Button model, ISnowflake snowflake) {
+        ButtonStyle style = ButtonStyle.valueOf(model.getStyle().name());
+        return net.dv8tion.jda.api.interactions.button
+            .Button.of(style, model.getIdOrUrl(), this.getLabel(model.getLabel(), snowflake));
+    }
+
+    public MessageEmbed buildEmbed(Embed request, ISnowflake snowflake) {
         EmbedBuilder builder = new EmbedBuilder();
         if (request.getTitle() != null) {
-            String text = this.parse(request.getTitle(), member);
+            String text = this.getLabel(request.getTitle(), snowflake);
             builder.setTitle(text, request.getUrl());
         }
         if (request.getColor() != null) {
             builder.setColor(request.getColor());
         }
         if (request.getDescription() != null) {
-            String text = this.parse(request.getDescription(), member);
+            String text = this.getLabel(request.getDescription(), snowflake);
             builder.setDescription(text);
         }
         if (request.getImage() != null) {
@@ -163,17 +127,17 @@ public class DiscordAdapter {
             builder.setTimestamp(time);
         }
         if (request.getAuthor() != null) {
-            String name = this.parse(request.getAuthor().getName(), member);
+            String name = this.getLabel(request.getAuthor().getName(), snowflake);
             builder.setAuthor(name, request.getAuthor().getUrl(), request.getAuthor().getIcon());
         }
         if (request.getFooter() != null) {
-            String text = this.parse(request.getFooter().getText(), member);
+            String text = this.getLabel(request.getFooter().getText(), snowflake);
             builder.setFooter(text, request.getFooter().getIcon());
         }
         if (!request.getFields().isEmpty()) {
             for (Embed.Field field : request.getFields()) {
-                String name = this.parse(field.getName(), member);
-                String value = this.parse(field.getValue(), member);
+                String name = this.getLabel(field.getName(), snowflake);
+                String value = this.getLabel(field.getValue(), snowflake);
                 builder.addField(name, value, field.isInline());
             }
         }
