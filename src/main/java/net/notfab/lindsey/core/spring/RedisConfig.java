@@ -9,6 +9,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
 public class RedisConfig {
@@ -39,6 +41,17 @@ public class RedisConfig {
         RedisTemplate<?, ?> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
         return template;
+    }
+
+    @Bean
+    public JedisPool pool(RedisProperties properties) {
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(128);
+        config.setMaxIdle(8);
+        config.setMinIdle(2);
+        config.setTestOnBorrow(true);
+        return new JedisPool(config, properties.getHost(), properties.getPort(),
+            15000, properties.getPassword());
     }
 
 }

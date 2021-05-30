@@ -4,14 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.interactions.ActionRow;
-import net.dv8tion.jda.api.interactions.Component;
-import net.dv8tion.jda.api.interactions.button.ButtonStyle;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.ButtonStyle;
+import net.dv8tion.jda.api.interactions.components.Component;
 import net.lindseybot.discord.Button;
 import net.lindseybot.discord.Embed;
 import net.lindseybot.discord.MessageComponent;
 import net.lindseybot.enums.MentionType;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -25,10 +26,12 @@ import java.util.List;
 public class DiscordAdapter {
 
     private final Translator i18n;
+    private final String ENCRYPTION_TOKEN;
     private final List<Message.MentionType> DEFAULT_ALLOWED_MENTIONS;
 
-    public DiscordAdapter(Translator i18n) {
+    public DiscordAdapter(Translator i18n, @Value("bot.encryption") String token) {
         this.i18n = i18n;
+        this.ENCRYPTION_TOKEN = token;
         this.DEFAULT_ALLOWED_MENTIONS = new ArrayList<>();
         this.DEFAULT_ALLOWED_MENTIONS.add(Message.MentionType.USER);
         this.DEFAULT_ALLOWED_MENTIONS.add(Message.MentionType.CHANNEL);
@@ -97,10 +100,37 @@ public class DiscordAdapter {
         return builder.build();
     }
 
-    private net.dv8tion.jda.api.interactions.button.Button createButton(Button model, ISnowflake snowflake) {
+    private net.dv8tion.jda.api.interactions.components.Button createButton(Button model, ISnowflake snowflake) {
         ButtonStyle style = ButtonStyle.valueOf(model.getStyle().name());
-        return net.dv8tion.jda.api.interactions.button
-            .Button.of(style, model.getIdOrUrl(), this.getLabel(model.getLabel(), snowflake));
+        String id;
+        if (style == ButtonStyle.LINK) {
+            id = model.getIdOrUrl();
+        } else {
+            id = EncryptionUtils.aesEcojiEncrypt(ENCRYPTION_TOKEN, model.getIdOrUrl() + ":" + model.getUserFilter());
+            if (id == null) {
+                throw new IllegalStateException("Failed to encode button id");
+            } else if (id.codePointCount(0, id.length()) > 100) {
+                throw new IllegalStateException("Button id too big " + model.getIdOrUrl());
+            }
+        }
+        net.dv8tion.jda.api.interactions.components.Button button = net.dv8tion.jda.api.interactions.components.Button
+            .of(style, id, this.getLabel(model.getLabel(), snowflake));
+        if (model.getEmote() != null) {
+            button.withEmoji(this.toEmoji(model.getEmote()));
+        }
+        if (model.isDisabled()) {
+            return button.asDisabled();
+        } else {
+            return button;
+        }
+    }
+
+    private Emoji toEmoji(net.lindseybot.discord.Emote emote) {
+        if (emote.isUnicode()) {
+            return Emoji.ofUnicode(emote.getName());
+        } else {
+            return Emoji.ofEmote(emote.getName(), emote.getId(), emote.isAnimated());
+        }
     }
 
     public MessageEmbed buildEmbed(Embed request, ISnowflake snowflake) {
