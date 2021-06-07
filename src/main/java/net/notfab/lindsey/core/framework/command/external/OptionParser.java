@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.lindseybot.commands.request.CommandOption;
+import net.lindseybot.controller.CommandOption;
 import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.command.FinderUtil;
 import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;

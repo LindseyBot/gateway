@@ -2,28 +2,24 @@ package net.notfab.lindsey.core.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.lindseybot.commands.Command;
-import net.lindseybot.commands.request.CommandOption;
-import net.lindseybot.commands.request.CommandRequest;
-import net.lindseybot.commands.response.*;
-import net.lindseybot.discord.Embed;
-import net.notfab.lindsey.core.framework.DiscordAdapter;
-import net.notfab.lindsey.core.framework.command.CommandRegistry;
+import net.lindseybot.controller.CommandMeta;
+import net.lindseybot.controller.CommandOption;
+import net.lindseybot.controller.registry.CommandRegistry;
+import net.lindseybot.discord.bridge.InteractionData;
+import net.lindseybot.framework.CommandRequest;
+import net.lindseybot.services.MessagingService;
 import net.notfab.lindsey.core.framework.command.external.BadArgumentException;
 import net.notfab.lindsey.core.framework.command.external.ExternalParser;
 import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.i18n.Translator;
-import net.notfab.lindsey.core.framework.menu.Menu;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
-import net.notfab.lindsey.shared.enums.RabbitExchange;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,22 +30,19 @@ public class ExternalCommandManager {
     private final PermissionManager permissions;
     private final Translator i18n;
     private final Messenger msg;
+
     private final CommandRegistry registry;
-    private final RabbitTemplate template;
-    private final DiscordAdapter adapter;
+    private final MessagingService messaging;
 
     private final ExecutorService service = Executors.newCachedThreadPool();
-    private final ParameterizedTypeReference<CommandResponse> type = ParameterizedTypeReference.forType(CommandResponse.class);
 
-    public ExternalCommandManager(PermissionManager permissions,
-                                  Translator i18n, Messenger msg, CommandRegistry registry,
-                                  RabbitTemplate template, DiscordAdapter adapter) {
+    public ExternalCommandManager(PermissionManager permissions, Translator i18n, Messenger msg,
+                                  CommandRegistry registry, MessagingService messaging) {
         this.permissions = permissions;
         this.i18n = i18n;
         this.msg = msg;
         this.registry = registry;
-        this.template = template;
-        this.adapter = adapter;
+        this.messaging = messaging;
     }
 
     /**
@@ -61,7 +54,7 @@ public class ExternalCommandManager {
      * @param event       The message event.
      */
     public void onCommand(String commandName, List<String> args, Member member, ServerMessageReceivedEvent event) {
-        Command command = this.registry.get(commandName);
+        CommandMeta command = this.registry.get(commandName);
         if (command == null) {
             return;
         }
@@ -70,7 +63,7 @@ public class ExternalCommandManager {
             .append(commandName);
 
         // -- Find subcommand
-        if (args.size() > 0 && !command.getCommands().isEmpty()) {
+        if (args.size() > 0 && !command.getSubcommands().isEmpty()) {
             try {
                 command = findCommand(args, command, path);
             } catch (BadArgumentException ex) {
@@ -89,12 +82,14 @@ public class ExternalCommandManager {
             return;
         }
 
-        if (command.isDeveloperOnly() && !Arrays.asList(87166524837613568L, 119566649731842049L).contains(member.getIdLong())) {
-            // Dev-only commands
+        // -- Dev-only commands
+        if (command.isDeveloperOnly()
+            && !Arrays.asList(87166524837613568L, 119566649731842049L).contains(member.getIdLong())) {
             return;
         }
 
         List<CommandOption> optList = command.getOptions();
+        CommandMeta finalCommand = command;
         service.submit(() -> {
             CommandRequest request;
             try {
@@ -103,39 +98,16 @@ public class ExternalCommandManager {
                 msg.send(event.getChannel(), sender(member) + i18n.get(member, ex.getMessage(), ex.getArgs()));
                 return;
             }
-            request.setId(UUID.randomUUID().toString());
-            request.setCommandPath("commands." + path);
-            try {
-                CommandResponse response =
-                    template.convertSendAndReceiveAsType(RabbitExchange.COMMANDS.getName(), commandName, request, type);
-                if (response == null || response instanceof InvalidResponse) {
-                    return;
-                } else if (response instanceof ErrorResponse) {
-                    ErrorResponse error = (ErrorResponse) response;
-                    event.getMessage().
-                        reply(this.i18n.get(member, error.getMessage()))
-                        .queue();
-                    return;
-                } else if (response instanceof MessageResponse) {
-                    MessageResponse resp = (MessageResponse) response;
-                    Message message = this.adapter.toMessage(resp.getMessage(), member);
-                    event.getMessage()
-                        .reply(message)
-                        .queue();
-                    return;
-                } else if (response instanceof MenuResponse) {
-                    MenuResponse menu = (MenuResponse) response;
-                    List<MessageEmbed> pages = new ArrayList<>();
-                    for (Embed embed : menu.getEmbeds()) {
-                        this.adapter.buildEmbed(embed, member);
-                    }
-                    Menu.create(event.getChannel(), pages);
-                    return;
-                }
-                log.warn("Unknown response " + (response.getClass().getSimpleName()) + ":" + response);
-            } catch (Exception ex) {
-                log.error("Error during command processing", ex);
-            }
+            request.setPath(path.toString());
+
+            InteractionData data = new InteractionData();
+            data.setGuildId(member.getGuild().getIdLong());
+            data.setChannelId(event.getChannel().getIdLong());
+            data.setToken(null);
+            data.setMessageId(event.getMessage().getIdLong());
+            data.setUserId(event.getMessage().getAuthor().getIdLong());
+            request.setInteraction(data);
+            this.messaging.enqueue("Lindsey:Commands:" + finalCommand.getName(), request);
         });
     }
 
@@ -143,13 +115,13 @@ public class ExternalCommandManager {
         return "**" + member.getEffectiveName() + "**: ";
     }
 
-    private Command findCommand(List<String> args, Command command, StringBuilder path) throws BadArgumentException {
+    private CommandMeta findCommand(List<String> args, CommandMeta command, StringBuilder path) throws BadArgumentException {
         do {
             if (args.isEmpty()) {
                 // Subcommand not found
                 throw new BadArgumentException("search.command", command.getName());
             }
-            Optional<Command> sub = command.getCommands().stream()
+            Optional<CommandMeta> sub = command.getSubcommands().stream()
                 .filter(cmd -> cmd.getName().equals(args.get(0)))
                 .findFirst();
             if (sub.isEmpty()) {
@@ -160,7 +132,7 @@ public class ExternalCommandManager {
                 path.append(".").append(command.getName());
                 args.remove(0);
             }
-        } while (!command.getCommands().isEmpty());
+        } while (!command.getSubcommands().isEmpty());
         return command;
     }
 

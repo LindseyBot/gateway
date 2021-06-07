@@ -2,6 +2,7 @@ package net.notfab.lindsey.core.listeners;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.lindseybot.services.EventService;
 import net.notfab.eventti.EventHandler;
 import net.notfab.eventti.Listener;
 import net.notfab.eventti.ListenerPriority;
@@ -9,7 +10,6 @@ import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 import net.notfab.lindsey.core.framework.events.ServerMessageUpdatedEvent;
 import net.notfab.lindsey.core.service.AutoModService;
-import net.notfab.lindsey.core.service.EventService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

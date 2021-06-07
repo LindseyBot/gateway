@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.lindseybot.enums.AutoModFeature;
+import net.lindseybot.services.EventService;
 import net.notfab.eventti.EventHandler;
 import net.notfab.eventti.Listener;
 import net.notfab.lindsey.core.automod.AutoModerator;

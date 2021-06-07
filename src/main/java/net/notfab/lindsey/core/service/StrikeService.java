@@ -1,6 +1,7 @@
 package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.lindseybot.services.EventService;
 import net.notfab.lindsey.core.framework.events.StrikeReceivedEvent;
 import net.notfab.lindsey.shared.entities.profile.member.Strike;
 import net.notfab.lindsey.shared.repositories.sql.StrikeRepository;

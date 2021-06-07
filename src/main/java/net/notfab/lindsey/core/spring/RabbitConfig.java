@@ -1,8 +1,6 @@
 package net.notfab.lindsey.core.spring;
 
 import net.lindseybot.utils.RabbitUtils;
-import net.notfab.lindsey.shared.enums.RabbitExchange;
-import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -32,30 +30,6 @@ public class RabbitConfig {
         template.setMessageConverter(RabbitUtils.jacksonConverter());
         template.setReplyTimeout(TimeUnit.SECONDS.toMillis(15));
         return template;
-    }
-
-    // -- Commands
-
-    @Bean
-    public DirectExchange commandExchange() {
-        return new DirectExchange(RabbitExchange.COMMANDS.getName());
-    }
-
-    // -- Gateway Messaging
-
-    @Bean
-    public Queue anonQueue() {
-        return new AnonymousQueue();
-    }
-
-    @Bean
-    public FanoutExchange gatewayExchange() {
-        return new FanoutExchange(RabbitExchange.GATEWAYS.getName());
-    }
-
-    @Bean
-    public Binding gatewayBinding() {
-        return BindingBuilder.bind(anonQueue()).to(gatewayExchange());
     }
 
 }

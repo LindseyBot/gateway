@@ -2,11 +2,14 @@ package net.notfab.lindsey.core.framework.command.external;
 
 import lombok.Data;
 import net.dv8tion.jda.api.entities.Member;
-import net.lindseybot.commands.request.CommandOption;
-import net.lindseybot.commands.request.CommandRequest;
+import net.lindseybot.controller.CommandOption;
+import net.lindseybot.framework.CommandOpts;
+import net.lindseybot.framework.CommandRequest;
 import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 @Data
 public class ExternalParser {
@@ -14,15 +17,14 @@ public class ExternalParser {
     public static CommandRequest run(StringBuilder path, List<CommandOption> optList, Deque<String> args,
                                      Member member, ServerMessageReceivedEvent event) throws BadArgumentException {
         CommandRequest request = new CommandRequest();
-        request.setCommandName(path.toString());
+        request.setPath(path.toString());
         request.setGuild(FakeBuilder.toFake(event.getGuild()));
         request.setMember(FakeBuilder.toFake(member));
         request.setChannel(FakeBuilder.toFake(event.getChannel()));
         if (optList.isEmpty()) {
-            request.setOptions(new HashMap<>());
             return request;
         }
-        Map<String, Object> opts = new HashMap<>();
+        CommandOpts opts = new CommandOpts();
         for (int i = 0; i < optList.size(); i++) {
             CommandOption option = optList.get(i);
             boolean isLastOption = (optList.size() - 1) == i;

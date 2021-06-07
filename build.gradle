@@ -50,7 +50,7 @@ dependencies {
     implementation group: 'org.graylog2', name: 'gelfclient', version: '1.5.1'
     implementation group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.76'
     implementation group: 'net.jodah', name: 'expiringmap', version: '0.5.8'
-    implementation group: 'net.notfab.lindsey', name: 'shared', version: '0.1.34'
+    implementation group: 'net.notfab.lindsey', name: 'shared', version: '0.1.35'
     implementation group: 'net.notfab', name: 'Eventti', version: '1.3.7'
     implementation group: 'com.github.mpkorstanje', name: 'simmetrics-core', version: '4.1.1'
 
