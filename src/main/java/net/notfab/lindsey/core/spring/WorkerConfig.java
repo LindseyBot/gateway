@@ -20,6 +20,7 @@ public class WorkerConfig {
     @Bean
     public MessagingService messagingService(JedisPool pool, EventService events) {
         MessagingService service = new MessagingService(pool, events);
+        service.subscribe("META");
         service.subscribe("GATEWAYS");
         return service;
     }
