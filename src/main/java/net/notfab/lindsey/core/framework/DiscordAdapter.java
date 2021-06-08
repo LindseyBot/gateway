@@ -29,7 +29,7 @@ public class DiscordAdapter {
     private final String ENCRYPTION_TOKEN;
     private final List<Message.MentionType> DEFAULT_ALLOWED_MENTIONS;
 
-    public DiscordAdapter(Translator i18n, @Value("bot.encryption") String token) {
+    public DiscordAdapter(Translator i18n, @Value("${bot.encryption}") String token) {
         this.i18n = i18n;
         this.ENCRYPTION_TOKEN = token;
         this.DEFAULT_ALLOWED_MENTIONS = new ArrayList<>();
@@ -42,11 +42,9 @@ public class DiscordAdapter {
     private String getLabel(net.lindseybot.discord.Message msg, ISnowflake snowflake) {
         if (msg.isRaw()) {
             return msg.getName();
-        } else if (snowflake instanceof Member) {
-            Member member = (Member) snowflake;
+        } else if (snowflake instanceof Member member) {
             return this.i18n.get(member, msg.getName(), msg.getArgs());
-        } else if (snowflake instanceof Guild) {
-            Guild guild = (Guild) snowflake;
+        } else if (snowflake instanceof Guild guild) {
             return this.i18n.get(guild, msg.getName(), msg.getArgs());
         } else {
             throw new IllegalArgumentException("Unknown snowflake holder");
@@ -79,8 +77,7 @@ public class DiscordAdapter {
             List<Component> components = new ArrayList<>();
             int i = 0;
             for (MessageComponent component : msg.getComponents()) {
-                if (component instanceof Button) {
-                    Button model = (Button) component;
+                if (component instanceof Button model) {
                     components.add(this.createButton(model, snowflake));
                 }
                 i++;

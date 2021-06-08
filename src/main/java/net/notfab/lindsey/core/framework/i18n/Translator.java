@@ -67,8 +67,10 @@ public class Translator {
             }
         }
         String msg = template;
-        for (int i = 0; i < args.length; i++) {
-            msg = msg.replace("{" + i + "}", String.valueOf(args[i]));
+        if (args != null && args.length > 0) {
+            for (int i = 0; i < args.length; i++) {
+                msg = msg.replace("{" + i + "}", String.valueOf(args[i]));
+            }
         }
         return msg;
     }

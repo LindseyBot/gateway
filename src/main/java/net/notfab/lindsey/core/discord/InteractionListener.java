@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.internal.interactions.InteractionHookImpl;
 import net.dv8tion.jda.internal.interactions.InteractionImpl;
 import net.lindseybot.discord.bridge.Action;
 import net.lindseybot.discord.bridge.InteractionData;
@@ -16,7 +17,6 @@ import net.notfab.lindsey.core.framework.DiscordAdapter;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Component
@@ -56,14 +56,17 @@ public class InteractionListener implements RedisConsumer<InteractionResponse> {
         if (message.getData().getToken() != null) {
             hook = new InteractionImpl(0L, data.getType().getKey(), data.getToken(), guild, member, member.getUser(), channel)
                 .getHook();
+            ((InteractionHookImpl) hook).ack();
+            ((InteractionHookImpl) hook).ready();
         } else {
             hook = null;
         }
-        AtomicLong last_message = new AtomicLong(data.getMessageId());
         RestAction<?> rest = null;
         for (Action action : message.getActions()) {
-            RestAction<?> act = this.toRestAction(action, guild, member, hook, last_message);
-            if (act == null) {
+            RestAction<?> act = this.toRestAction(action, guild, member, hook);
+            if (action instanceof WaitAction wait && rest != null) {
+                rest = rest.delay(wait.getTime(), TimeUnit.MILLISECONDS);
+            } else if (act == null) {
                 Message msg = this.adapter.toMessage(net.lindseybot.discord.Message.of("internal.error"), member);
                 if (hook != null) {
                     rest = hook.sendMessage(msg);
@@ -73,15 +76,8 @@ public class InteractionListener implements RedisConsumer<InteractionResponse> {
                 break;
             } else if (rest == null) {
                 rest = act;
-            } else if (action instanceof WaitAction wait) {
-                rest = rest.delay(wait.getTime(), TimeUnit.MILLISECONDS);
             } else {
-                rest = rest.flatMap(m -> {
-                    if (m instanceof Message msg) {
-                        last_message.set(msg.getIdLong());
-                    }
-                    return act;
-                });
+                rest = rest.flatMap(m -> act);
             }
         }
         if (rest == null) {
@@ -91,7 +87,7 @@ public class InteractionListener implements RedisConsumer<InteractionResponse> {
         rest.queue();
     }
 
-    private RestAction<?> toRestAction(Action action, Guild guild, Member member, InteractionHook hook, AtomicLong last_message) {
+    private RestAction<?> toRestAction(Action action, Guild guild, Member member, InteractionHook hook) {
         if (action instanceof AddRoleAction data) {
             Role role = guild.getRoleById(data.getRoleId());
             if (role == null) {
@@ -105,15 +101,14 @@ public class InteractionListener implements RedisConsumer<InteractionResponse> {
         } else if (action instanceof MessageAction data) {
             Message message = this.adapter.toMessage(data.getMessage(), member);
             if (data.isEdit()) {
-                long id = data.getTargetId() == 0 ? last_message.get() : data.getTargetId();
                 if (hook != null) {
-                    return hook.editMessageById(id, message);
+                    return hook.editMessageById(data.getTargetId(), message);
                 } else {
                     TextChannel targetChannel = guild.getTextChannelById(data.getChannelId());
                     if (targetChannel == null) {
                         return null;
                     }
-                    return targetChannel.editMessageById(id, message);
+                    return targetChannel.editMessageById(data.getTargetId(), message);
                 }
             } else {
                 if (hook != null) {
