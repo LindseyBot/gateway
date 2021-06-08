@@ -19,7 +19,9 @@ public class WorkerConfig {
 
     @Bean
     public MessagingService messagingService(JedisPool pool, EventService events) {
-        return new MessagingService(pool, events);
+        MessagingService service = new MessagingService(pool, events);
+        service.subscribe("GATEWAYS");
+        return service;
     }
 
     @Bean

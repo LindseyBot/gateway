@@ -106,7 +106,8 @@ public class DiscordAdapter {
         if (style == ButtonStyle.LINK) {
             id = model.getIdOrUrl();
         } else {
-            id = EncryptionUtils.aesEcojiEncrypt(ENCRYPTION_TOKEN, model.getIdOrUrl() + ":" + model.getUserFilter());
+            id = EncryptionUtils.aesEcojiEncrypt(ENCRYPTION_TOKEN,
+                model.getIdOrUrl() + ":" + model.getUserFilter() + ":" + model.getData());
             if (id == null) {
                 throw new IllegalStateException("Failed to encode button id");
             } else if (id.codePointCount(0, id.length()) > 100) {
