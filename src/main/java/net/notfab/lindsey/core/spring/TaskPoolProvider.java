@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class TaskPoolProvider {
 
     @Bean
-    public TaskExecutor commands() {
+    public TaskExecutor commandPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setMaxPoolSize(6);
         executor.setCorePoolSize(2);

@@ -20,7 +20,7 @@ public class CommandManager {
     private final TaskExecutor pool;
     private final Map<String, Command> commandList = new HashMap<>();
 
-    public CommandManager(@Qualifier("commands") TaskExecutor pool, List<Command> commands) {
+    public CommandManager(@Qualifier("commandPool") TaskExecutor pool, List<Command> commands) {
         Instance = this;
         this.pool = pool;
         commands.forEach(this::register);
