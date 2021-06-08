@@ -128,9 +128,9 @@ public class DiscordAdapter {
 
     private Emoji toEmoji(net.lindseybot.discord.Emote emote) {
         if (emote.isUnicode()) {
-            return Emoji.ofUnicode(emote.getName());
+            return Emoji.fromUnicode(emote.getName());
         } else {
-            return Emoji.ofEmote(emote.getName(), emote.getId(), emote.isAnimated());
+            return Emoji.fromEmote(emote.getName(), emote.getId(), emote.isAnimated());
         }
     }
 
