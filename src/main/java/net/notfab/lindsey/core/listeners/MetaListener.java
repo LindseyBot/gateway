@@ -21,7 +21,6 @@ import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public class MetaListener {
     @RabbitListener(bindings = {
         @QueueBinding(value = @Queue(), exchange = @Exchange("events"), key = {"events.commands.meta"})
     })
-    public void onCommandMeta(@Payload CommandMetaEvent event) {
+    public void onCommandMeta(CommandMetaEvent event) {
         CommandMeta model = event.getModel();
         if (!event.isCreate()) {
             log.info("Skipped unregistering a command on Discord ({})", model.getName());
