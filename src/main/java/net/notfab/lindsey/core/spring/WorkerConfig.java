@@ -3,11 +3,9 @@ package net.notfab.lindsey.core.spring;
 import net.lindseybot.controller.registry.ButtonRegistry;
 import net.lindseybot.controller.registry.CommandRegistry;
 import net.lindseybot.properties.ControllerProperties;
-import net.lindseybot.services.EventService;
-import net.lindseybot.services.MessagingService;
+import net.notfab.lindsey.core.service.EventService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import redis.clients.jedis.JedisPool;
 
 @Component
 public class WorkerConfig {
@@ -18,23 +16,13 @@ public class WorkerConfig {
     }
 
     @Bean
-    public MessagingService messagingService(JedisPool pool, EventService events) {
-        MessagingService service = new MessagingService(pool, events);
-        service.subscribe("META");
-        service.subscribe("GATEWAYS");
-        return service;
+    public CommandRegistry commands(ControllerProperties properties) {
+        return new CommandRegistry(properties);
     }
 
     @Bean
-    public CommandRegistry commands(ControllerProperties properties,
-                                    EventService service, MessagingService messaging) {
-        return new CommandRegistry(properties, service, messaging);
-    }
-
-    @Bean
-    public ButtonRegistry buttons(ControllerProperties properties,
-                                  EventService service, MessagingService messaging) {
-        return new ButtonRegistry(properties, service, messaging);
+    public ButtonRegistry buttons(ControllerProperties properties) {
+        return new ButtonRegistry(properties);
     }
 
 }

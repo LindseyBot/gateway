@@ -2,11 +2,11 @@ package net.notfab.lindsey.core.listeners;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import net.lindseybot.services.EventService;
 import net.notfab.eventti.EventHandler;
 import net.notfab.eventti.Listener;
 import net.notfab.lindsey.core.framework.events.MessageReactionAddedEvent;
 import net.notfab.lindsey.core.framework.events.MessageReactionRemovedEvent;
+import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.core.service.ReactionRoleService;
 import net.notfab.lindsey.shared.entities.ReactionRole;
 import org.jetbrains.annotations.NotNull;

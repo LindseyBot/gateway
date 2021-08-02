@@ -81,7 +81,7 @@ public class Translator {
         if (tomlMap.containsKey(language)) {
             toml = tomlMap.get(language);
         } else {
-            toml = new Toml().parse(getLanguage(language.name()));
+            toml = new Toml().read(getLanguage(language.name()));
             tomlMap.put(language, toml);
         }
         return toml.getString(key);

@@ -12,6 +12,7 @@ import net.lindseybot.discord.Embed;
 import net.lindseybot.discord.MessageComponent;
 import net.lindseybot.enums.MentionType;
 import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.shared.enums.Language;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,14 @@ public class DiscordAdapter {
         this.DEFAULT_ALLOWED_MENTIONS.add(Message.MentionType.CHANNEL);
         this.DEFAULT_ALLOWED_MENTIONS.add(Message.MentionType.EMOTE);
         this.DEFAULT_ALLOWED_MENTIONS.add(Message.MentionType.ROLE);
+    }
+
+    public String getLabel(net.lindseybot.discord.Message msg, Language language) {
+        if (msg.isRaw()) {
+            return msg.getName();
+        } else {
+            return this.i18n.get(language, msg.getName());
+        }
     }
 
     private String getLabel(net.lindseybot.discord.Message msg, ISnowflake snowflake) {

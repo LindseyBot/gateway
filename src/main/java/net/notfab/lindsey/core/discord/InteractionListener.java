@@ -11,8 +11,6 @@ import net.lindseybot.discord.bridge.Action;
 import net.lindseybot.discord.bridge.InteractionData;
 import net.lindseybot.discord.bridge.InteractionResponse;
 import net.lindseybot.discord.bridge.actions.*;
-import net.lindseybot.models.RedisConsumer;
-import net.lindseybot.services.MessagingService;
 import net.notfab.lindsey.core.framework.DiscordAdapter;
 import org.springframework.stereotype.Component;
 
@@ -20,23 +18,16 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
-public class InteractionListener implements RedisConsumer<InteractionResponse> {
+public class InteractionListener {
 
     private final DiscordAdapter adapter;
     private final ShardManager api;
 
-    public InteractionListener(MessagingService messaging, DiscordAdapter adapter, ShardManager api) {
+    public InteractionListener(DiscordAdapter adapter, ShardManager api) {
         this.adapter = adapter;
         this.api = api;
-        messaging.addConsumer("Lindsey:Interactions", this);
     }
 
-    @Override
-    public Class<InteractionResponse> getTClass() {
-        return InteractionResponse.class;
-    }
-
-    @Override
     public void onMessage(InteractionResponse message) {
         InteractionData data = message.getData();
         Guild guild = this.api.getGuildById(data.getGuildId());

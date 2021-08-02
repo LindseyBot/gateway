@@ -3,7 +3,6 @@ package net.notfab.lindsey.core.listeners;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.lindseybot.services.EventService;
 import net.notfab.eventti.EventHandler;
 import net.notfab.eventti.Listener;
 import net.notfab.eventti.ListenerPriority;
@@ -13,7 +12,7 @@ import net.notfab.lindsey.core.framework.command.CommandManager;
 import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.core.service.ExternalCommandManager;
+import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
@@ -33,15 +32,13 @@ public class CommandListener implements Listener {
     private final CommandManager manager;
     private final PermissionManager permissions;
     private final TaskExecutor threadPool;
-    private final ExternalCommandManager externalCommandManager;
 
     public CommandListener(EventService events, CommandManager manager, ProfileManager profileManager,
-                           PermissionManager permissions, ExternalCommandManager externalCommandManager) {
+                           PermissionManager permissions) {
         this.manager = manager;
         this.threadPool = manager.getPool();
         this.profiles = profileManager;
         this.permissions = permissions;
-        this.externalCommandManager = externalCommandManager;
         events.addListener(this);
     }
 
@@ -70,13 +67,6 @@ public class CommandListener implements Listener {
             arguments.clear();
         } else {
             arguments.remove(0);
-        }
-
-        // -- Override
-        if (this.externalCommandManager.isCommand(commandName)) {
-            event.setCancelled(true);
-            this.externalCommandManager.onCommand(commandName, arguments, event.getMember(), event);
-            return;
         }
 
         // -- Execution

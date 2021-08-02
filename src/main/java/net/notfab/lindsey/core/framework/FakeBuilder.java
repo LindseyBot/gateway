@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.framework.command.external;
+package net.notfab.lindsey.core.framework;
 
 import net.dv8tion.jda.api.entities.*;
 import net.notfab.lindsey.shared.rpc.*;
