@@ -17,9 +17,14 @@ public class RabbitConfig {
     @Primary
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
-        template.setMessageConverter(new Jackson2JsonMessageConverter());
+        template.setMessageConverter(this.jackson2JsonMessageConverter());
         template.setReplyTimeout(TimeUnit.SECONDS.toMillis(15));
         return template;
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
     // -- Spring AMQP Remoting
