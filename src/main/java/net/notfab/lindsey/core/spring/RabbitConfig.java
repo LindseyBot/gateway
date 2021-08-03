@@ -24,17 +24,7 @@ public class RabbitConfig {
 
     @Bean
     public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
-
-    // -- Spring AMQP Remoting
-
-    @Bean(name = "rpc")
-    public RabbitTemplate rpcTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate template = new RabbitTemplate(connectionFactory);
-        template.setMessageConverter(RabbitUtils.jacksonConverter());
-        template.setReplyTimeout(TimeUnit.SECONDS.toMillis(15));
-        return template;
+        return RabbitUtils.jacksonConverter();
     }
 
 }

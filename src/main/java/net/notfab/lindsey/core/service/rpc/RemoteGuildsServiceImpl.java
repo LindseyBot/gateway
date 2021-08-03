@@ -152,7 +152,7 @@ public class RemoteGuildsServiceImpl implements RemoteGuildsService {
     }
 
     @Bean(name = "RemoteGuildsS")
-    public AmqpInvokerServiceExporter exporter(@Qualifier("rpc") AmqpTemplate template) {
+    public AmqpInvokerServiceExporter exporter(AmqpTemplate template) {
         AmqpInvokerServiceExporter exporter = new AmqpInvokerServiceExporter();
         exporter.setServiceInterface(RemoteGuildsService.class);
         exporter.setService(this);
