@@ -2,9 +2,10 @@ package net.notfab.lindsey.core.service.rpc;
 
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.lindseybot.entities.discord.*;
 import net.lindseybot.utils.RabbitUtils;
+import net.notfab.lindsey.core.framework.FakeBuilder;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
-import net.notfab.lindsey.shared.rpc.*;
 import net.notfab.lindsey.shared.rpc.services.RemoteGuildsService;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -50,19 +51,11 @@ public class RemoteGuildsServiceImpl implements RemoteGuildsService {
         if (!this.hasPermission(guild, userId)) {
             throw new IllegalStateException("No permission");
         }
-        FGuild result = new FGuild();
-        result.setId(id);
-        result.setName(guild.getName());
-        result.setIconUrl(guild.getIconUrl());
+        FGuild result = FakeBuilder.toFake(guild);
 
         List<FRole> roles = guild.getRoles().stream()
-            .map(role -> {
-                FRole fRole = new FRole();
-                fRole.setId(role.getIdLong());
-                fRole.setName(role.getName());
-                fRole.setPosition(role.getPosition());
-                return fRole;
-            }).collect(Collectors.toList());
+            .map(FakeBuilder::toFake)
+            .collect(Collectors.toList());
         result.setRoles(roles);
 
         List<GuildChannel> topChannels = guild.getChannels().stream()

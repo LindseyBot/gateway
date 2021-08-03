@@ -1,7 +1,9 @@
 package net.notfab.lindsey.core.framework;
 
 import net.dv8tion.jda.api.entities.*;
-import net.notfab.lindsey.shared.rpc.*;
+import net.lindseybot.entities.discord.*;
+
+import java.util.stream.Collectors;
 
 public class FakeBuilder {
 
@@ -9,7 +11,7 @@ public class FakeBuilder {
         FGuild fake = new FGuild();
         fake.setId(guild.getIdLong());
         fake.setName(guild.getName());
-        fake.setIconUrl(guild.getIconUrl());
+        fake.setIconHash(guild.getIconId());
         return fake;
     }
 
@@ -17,37 +19,55 @@ public class FakeBuilder {
         FRole fake = new FRole();
         fake.setId(role.getIdLong());
         fake.setName(role.getName());
+        fake.setColor(role.getColorRaw());
+        fake.setHoisted(role.isHoisted());
         fake.setPosition(role.getPosition());
+        fake.setPermissions(String.valueOf(role.getPermissionsRaw()));
+        fake.setManaged(role.isManaged());
+        fake.setMentionable(role.isMentionable());
         return fake;
     }
 
     public static FChannel toFake(VoiceChannel channel) {
         FChannel fake = new FChannel();
-        fake.setType(FChannelType.VOICE);
         fake.setId(channel.getIdLong());
         fake.setName(channel.getName());
+        fake.setType(FChannelType.VOICE);
         fake.setPosition(channel.getPosition());
         return fake;
     }
 
     public static FChannel toFake(TextChannel channel) {
         FChannel fake = new FChannel();
-        fake.setType(FChannelType.TEXT);
         fake.setId(channel.getIdLong());
         fake.setName(channel.getName());
+        fake.setType(FChannelType.TEXT);
         fake.setPosition(channel.getPosition());
         fake.setNsfw(channel.isNSFW());
         return fake;
     }
 
+    public static FUser toFake(User user) {
+        FUser fake = new FUser();
+        fake.setId(user.getIdLong());
+        fake.setName(user.getName());
+        fake.setDiscriminator(user.getDiscriminator());
+        fake.setAvatarHash(user.getAvatarId());
+        fake.setBot(user.isBot());
+        fake.setFlags(user.getFlagsRaw());
+        return fake;
+    }
+
     public static FMember toFake(Member member) {
+        FUser user = FakeBuilder.toFake(member.getUser());
         FMember fake = new FMember();
-        fake.setId(member.getIdLong());
-        fake.setName(member.getEffectiveName());
-        fake.setDiscrim(member.getUser().getDiscriminator());
-        fake.setAvatarUrl(member.getUser().getEffectiveAvatarUrl());
-        fake.setGuildId(member.getGuild().getIdLong());
-        fake.setGuildName(member.getGuild().getName());
+        fake.setUser(user);
+        fake.setNickname(member.getNickname());
+        //fake.setAvatarHash(member.getAvatarId());
+        fake.setPending(member.isPending());
+        fake.setRoles(member.getRoles().stream()
+            .map(Role::getIdLong)
+            .collect(Collectors.toList()));
         return fake;
     }
 
