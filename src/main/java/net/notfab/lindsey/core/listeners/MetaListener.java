@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.sharding.ShardManager;
-import net.lindseybot.entities.discord.Message;
+import net.lindseybot.entities.discord.Label;
 import net.lindseybot.entities.events.CommandMetaEvent;
 import net.lindseybot.entities.interaction.commands.*;
 import net.notfab.lindsey.core.framework.DiscordAdapter;
@@ -64,8 +64,8 @@ public class MetaListener {
         }
     }
 
-    private String toLabel(Message message) {
-        return this.adapter.getLabel(message, Language.en_US);
+    private String toLabel(Label label) {
+        return this.adapter.getLabel(label, Language.en_US);
     }
 
     private CommandData getData(CommandMeta meta) {
