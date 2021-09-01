@@ -67,7 +67,7 @@ public class BetterEmbedsListener implements Listener, ExpirationListener<Long, 
             event.setCancelled(true);
             event.getMessage()
                 .delete()
-                .flatMap((d) -> event.getChannel().sendMessage(embed))
+                .flatMap((d) -> event.getChannel().sendMessageEmbeds(embed))
                 .queue();
             break;
         }

@@ -49,7 +49,13 @@ public class MetaListener {
             log.info("Skipped unregistering a command on Discord ({})", model.getName());
             return;
         }
-        CommandData data = this.getData(model);
+        CommandData data;
+        try {
+            data = this.getData(model);
+        } catch (Exception ex) {
+            log.error("Failed to convert command to Discord format", ex);
+            return;
+        }
         if (!model.getGuilds().isEmpty()) {
             for (Long guildId : model.getGuilds()) {
                 Guild guild = this.shardManager.getGuildById(guildId);
@@ -105,9 +111,9 @@ public class MetaListener {
             if (a.isRequired() && b.isRequired()) {
                 return 0;
             } else if (a.isRequired()) {
-                return 1;
-            } else {
                 return -1;
+            } else {
+                return 1;
             }
         }).map(this::toOptionData).collect(Collectors.toList());
     }
@@ -128,13 +134,13 @@ public class MetaListener {
     private OptionType getType(OptType lindseyType) {
         switch (lindseyType) {
             // TODO: Wait num type for double
-            case INT, DOUBLE -> {
+            case INT, DOUBLE, LONG -> {
                 return OptionType.INTEGER;
             }
             case BOOLEAN -> {
                 return OptionType.BOOLEAN;
             }
-            case MEMBER -> {
+            case MEMBER, USER -> {
                 return OptionType.USER;
             }
             case TEXT_CHANNEL, VOICE_CHANNEL -> {

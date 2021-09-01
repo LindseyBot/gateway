@@ -163,6 +163,7 @@ public class DiscordListener extends ListenerAdapter {
         ids.add(141555945586163712L);
         ids.add(213044545825406976L);
         ids.add(382281038547648512L);
+        ids.add(859946655310413844L);
         return !ids.contains(guild.getIdLong());
     }
 

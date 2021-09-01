@@ -2,117 +2,118 @@ package net.notfab.lindsey.core.commands.economy;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.notfab.lindsey.core.framework.Utils;
-import net.notfab.lindsey.core.framework.command.*;
-import net.notfab.lindsey.core.framework.command.help.HelpArticle;
-import net.notfab.lindsey.core.framework.command.help.HelpPage;
+import net.lindseybot.entities.discord.Label;
+import net.lindseybot.entities.interaction.commands.CommandMeta;
+import net.lindseybot.entities.interaction.commands.OptType;
+import net.lindseybot.entities.interaction.commands.builder.CommandBuilder;
+import net.lindseybot.entities.interaction.commands.builder.SubCommandBuilder;
+import net.lindseybot.enums.Modules;
+import net.lindseybot.enums.PermissionLevel;
+import net.notfab.lindsey.core.framework.command.BotCommand;
+import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.economy.EconomyService;
+import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
-import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Slf4j
 @Component
-public class Cookies implements Command {
+public class Cookies extends Command {
 
-    @Autowired
-    private Translator i18n;
+    private final Messenger msg;
+    private final ProfileManager profiles;
+    private final EconomyService economy;
 
-    @Autowired
-    private Messenger msg;
-
-    @Autowired
-    private ProfileManager profiles;
-
-    @Autowired
-    private EconomyService economy;
+    public Cookies(Messenger msg, ProfileManager profiles, EconomyService economy) {
+        this.msg = msg;
+        this.profiles = profiles;
+        this.economy = economy;
+    }
 
     @Override
-    public CommandDescriptor getInfo() {
-        return new CommandDescriptor.Builder()
-            .name("cookies")
-            .alias("cookie")
+    public CommandMeta getMetadata() {
+        return new CommandBuilder("cookies", Label.of("commands.cookies.description"))
+            .permission(PermissionLevel.EVERYONE)
             .module(Modules.ECONOMY)
-            .permission("commands.cookies", "permissions.command")
+            .guilds(859946655310413844L)
+            .guilds(213044545825406976L)
+            .addSubcommand(
+                new SubCommandBuilder("daily", Label.of("commands.cookies.daily.description"))
+                    .permission(PermissionLevel.ADMIN)
+                    .ephemeral()
+                    .build())
+            .addSubcommand(
+                new SubCommandBuilder("send", Label.of("commands.cookies.send.description"))
+                    .ephemeral()
+                    .addOption(OptType.USER, "target", Label.of("commands.cookies.send.target"), true)
+                    .addOption(OptType.INT, "amount", Label.of("commands.cookies.send.amount"), true)
+                    .build())
             .build();
     }
 
-    @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
-        if (args.length == 0) {
-            UserProfile profile = profiles.getUser(member);
-            msg.send(channel, sender(member) + i18n.get(member, "commands.economy.cookies.self", profile.getCookies()));
-        } else if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("daily")) {
-                UserProfile profile = profiles.getUser(member);
-                if (profile.getCookieStreak() == 0) {
-                    // no streak
-                    profile.setLastDailyCookies(System.currentTimeMillis());
-                    profile.setCookieStreak(profile.getCookieStreak() + 1);
-                    profiles.save(profile);
-                    economy.pay(member, 15);
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.economy.cookies.daily", 15));
-                } else if (isInLastHours(profile, 24)) {
-                    String time = Utils.getTime(TimeUnit.DAYS.toMillis(1) -
-                        (System.currentTimeMillis() - profile.getLastDailyCookies()), member, i18n);
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.economy.cookies.daily_already", time));
-                    return false;
-                } else {
-                    // streak
-                    if (isInLastHours(profile, 48)) {
-                        profile.setCookieStreak(profile.getCookieStreak() + 1);
-                    } else {
-                        profile.setCookieStreak(1);
-                    }
-                    profile.setLastDailyCookies(System.currentTimeMillis());
-                    long cookies = profile.getCookieStreak() * 15;
-                    profiles.save(profile);
-                    economy.pay(member, cookies);
-                    msg.send(channel, sender(member) + i18n.get(member,
-                        "commands.economy.cookies.daily_streak", cookies, profile.getCookieStreak()));
-                }
-                return true;
-            }
-            Member target = FinderUtil.findMember(args[0], message);
-            if (target == null) {
-                msg.send(channel, sender(member) + i18n.get(member, "search.member", args[0]));
-                return false;
-            } else {
-                UserProfile profile = profiles.getUser(target);
-                msg.send(channel, sender(member) + i18n.get(member, "commands.economy.cookies.target", target.getEffectiveName(), profile.getCookies()));
-            }
+    @BotCommand("cookies/daily")
+    public void onDaily(ServerCommandEvent event) {
+        Member member = event.getMember();
+        UserProfile profile = this.profiles.get(member.getUser());
+        if (this.isSameDay(profile.getLastDailyCookies(), System.currentTimeMillis())) {
+            long next = Instant.ofEpochMilli(System.currentTimeMillis())
+                .truncatedTo(ChronoUnit.DAYS)
+                .plus(1, ChronoUnit.DAYS)
+                .getEpochSecond();
+            this.msg.reply(event, Label.of("commands.cookies.daily.fail", "<t:" + next + ":R>"), true);
+            return;
+        }
+        long streak;
+        if (isStreak(profile.getLastDailyCookies())) {
+            streak = profile.getCookieStreak() + 1;
         } else {
-            HelpArticle article = this.help(member);
-            article.send(channel, member, args, msg, i18n);
-            return false;
+            streak = 1L;
         }
-        return true;
+        profile.setCookieStreak(streak);
+        profile.setLastDailyCookies(System.currentTimeMillis());
+        profiles.save(profile);
+        economy.pay(member.getUser(), streak * 15);
+        this.msg.reply(event, Label.of("commands.cookies.daily.received", streak * 15, streak), true);
     }
 
-    @Override
-    public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("cookies")
-            .text("commands.economy.cookies.description")
-            .usage("L!cookies <@user>")
-            .permission("commands.cookies")
-            .addExample("L!cookies")
-            .addExample("L!cookies @Lindsey");
-        return HelpArticle.of(page);
+    private boolean isSameDay(long one, long two) {
+        return Instant.ofEpochMilli(one).truncatedTo(ChronoUnit.DAYS)
+            .equals(Instant.ofEpochMilli(two).truncatedTo(ChronoUnit.DAYS));
     }
 
-    private boolean isInLastHours(UserProfile profile, long hours) {
-        long lastDaily = profile.getLastDailyCookies();
-        if (lastDaily == 0) {
-            return false;
+    private boolean isStreak(long last) {
+        return Instant.ofEpochMilli(last).truncatedTo(ChronoUnit.DAYS)
+            .equals(Instant.now().minus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS));
+    }
+
+    @BotCommand("cookies/send")
+    public void onSend(ServerCommandEvent event) {
+        Member target = event.getOptions().getMember("target");
+        if (target == null) {
+            this.msg.reply(event, Label.of("search.member"), true);
+            return;
         }
-        return (System.currentTimeMillis() - lastDaily) < TimeUnit.HOURS.toMillis(hours);
+        long amount = event.getOptions().getLong("amount");
+        if (amount <= 0) {
+            this.msg.reply(event, Label.of("commands.cookies.send.invalid"), true);
+            return;
+        }
+        Member self = event.getMember();
+        if (!this.economy.has(self, amount)) {
+            this.msg.reply(event, Label.of("economy.not_enough"), true);
+            return;
+        } else if (self.equals(target)) {
+            this.msg.reply(event, Label.of("validation.self"), true);
+            return;
+        }
+        this.economy.pay(self, -amount);
+        this.economy.pay(target, amount);
+        this.msg.reply(event, Label.of("commands.cookies.send.sent", self.getAsMention(), amount, target.getAsMention()), false);
     }
 
 }

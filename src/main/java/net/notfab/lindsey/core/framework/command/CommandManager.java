@@ -2,11 +2,14 @@ package net.notfab.lindsey.core.framework.command;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lindseybot.controller.registry.CommandRegistry;
+import net.lindseybot.entities.events.CommandMetaEvent;
 import net.lindseybot.entities.interaction.commands.CommandMeta;
+import net.lindseybot.entities.interaction.commands.CommandMetaBase;
 import net.lindseybot.entities.interaction.commands.SubCommandMeta;
 import net.lindseybot.entities.interaction.commands.SubcommandGroupMeta;
 import net.lindseybot.enums.PermissionLevel;
 import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
+import net.notfab.lindsey.core.listeners.MetaListener;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
@@ -20,10 +23,12 @@ import java.util.Map;
 public class CommandManager {
 
     private final CommandRegistry registry;
-    private final Map<String, Method> listeners = new HashMap<>();
+    private final MetaListener metaListener;
+    private final Map<String, MethodReference> listeners = new HashMap<>();
 
-    public CommandManager(List<Command> commands, CommandRegistry registry) {
+    public CommandManager(List<Command> commands, CommandRegistry registry, MetaListener metaListener) {
         this.registry = registry;
+        this.metaListener = metaListener;
         commands.forEach(this::register);
     }
 
@@ -31,6 +36,11 @@ public class CommandManager {
         CommandMeta metadata = command.getMetadata();
         if (metadata != null) {
             this.registry.register(metadata);
+            CommandMetaEvent event = new CommandMetaEvent();
+            event.setCreate(true);
+            event.setModel(metadata);
+            this.registry.onEvent(event);
+            this.metaListener.onCommandMeta(event);
         }
         for (Method method : command.getClass().getDeclaredMethods()) {
             BotCommand cmd = method.getDeclaredAnnotation(BotCommand.class);
@@ -43,7 +53,7 @@ public class CommandManager {
                 log.warn("Invalid command listener declaration: " + cmd.value());
                 continue;
             }
-            listeners.put(cmd.value(), method);
+            listeners.put(cmd.value(), new MethodReference(command, method));
         }
     }
 
@@ -63,32 +73,63 @@ public class CommandManager {
         return this.registry.getAll();
     }
 
-    public Method getListener(String path) {
+    public MethodReference getListener(String path) {
         return this.listeners.get(path);
+    }
+
+    public CommandMetaBase findMeta(String path) {
+        String[] split = path.split("/");
+        CommandMeta command = this.findCommand(path);
+        if (split.length == 1) {
+            return command;
+        } else if (split.length == 2) {
+            return command.getSubcommands().stream()
+                .filter(g -> g.getName().equals(split[1]))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Invalid command"));
+        } else {
+            SubcommandGroupMeta group = command.getGroups().stream()
+                .filter(g -> g.getName().equals(split[1]))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Invalid command"));
+            return group.getSubcommands().stream()
+                .filter(g -> g.getName().equals(split[1]))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Invalid command"));
+        }
     }
 
     public PermissionLevel getPermission(String path) {
         CommandMeta meta = this.findCommand(path);
-        if (!path.contains("/")) {
-            return meta.getPermission();
-        }
         String[] split = path.split("/");
-        if (split.length == 2) {
+        if (split.length == 1) {
+            return meta.getPermission();
+        } else if (split.length == 2) {
             SubCommandMeta data = meta.getSubcommands().stream()
-                .filter(g -> g.getName().equals(split[1]))
+                .filter(s -> s.getName().equals(split[1]))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Invalid command"));
-            return data.getPermission();
+            if (data.getPermission() != null) {
+                return data.getPermission();
+            } else {
+                return meta.getPermission();
+            }
         } else {
-            SubcommandGroupMeta data = meta.getGroups().stream()
+            SubcommandGroupMeta group = meta.getGroups().stream()
                 .filter(g -> g.getName().equals(split[1]))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Invalid command"));
-            SubCommandMeta subcommand = data.getSubcommands().stream()
-                .filter(g -> g.getName().equals(split[1]))
+            SubCommandMeta sub = group.getSubcommands().stream()
+                .filter(s -> s.getName().equals(split[1]))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Invalid command"));
-            return subcommand.getPermission();
+            if (sub.getPermission() != null) {
+                return sub.getPermission();
+            } else if (group.getPermission() != null) {
+                return group.getPermission();
+            } else {
+                return meta.getPermission();
+            }
         }
     }
 

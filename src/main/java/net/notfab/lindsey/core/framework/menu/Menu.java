@@ -29,7 +29,7 @@ public class Menu {
     // -- Reactions
 
     public static Menu create(Message message, List<MessageEmbed> pages) {
-        Message msg = message.reply(pages.get(0))
+        Message msg = message.replyEmbeds(pages.get(0))
             .complete();
         if (pages.size() > 1) {
             msg.addReaction(Emotes.LeftArrow.asReaction())
@@ -47,7 +47,7 @@ public class Menu {
     }
 
     public static Menu create(TextChannel channel, List<MessageEmbed> pages) {
-        Message message = channel.sendMessage(pages.get(0))
+        Message message = channel.sendMessageEmbeds(pages.get(0))
             .complete();
         if (pages.size() > 1) {
             message.addReaction(Emotes.LeftArrow.asReaction())
@@ -87,7 +87,7 @@ public class Menu {
                 return;
             }
             Message msg = new MessageBuilder()
-                .setEmbed(previous)
+                .setEmbeds(previous)
                 .build();
             channel.editMessageById(this.messageId, msg)
                 .queue();
@@ -98,7 +98,7 @@ public class Menu {
                 return;
             }
             Message msg = new MessageBuilder()
-                .setEmbed(next)
+                .setEmbeds(next)
                 .build();
             channel.editMessageById(this.messageId, msg)
                 .queue();

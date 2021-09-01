@@ -40,9 +40,15 @@ public class Messenger {
 
     public void reply(ServerCommandEvent event, Label label, boolean ephemeral) {
         String content = getContent(label, event.getMember(), null);
-        event.getUnderlying().reply(content)
-            .setEphemeral(ephemeral)
-            .queue();
+        if (event.getUnderlying().isAcknowledged()) {
+            event.getUnderlying().getHook()
+                .editOriginal(content)
+                .queue();
+        } else {
+            event.getUnderlying().reply(content)
+                .setEphemeral(ephemeral)
+                .queue();
+        }
     }
 
     public void reply(ButtonClickEvent event, Label label, boolean ephemeral) {
@@ -57,7 +63,7 @@ public class Messenger {
     }
 
     public void send(TextChannel channel, MessageEmbed embed) {
-        channel.sendMessage(embed).queue();
+        channel.sendMessageEmbeds(embed).queue();
     }
 
     public void send(TextChannel channel, EmbedBuilder builder) {

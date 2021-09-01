@@ -5,6 +5,7 @@ import net.lindseybot.entities.discord.Label;
 import net.lindseybot.entities.interaction.commands.CommandMeta;
 import net.lindseybot.entities.interaction.commands.OptType;
 import net.lindseybot.entities.interaction.commands.builder.CommandBuilder;
+import net.lindseybot.enums.Modules;
 import net.lindseybot.enums.PermissionLevel;
 import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
@@ -26,34 +27,34 @@ public class Hackban extends Command {
 
     @Override
     public CommandMeta getMetadata() {
-        return new CommandBuilder("hackban", Label.raw("Bans a user by id"))
-            .permission(PermissionLevel.DEVELOPER)
-            .addOption(OptType.LONG, "user", Label.raw("Target user's id"), true)
-            .addOption(OptType.INT, "delDays", Label.raw("Days to delete messages"), false)
-            .addOption(OptType.STRING, "reason", Label.raw("Reason for the ban"), false)
+        return new CommandBuilder("hackban", Label.of("commands.hackban.description"))
+            .module(Modules.MODERATION)
+            .permission(PermissionLevel.ADMIN)
+            .guilds(859946655310413844L)
+            .addOption(OptType.LONG, "user", Label.of("commands.hackban.user"), true)
+            .addOption(OptType.STRING, "reason", Label.of("commands.hackban.reason"), false)
             .build();
     }
 
     @BotCommand("hackban")
     public void onCommand(ServerCommandEvent event) {
         long target = event.getOptions().getLong("user");
-        int delDays = event.getOptions().getInt("delDays");
         String reason;
         if (!event.getOptions().has("reason")) {
             reason = "Banned by " + this.getAsTag(event.getMember());
         } else {
             reason = event.getOptions().getString("reason");
         }
-        event.getGuild().ban(String.valueOf(target), delDays, reason)
-            .queue((v) -> this.onBanned(event.getUnderlying(), target, delDays, reason));
+        event.getGuild().ban(String.valueOf(target), 7, reason)
+            .queue((v) -> this.onBanned(event.getUnderlying(), target, reason));
         this.msg.reply(event, Label.raw("User banned."), true);
     }
 
-    private void onBanned(SlashCommandEvent event, long target, int delDays, String reason) {
+    private void onBanned(SlashCommandEvent event, long target, String reason) {
         this.audit.builder().from(event)
             .message("logs.ban")
             .field("target_id", target).field("target", "External User#000")
-            .field("delDays", delDays)
+            .field("delDays", 7)
             .field("reason", reason)
             .send();
     }

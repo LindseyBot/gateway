@@ -1,6 +1,5 @@
 package net.notfab.lindsey.core.framework.i18n;
 
-import com.moandjiezana.toml.Toml;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,7 +14,6 @@ import okhttp3.ResponseBody;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -24,18 +22,12 @@ import java.util.Properties;
 @Service
 public class Translator {
 
-    private static final Map<Language, Toml> tomlMap = new HashMap<>();
     private static final Map<Language, Properties> propertiesMap = new HashMap<>();
-
     private final ProfileManager profiles;
 
     public Translator(ProfileManager profiles) {
         this.profiles = profiles;
         log.info("Loaded " + this.reloadLanguages() + " language files.");
-    }
-
-    private static InputStream getLanguage(String language) {
-        return Translator.class.getResourceAsStream("/lang/" + language + ".toml");
     }
 
     public String get(Member member, String message, Object... args) {
@@ -61,10 +53,7 @@ public class Translator {
     public String get(Language language, String key, Object... args) {
         String template = this.getTemplate(language, key);
         if (template.equals(key)) {
-            String tomlTemplate = this.getTomlTemplate(language, key);
-            if (tomlTemplate != null) {
-                template = tomlTemplate;
-            }
+            return template;
         }
         String msg = template;
         if (args != null && args.length > 0) {
@@ -73,18 +62,6 @@ public class Translator {
             }
         }
         return msg;
-    }
-
-    @Deprecated
-    private String getTomlTemplate(Language language, String key) {
-        Toml toml;
-        if (tomlMap.containsKey(language)) {
-            toml = tomlMap.get(language);
-        } else {
-            toml = new Toml().read(getLanguage(language.name()));
-            tomlMap.put(language, toml);
-        }
-        return toml.getString(key);
     }
 
     private String getTemplate(Language language, String key) {

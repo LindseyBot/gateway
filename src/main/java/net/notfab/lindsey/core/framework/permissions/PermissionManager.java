@@ -24,9 +24,11 @@ public class PermissionManager {
     }
 
     public boolean hasPermission(Member member, PermissionLevel target) {
-        if (member.isOwner()) {
+        if (member.isOwner()
+            && (target.getWeight() < PermissionLevel.DEVELOPER.getWeight())) {
             return true;
-        } else if (member.hasPermission(Permission.ADMINISTRATOR)) {
+        } else if (member.hasPermission(Permission.ADMINISTRATOR)
+            && (target.getWeight() < PermissionLevel.OWNER.getWeight())) {
             return true;
         } else if (isDeveloper(member)) {
             return true;

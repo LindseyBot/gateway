@@ -5,6 +5,7 @@ import net.lindseybot.entities.discord.Label;
 import net.lindseybot.entities.interaction.commands.CommandMeta;
 import net.lindseybot.entities.interaction.commands.OptType;
 import net.lindseybot.entities.interaction.commands.builder.CommandBuilder;
+import net.lindseybot.enums.Modules;
 import net.lindseybot.enums.PermissionLevel;
 import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
@@ -30,7 +31,9 @@ public class Calc extends Command {
     @Override
     public CommandMeta getMetadata() {
         return new CommandBuilder("calc", Label.raw("Calculates an expression"))
-            .permission(PermissionLevel.DEVELOPER)
+            .permission(PermissionLevel.EVERYONE)
+            .module(Modules.FUN)
+            .guilds(859946655310413844L)
             .addOption(OptType.STRING, "expression", Label.raw("Mathematical expression"), true)
             .build();
     }

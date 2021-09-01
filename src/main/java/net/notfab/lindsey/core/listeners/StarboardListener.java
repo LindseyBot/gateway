@@ -105,7 +105,7 @@ public class StarboardListener implements Listener {
             .append(" ").append(String.valueOf(starboard.getStars()))
             .append(" ").append(message.getTextChannel().getAsMention())
             .append(" ID: ").append(message.getId());
-        messageBuilder.setEmbed(builder.build());
+        messageBuilder.setEmbeds(builder.build());
         messageBuilder.setAllowedMentions(Collections.singletonList(Message.MentionType.CHANNEL));
         return messageBuilder.build();
     }
