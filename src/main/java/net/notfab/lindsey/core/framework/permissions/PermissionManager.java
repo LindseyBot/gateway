@@ -1,134 +1,72 @@
 package net.notfab.lindsey.core.framework.permissions;
 
-import lombok.Getter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.notfab.lindsey.core.framework.command.CommandManager;
+import net.dv8tion.jda.api.entities.User;
+import net.lindseybot.enums.PermissionLevel;
 import net.notfab.lindsey.core.repositories.sql.PermissionRepository;
-import net.notfab.lindsey.shared.entities.permissions.MemberPermission;
+import net.notfab.lindsey.shared.entities.permissions.PermissionEntry;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PermissionManager {
 
-    @Getter
-    private static PermissionManager Instance;
-
     private final PermissionRepository repository;
-    private final Map<String, Boolean> defaults = new HashMap<>();
 
     public PermissionManager(PermissionRepository repository) {
-        Instance = this;
         this.repository = repository;
     }
 
-    public boolean hasPermission(Member member, boolean byDefault, String... nodes) {
+    public boolean hasPermission(Member member, PermissionLevel target) {
         if (member.isOwner()) {
             return true;
-        }
-        if (member.hasPermission(Permission.ADMINISTRATOR)) {
+        } else if (member.hasPermission(Permission.ADMINISTRATOR)) {
+            return true;
+        } else if (isDeveloper(member)) {
             return true;
         }
-        // --
-        List<Role> list = new ArrayList<>();
-        list.add(member.getGuild().getPublicRole()); // Always add public role
-        list.addAll(member.getRoles());
-        list.sort(Comparator.comparing(Role::getPosition));
-        // --
-        Map<String, MemberPermission> perms = new HashMap<>();
-        for (Role role : list) {
-            for (MemberPermission memberPermission : repository.findAllByRole(role.getIdLong())) {
-                perms.put(memberPermission.getNode(), memberPermission);
-            }
-        }
-        for (String node : nodes) {
-            node = node.toLowerCase();
-            if (perms.containsKey(node)) {
-                if (!perms.get(node).isAllowed()) {
-                    return false;
-                }
-            } else if (!byDefault) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean hasPermission(Member member, String... nodes) {
-        if (member.isOwner()) {
-            return true;
-        }
-        if (member.hasPermission(Permission.ADMINISTRATOR)) {
-            return true;
-        }
-        // --
-        List<Role> list = new ArrayList<>();
-        list.add(member.getGuild().getPublicRole()); // Always add public role
-        list.addAll(member.getRoles());
-        list.sort(Comparator.comparing(Role::getPosition));
-        // --
-        Map<String, MemberPermission> perms = new HashMap<>();
-        for (Role role : list) {
-            for (MemberPermission memberPermission : repository.findAllByRole(role.getIdLong())) {
-                perms.put(memberPermission.getNode(), memberPermission);
-            }
-        }
-        for (String node : nodes) {
-            node = node.toLowerCase();
-            if (perms.containsKey(node)) {
-                if (!perms.get(node).isAllowed()) {
-                    return false;
-                }
-            } else if (!defaults.getOrDefault(node, false)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Initializes the default permission list.
-     */
-    public void init() {
-        CommandManager.getInstance().getCommands()
+        Map<Long, PermissionEntry> entries = this.repository.findAllByGuild(member.getGuild().getIdLong())
             .stream()
-            .map(cmd -> cmd.getInfo().getPermissions())
-            .flatMap(Collection::stream)
-            .forEach(perm -> this.defaults.put(perm.getName(), perm.isAllowed()));
-    }
-
-    public List<MemberPermission> list(Role role) {
-        return repository.findAllByRole(role.getIdLong());
-    }
-
-    public void delete(Role role) {
-        repository.deleteAllByRole(role.getIdLong());
-    }
-
-    public void delete(Role role, String name) {
-        repository.deleteByRoleAndNode(role.getIdLong(), name);
-    }
-
-    public boolean exists(String name) {
-        return this.defaults.containsKey(name);
-    }
-
-    public void set(Role role, String name, boolean status) {
-        Optional<MemberPermission> optional = repository.findByRoleAndNode(role.getIdLong(), name);
-        MemberPermission object;
-        if (optional.isEmpty()) {
-            object = new MemberPermission();
-            object.setNode(name);
-            object.setAllowed(status);
-            object.setRole(role.getIdLong());
-        } else {
-            object = optional.get();
-            object.setAllowed(status);
+            .collect(Collectors.toMap(PermissionEntry::getTarget, e -> e));
+        if (entries.containsKey(member.getIdLong())) {
+            // Member overrides take priority.
+            return this.has(entries.get(member.getIdLong()).getLevel(), target);
+        } else if (target == PermissionLevel.EVERYONE && !entries.containsKey(member.getGuild().getIdLong())) {
+            // Everyone role has no override.
+            return true;
         }
-        repository.save(object);
+        List<Role> roles = new ArrayList<>();
+        roles.add(member.getGuild().getPublicRole());
+        roles.addAll(member.getRoles());
+        for (Role role : roles) {
+            PermissionEntry entry = entries.get(role.getIdLong());
+            if (entry == null) {
+                continue;
+            }
+            PermissionLevel level = entry.getLevel();
+            if (this.has(level, target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isDeveloper(Member member) {
+        User user = member.getUser();
+        return user.getIdLong() == 87166524837613568L;
+    }
+
+    private boolean has(PermissionLevel level, PermissionLevel target) {
+        if (level.equals(target)) {
+            return true;
+        }
+        return level.getWeight() >= target.getWeight();
     }
 
 }

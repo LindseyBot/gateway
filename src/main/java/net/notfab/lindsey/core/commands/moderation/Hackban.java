@@ -1,107 +1,61 @@
 package net.notfab.lindsey.core.commands.moderation;
 
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.notfab.lindsey.core.framework.command.Bundle;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.lindseybot.entities.discord.Label;
+import net.lindseybot.entities.interaction.commands.CommandMeta;
+import net.lindseybot.entities.interaction.commands.OptType;
+import net.lindseybot.entities.interaction.commands.builder.CommandBuilder;
+import net.lindseybot.enums.PermissionLevel;
+import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
-import net.notfab.lindsey.core.framework.command.CommandDescriptor;
-import net.notfab.lindsey.core.framework.command.Modules;
-import net.notfab.lindsey.core.framework.command.help.HelpArticle;
-import net.notfab.lindsey.core.framework.command.help.HelpPage;
+import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
-import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.service.AuditService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
-
 @Component
-public class Hackban implements Command {
+public class Hackban extends Command {
 
-    @Autowired
-    private Messenger msg;
+    private final Messenger msg;
+    private final AuditService audit;
 
-    @Autowired
-    private Translator i18n;
-
-    @Autowired
-    private AuditService logging;
+    public Hackban(Messenger msg, AuditService audit) {
+        this.msg = msg;
+        this.audit = audit;
+    }
 
     @Override
-    public CommandDescriptor getInfo() {
-        return new CommandDescriptor.Builder()
-            .name("hackban")
-            .permission("commands.ban", "permissions.command", false)
-            .module(Modules.MODERATION)
+    public CommandMeta getMetadata() {
+        return new CommandBuilder("hackban", Label.raw("Bans a user by id"))
+            .permission(PermissionLevel.DEVELOPER)
+            .addOption(OptType.LONG, "user", Label.raw("Target user's id"), true)
+            .addOption(OptType.INT, "delDays", Label.raw("Days to delete messages"), false)
+            .addOption(OptType.STRING, "reason", Label.raw("Reason for the ban"), false)
             .build();
     }
 
-    @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
-        if (args.length == 0) {
-            HelpArticle article = this.help(member);
-            article.send(channel, member, args, msg, i18n);
+    @BotCommand("hackban")
+    public void onCommand(ServerCommandEvent event) {
+        long target = event.getOptions().getLong("user");
+        int delDays = event.getOptions().getInt("delDays");
+        String reason;
+        if (!event.getOptions().has("reason")) {
+            reason = "Banned by " + this.getAsTag(event.getMember());
         } else {
-            try {
-                Long.parseLong(args[0]);
-            } catch (IllegalArgumentException ex) {
-                msg.send(channel, sender(member) + i18n.get(member, "core.not_number", args[0]));
-                return false;
-            }
-            String reason;
-            if (args.length > 1) {
-                reason = argsToString(args, 1);
-            } else {
-                reason = i18n.get(member, "commands.mod.ban.noreason");
-            }
-            Member target = channel.getGuild().retrieveMemberById(args[0])
-                .complete();
-            if (target != null) {
-                if (!member.canInteract(target) || target.isOwner()
-                    || target.hasPermission(Permission.ADMINISTRATOR)
-                    || target.getUser().isBot()
-                    || !member.hasPermission(Permission.BAN_MEMBERS)) {
-                    msg.send(channel, sender(member) + i18n.get(member, "commands.mod.ban.interact", target.getEffectiveName()));
-                    return false;
-                }
-                target.ban(7, member.getUser().getName() + ": " + reason)
-                    .flatMap(aVoid -> {
-                        this.logging.builder().from(message)
-                            .message(channel.getGuild(), "logs.ban", target.getUser().getAsTag(), target.getId(), reason)
-                            .send();
-                        return channel.sendMessage(i18n.get(member, "commands.mod.ban.banned", target.getEffectiveName()));
-                    })
-                    .delay(5, TimeUnit.SECONDS)
-                    .flatMap(Message::delete)
-                    .queue();
-            } else {
-                channel.getGuild().ban(args[0], 7, member.getUser().getName() + ": " + reason)
-                    .flatMap(aVoid -> {
-                        this.logging.builder().from(message)
-                            .message(channel.getGuild(), "logs.hack_ban", args[0], reason)
-                            .send();
-                        return channel.sendMessage(i18n.get(member, "commands.mod.ban.banned", args[0]));
-                    })
-                    .delay(5, TimeUnit.SECONDS)
-                    .flatMap(Message::delete)
-                    .queue();
-            }
+            reason = event.getOptions().getString("reason");
         }
-        return true;
+        event.getGuild().ban(String.valueOf(target), delDays, reason)
+            .queue((v) -> this.onBanned(event.getUnderlying(), target, delDays, reason));
+        this.msg.reply(event, Label.raw("User banned."), true);
     }
 
-    @Override
-    public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("hackban")
-            .text("commands.mod.hackban.description")
-            .usage("L!ban <id> [reason]")
-            .permission("commands.ban")
-            .addExample("L!ban 119482224713269248")
-            .addExample("L!ban 119482224713269248 Not sending images");
-        return HelpArticle.of(page);
+    private void onBanned(SlashCommandEvent event, long target, int delDays, String reason) {
+        this.audit.builder().from(event)
+            .message("logs.ban")
+            .field("target_id", target).field("target", "External User#000")
+            .field("delDays", delDays)
+            .field("reason", reason)
+            .send();
     }
 
 }

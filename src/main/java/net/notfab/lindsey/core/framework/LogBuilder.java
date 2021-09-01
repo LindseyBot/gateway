@@ -1,28 +1,29 @@
 package net.notfab.lindsey.core.framework;
 
 import net.dv8tion.jda.api.entities.*;
-import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.notfab.lindsey.core.service.AuditService;
 import org.graylog2.gelfclient.GelfMessageBuilder;
 import org.graylog2.gelfclient.GelfMessageLevel;
 
 public class LogBuilder {
 
-    private final Translator translator;
     private final AuditService service;
     private final GelfMessageBuilder builder;
 
-    public LogBuilder(Translator translator, AuditService service) {
-        this.translator = translator;
+    public LogBuilder(AuditService service) {
         this.service = service;
         this.builder = new GelfMessageBuilder("", "discord-gateway");
         this.builder.level(GelfMessageLevel.INFO);
     }
 
-    public LogBuilder message(Guild guild, String i18n, Object... args) {
-        this.builder
-            .message(this.translator.get(guild, i18n, args))
-            .additionalField("guild", guild.getId());
+    public LogBuilder guild(Guild guild) {
+        this.builder.additionalField("guild", guild.getId());
+        return this;
+    }
+
+    public LogBuilder message(String message) {
+        this.builder.message(message);
         return this;
     }
 
@@ -34,6 +35,17 @@ public class LogBuilder {
         this.builder
             .additionalField("user_id", user.getId())
             .additionalField("user", user.getAsTag());
+        return this;
+    }
+
+    public LogBuilder target(Member member) {
+        return this.target(member.getUser());
+    }
+
+    public LogBuilder target(User user) {
+        this.builder
+            .additionalField("target_id", user.getId())
+            .additionalField("target", user.getAsTag());
         return this;
     }
 
@@ -52,11 +64,20 @@ public class LogBuilder {
      */
     public LogBuilder cause(Message message) {
         this.builder
-            .additionalField("message_id", message.getId())
-            .additionalField("message_author_id", message.getAuthor().getId())
-            .additionalField("message_author", message.getAuthor().getAsTag())
-            .additionalField("message_channel_id", message.getChannel().getId())
-            .additionalField("message_channel_name", message.getChannel().getName());
+            .additionalField("trigger", "message")
+            .additionalField("message", message.getId());
+        return this;
+    }
+
+    /**
+     * Registers a command as the cause of an action.
+     *
+     * @param event The command.
+     */
+    public LogBuilder cause(SlashCommandEvent event) {
+        this.builder
+            .additionalField("trigger", "slash_command")
+            .additionalField("command", event.getCommandPath());
         return this;
     }
 
@@ -66,9 +87,30 @@ public class LogBuilder {
      * @param message The message.
      */
     public LogBuilder from(Message message) {
-        return this.user(message.getAuthor())
+        LogBuilder builder = this.user(message.getAuthor())
             .channel(message.getChannel())
             .cause(message);
+        if (message.isFromGuild()) {
+            return builder.guild(message.getGuild());
+        } else {
+            return builder;
+        }
+    }
+
+    /**
+     * Fills in all information from a command.
+     *
+     * @param event The command.
+     */
+    public LogBuilder from(SlashCommandEvent event) {
+        LogBuilder builder = this.user(event.getUser())
+            .channel(event.getMessageChannel())
+            .cause(event);
+        if (event.getGuild() != null) { // IntelliJ complains about isFromGuild
+            return builder.guild(event.getGuild());
+        } else {
+            return builder;
+        }
     }
 
     public LogBuilder field(String name, Object value) {

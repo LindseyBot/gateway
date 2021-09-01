@@ -1,16 +1,15 @@
 package net.notfab.lindsey.core.discord;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.notfab.lindsey.core.Lindsey;
-import net.notfab.lindsey.core.framework.events.MessageReactionAddedEvent;
-import net.notfab.lindsey.core.framework.events.MessageReactionRemovedEvent;
-import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
-import net.notfab.lindsey.core.framework.events.ServerMessageUpdatedEvent;
+import net.notfab.lindsey.core.framework.command.OptionMapper;
+import net.notfab.lindsey.core.framework.events.*;
 import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.core.service.IgnoreService;
 import org.jetbrains.annotations.NotNull;
@@ -125,6 +124,35 @@ public class DiscordListener extends ListenerAdapter {
         localEvent.setGuild(event.getGuild());
         localEvent.setChannel(event.getChannel());
         localEvent.setReaction(event.getReactionEmote());
+
+        this.events.fire(localEvent);
+    }
+
+    @Override
+    public void onSlashCommand(@NotNull SlashCommandEvent event) {
+        if (event.getMember() == null || event.getMember().getUser().isBot()) {
+            return;
+        } else if (event.getGuild() == null) {
+            return;
+        } else if (isNotAllowed(event.getGuild())) {
+            event.reply("No authorization.").setEphemeral(true)
+                .queue();
+            return;
+        } else if (event.getMember().isPending()) {
+            event.reply("Please complete membership screening before executing any commands.").setEphemeral(true)
+                .queue();
+            return;
+        } else if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
+            return;
+        }
+
+        ServerCommandEvent localEvent = new ServerCommandEvent();
+        localEvent.setMember(event.getMember());
+        localEvent.setGuild(event.getGuild());
+        localEvent.setChannel(event.getTextChannel());
+        localEvent.setPath(event.getCommandPath());
+        localEvent.setOptions(new OptionMapper(event.getOptions()));
+        localEvent.setUnderlying(event);
 
         this.events.fire(localEvent);
     }

@@ -1,56 +1,56 @@
 package net.notfab.lindsey.core.commands.fun;
 
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.notfab.lindsey.core.framework.command.Bundle;
+import lombok.extern.slf4j.Slf4j;
+import net.lindseybot.entities.discord.Label;
+import net.lindseybot.entities.interaction.commands.CommandMeta;
+import net.lindseybot.entities.interaction.commands.OptType;
+import net.lindseybot.entities.interaction.commands.builder.CommandBuilder;
+import net.lindseybot.enums.PermissionLevel;
+import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
-import net.notfab.lindsey.core.framework.command.CommandDescriptor;
-import net.notfab.lindsey.core.framework.command.Modules;
-import net.notfab.lindsey.core.framework.command.help.HelpArticle;
-import net.notfab.lindsey.core.framework.command.help.HelpPage;
+import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
 import net.notfab.lindsey.core.framework.i18n.Messenger;
-import net.notfab.lindsey.core.framework.i18n.Translator;
 import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
+@Slf4j
 @Component
-public class Calc implements Command {
+public class Calc extends Command {
 
-    @Autowired
-    private Translator i18n;
+    private final Messenger msg;
 
-    @Autowired
-    private Messenger msg;
-
-    @Override
-    public CommandDescriptor getInfo() {
-        return new CommandDescriptor.Builder()
-            .name("calc")
-            .alias("calculator")
-            .module(Modules.FUN)
-            .permission("commands.calc", "permissions.command")
-            .build();
+    public Calc(Messenger msg) {
+        this.msg = msg;
     }
 
     @Override
-    public boolean execute(Member member, TextChannel channel, String[] args, Message message, Bundle bundle) throws Exception {
-        if (args.length == 0) {
-            HelpArticle article = this.help(member);
-            article.send(channel, member, args, msg, i18n);
-            return false;
+    public CommandMeta getMetadata() {
+        return new CommandBuilder("calc", Label.raw("Calculates an expression"))
+            .permission(PermissionLevel.DEVELOPER)
+            .addOption(OptType.STRING, "expression", Label.raw("Mathematical expression"), true)
+            .build();
+    }
+
+    @BotCommand("calc")
+    public void onCommand(@NotNull ServerCommandEvent event) {
+        String expr = event.getOptions().getString("expression");
+        if (expr == null) {
+            this.msg.reply(event, Label.raw("Missing expression"), true);
+            return;
         }
 
         StringBuilder expression = new StringBuilder();
-        if (this.argsToString(args, 0).contains(",")) {
-            for (String arg : this.argsToString(args, 0).split(",")) {
+        if (expr.contains(",")) {
+            for (String arg : expr.split(",")) {
                 expression.append("\"").append(arg).append("\",");
             }
             expression = new StringBuilder(expression.substring(0, expression.length() - 1));
         } else {
-            expression.append("\"").append(this.argsToString(args, 0)).append("\"");
+            expression.append("\"").append(expr).append("\"");
         }
 
         OkHttpClient client = new OkHttpClient();
@@ -60,35 +60,28 @@ public class Calc implements Command {
             .post(RequestBody.create(MediaType.parse("application/json"), json))
             .addHeader("Content-Type", "application/json; charset=utf-8")
             .build();
-        Response resp = client.newCall(request).execute();
-        JSONObject obj = new JSONObject(resp.body().string());
-        if (!obj.isNull("error")) {
-            msg.send(channel, obj.getString("error"));
-            return false;
+        JSONObject obj;
+        try {
+            Response resp = client.newCall(request).execute();
+            obj = new JSONObject(resp.body().string());
+        } catch (IOException ex) {
+            log.error("Failed to execute math expression", ex);
+            return;
         }
-
+        if (!obj.isNull("error")) {
+            this.msg.reply(event, Label.raw(obj.getString("error")), true);
+            return;
+        }
         StringBuilder res = new StringBuilder();
-        if (this.argsToString(args, 0).contains(",")) {
+        if (expr.contains(",")) {
+            String[] args = expr.split(" ");
             for (int i = 0; i < obj.getJSONArray("result").length(); i++) {
                 res.append(args[i].replace(",", "")).append(" => ").append(obj.getJSONArray("result").getString(i)).append("\n");
             }
         } else {
             res.append(" => ").append(obj.getJSONArray("result").getString(0));
         }
-        msg.send(channel, res.toString());
-        return true;
-    }
-
-    @Override
-    public HelpArticle help(Member member) {
-        HelpPage page = new HelpPage("calc")
-            .text("commands.fun.calc.description")
-            .usage("L!calc <expression>")
-            .permission("commands.calc")
-            .addExample("L!calc 2+3")
-            .addExample("L!calc x=2+3, y=2+x")
-            .addExample("L!calc 12 inch to cm");
-        return HelpArticle.of(page);
+        this.msg.reply(event, Label.raw(res.toString()), true);
     }
 
 }

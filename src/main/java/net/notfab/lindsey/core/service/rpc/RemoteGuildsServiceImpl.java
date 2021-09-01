@@ -3,6 +3,7 @@ package net.notfab.lindsey.core.service.rpc;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.lindseybot.entities.discord.*;
+import net.lindseybot.enums.PermissionLevel;
 import net.lindseybot.utils.RabbitUtils;
 import net.notfab.lindsey.core.framework.FakeBuilder;
 import net.notfab.lindsey.core.framework.permissions.PermissionManager;
@@ -39,7 +40,7 @@ public class RemoteGuildsServiceImpl implements RemoteGuildsService {
         if (member == null) {
             return false;
         }
-        return this.permissions.hasPermission(member, "ADMIN");
+        return this.permissions.hasPermission(member, PermissionLevel.ADMIN);
     }
 
     @Override

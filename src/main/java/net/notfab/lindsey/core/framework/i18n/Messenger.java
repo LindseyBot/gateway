@@ -2,11 +2,12 @@ package net.notfab.lindsey.core.framework.i18n;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.lindseybot.entities.discord.Label;
 import net.notfab.lindsey.core.framework.Emotes;
+import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
 import net.notfab.lindsey.shared.entities.profile.server.MusicSettings;
 import net.notfab.lindsey.shared.repositories.sql.server.MusicSettingsRepository;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,41 @@ import org.springframework.stereotype.Service;
 @Service
 public class Messenger {
 
+    private final Translator i18n;
     private final ShardManager shardManager;
     private final MusicSettingsRepository musicSettings;
 
-    public Messenger(ShardManager shardManager, MusicSettingsRepository musicSettings) {
+    public Messenger(Translator i18n, ShardManager shardManager, MusicSettingsRepository musicSettings) {
+        this.i18n = i18n;
         this.shardManager = shardManager;
         this.musicSettings = musicSettings;
+    }
+
+    private String getContent(Label label, Member member, User user) {
+        if (label.isLiteral()) {
+            return label.getName();
+        }
+        String content;
+        if (member == null) {
+            content = this.i18n.get(user, label.getName(), label.getArguments());
+        } else {
+            content = this.i18n.get(member, label.getName(), label.getArguments());
+        }
+        return content;
+    }
+
+    public void reply(ServerCommandEvent event, Label label, boolean ephemeral) {
+        String content = getContent(label, event.getMember(), null);
+        event.getUnderlying().reply(content)
+            .setEphemeral(ephemeral)
+            .queue();
+    }
+
+    public void reply(ButtonClickEvent event, Label label, boolean ephemeral) {
+        String content = this.getContent(label, event.getMember(), event.getUser());
+        event.reply(content)
+            .setEphemeral(ephemeral)
+            .queue();
     }
 
     public void send(TextChannel channel, String message) {
