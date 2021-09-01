@@ -80,9 +80,9 @@ public class RoleHistoryListener extends ListenerAdapter {
     }
 
     private void saveRoles(Member member) {
-        Set<String> roles = member.getRoles()
+        Set<Long> roles = member.getRoles()
             .stream()
-            .map(ISnowflake::getId)
+            .map(ISnowflake::getIdLong)
             .collect(Collectors.toSet());
         Optional<RoleHistory> oHistory = this.repository
             .findByUserAndGuild(member.getUser().getIdLong(), member.getGuild().getIdLong());

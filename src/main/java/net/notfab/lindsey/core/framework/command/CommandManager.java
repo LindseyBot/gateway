@@ -39,8 +39,8 @@ public class CommandManager {
             CommandMetaEvent event = new CommandMetaEvent();
             event.setCreate(true);
             event.setModel(metadata);
-            this.registry.onEvent(event);
             this.metaListener.onCommandMeta(event);
+            log.info("Registered command {}", metadata.getName());
         }
         for (Method method : command.getClass().getDeclaredMethods()) {
             BotCommand cmd = method.getDeclaredAnnotation(BotCommand.class);

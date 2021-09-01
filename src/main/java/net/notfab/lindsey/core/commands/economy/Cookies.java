@@ -40,11 +40,8 @@ public class Cookies extends Command {
         return new CommandBuilder("cookies", Label.of("commands.cookies.description"))
             .permission(PermissionLevel.EVERYONE)
             .module(Modules.ECONOMY)
-            .guilds(859946655310413844L)
-            .guilds(213044545825406976L)
             .addSubcommand(
                 new SubCommandBuilder("daily", Label.of("commands.cookies.daily.description"))
-                    .permission(PermissionLevel.ADMIN)
                     .ephemeral()
                     .build())
             .addSubcommand(
