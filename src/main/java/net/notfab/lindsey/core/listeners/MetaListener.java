@@ -12,6 +12,7 @@ import net.lindseybot.entities.discord.Label;
 import net.lindseybot.entities.events.CommandMetaEvent;
 import net.lindseybot.entities.interaction.commands.*;
 import net.notfab.lindsey.core.framework.DiscordAdapter;
+import net.notfab.lindsey.core.spring.config.AppSettings;
 import net.notfab.lindsey.shared.enums.Language;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -29,10 +30,12 @@ public class MetaListener {
 
     private final DiscordAdapter adapter;
     private final ShardManager shardManager;
+    private final AppSettings settings;
 
-    public MetaListener(DiscordAdapter adapter, ShardManager shardManager) {
+    public MetaListener(DiscordAdapter adapter, ShardManager shardManager, AppSettings settings) {
         this.adapter = adapter;
         this.shardManager = shardManager;
+        this.settings = settings;
     }
 
     /**
@@ -65,8 +68,10 @@ public class MetaListener {
                 }
                 guild.upsertCommand(data).queue();
             }
-        } else {
+        } else if (!this.settings.isBeta()) {
             this.shardManager.getShards().get(0).upsertCommand(data).queue();
+        } else {
+            log.info("Beta mode enabled, not registering global command: {}", model.getName());
         }
     }
 
