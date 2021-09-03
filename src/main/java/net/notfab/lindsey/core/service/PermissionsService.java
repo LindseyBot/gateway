@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.framework.permissions;
+package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,11 +15,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class PermissionManager {
+public class PermissionsService {
 
     private final PermissionRepository repository;
 
-    public PermissionManager(PermissionRepository repository) {
+    public PermissionsService(PermissionRepository repository) {
         this.repository = repository;
     }
 

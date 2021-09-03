@@ -1,5 +1,6 @@
-package net.notfab.lindsey.core.framework.actions;
+package net.notfab.lindsey.core.service;
 
+import net.notfab.lindsey.core.framework.actions.ScriptError;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.ScriptableObject;

@@ -6,12 +6,12 @@ import net.lindseybot.entities.interaction.commands.CommandMetaBase;
 import net.lindseybot.enums.PermissionLevel;
 import net.notfab.eventti.EventHandler;
 import net.notfab.eventti.Listener;
-import net.notfab.lindsey.core.framework.command.CommandManager;
 import net.notfab.lindsey.core.framework.command.MethodReference;
 import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
-import net.notfab.lindsey.core.framework.i18n.Messenger;
-import net.notfab.lindsey.core.framework.permissions.PermissionManager;
+import net.notfab.lindsey.core.service.CommandService;
 import net.notfab.lindsey.core.service.EventService;
+import net.notfab.lindsey.core.service.Messenger;
+import net.notfab.lindsey.core.service.PermissionsService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -24,13 +24,13 @@ import java.util.concurrent.TimeoutException;
 @Component
 public class CommandListener implements Listener {
 
-    private final CommandManager manager;
-    private final PermissionManager permissions;
+    private final CommandService manager;
+    private final PermissionsService permissions;
     private final Messenger msg;
 
     private final ThreadPoolTaskExecutor taskExecutor;
 
-    public CommandListener(EventService events, CommandManager manager, PermissionManager permissions, Messenger msg) {
+    public CommandListener(EventService events, CommandService manager, PermissionsService permissions, Messenger msg) {
         this.manager = manager;
         this.permissions = permissions;
         this.msg = msg;

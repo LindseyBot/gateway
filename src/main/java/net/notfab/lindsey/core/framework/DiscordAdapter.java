@@ -2,7 +2,7 @@ package net.notfab.lindsey.core.framework;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lindseybot.entities.discord.Label;
-import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.service.Translator;
 import net.notfab.lindsey.shared.enums.Language;
 import org.springframework.stereotype.Service;
 

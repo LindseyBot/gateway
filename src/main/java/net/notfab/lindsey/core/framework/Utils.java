@@ -3,9 +3,7 @@ package net.notfab.lindsey.core.framework;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.notfab.lindsey.core.framework.extractors.SCExtractor;
-import net.notfab.lindsey.core.framework.extractors.YTExtractor;
-import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.service.Translator;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -159,12 +157,6 @@ public class Utils {
         } catch (NumberFormatException ex) {
             return Optional.empty();
         }
-    }
-
-    public static boolean isSupportedMusicURL(String nameOrURL) {
-        YTExtractor youtube = new YTExtractor();
-        SCExtractor soundCloud = new SCExtractor();
-        return youtube.isSupported(nameOrURL) || soundCloud.isSupported(nameOrURL);
     }
 
     public static Optional<Boolean> parseBoolean(String argument) {

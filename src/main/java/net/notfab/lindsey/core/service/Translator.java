@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.framework.i18n;
+package net.notfab.lindsey.core.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;

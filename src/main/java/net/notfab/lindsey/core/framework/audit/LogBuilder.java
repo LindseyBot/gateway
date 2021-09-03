@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.framework;
+package net.notfab.lindsey.core.framework.audit;
 
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;

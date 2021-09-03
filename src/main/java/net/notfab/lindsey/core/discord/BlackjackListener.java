@@ -8,9 +8,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.jodah.expiringmap.ExpiringMap;
 import net.notfab.lindsey.core.Lindsey;
 import net.notfab.lindsey.core.framework.Emotes;
-import net.notfab.lindsey.core.framework.economy.EconomyService;
-import net.notfab.lindsey.core.framework.i18n.Translator;
 import net.notfab.lindsey.core.framework.models.BlackjackModel;
+import net.notfab.lindsey.core.service.EconomyService;
+import net.notfab.lindsey.core.service.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

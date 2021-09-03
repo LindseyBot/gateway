@@ -11,10 +11,10 @@ import net.lindseybot.enums.Modules;
 import net.lindseybot.enums.PermissionLevel;
 import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
-import net.notfab.lindsey.core.framework.economy.EconomyService;
 import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
-import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.service.EconomyService;
+import net.notfab.lindsey.core.service.Messenger;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
 import org.springframework.stereotype.Component;
 

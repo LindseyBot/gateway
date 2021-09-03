@@ -1,8 +1,7 @@
-package net.notfab.lindsey.core.framework.economy;
+package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.notfab.lindsey.core.framework.leaderboard.LeaderboardService;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
 import net.notfab.lindsey.shared.enums.LeaderboardType;

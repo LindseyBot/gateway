@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.framework.i18n;
+package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;

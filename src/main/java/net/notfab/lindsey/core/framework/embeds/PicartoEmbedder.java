@@ -3,7 +3,7 @@ package net.notfab.lindsey.core.framework.embeds;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.notfab.lindsey.core.framework.i18n.Translator;
+import net.notfab.lindsey.core.service.Translator;
 import net.notfab.lindsey.shared.entities.profile.server.BetterEmbedsSettings;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

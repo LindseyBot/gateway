@@ -10,8 +10,8 @@ import net.lindseybot.enums.PermissionLevel;
 import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
-import net.notfab.lindsey.core.framework.i18n.Messenger;
 import net.notfab.lindsey.core.service.AuditService;
+import net.notfab.lindsey.core.service.Messenger;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,7 +1,7 @@
 package net.notfab.lindsey.core.service;
 
 import lombok.extern.slf4j.Slf4j;
-import net.notfab.lindsey.core.framework.LogBuilder;
+import net.notfab.lindsey.core.framework.audit.LogBuilder;
 import org.graylog2.gelfclient.GelfMessage;
 import org.graylog2.gelfclient.transport.GelfTransport;
 import org.springframework.stereotype.Service;

@@ -6,7 +6,7 @@ import net.lindseybot.entities.discord.*;
 import net.lindseybot.enums.PermissionLevel;
 import net.lindseybot.utils.RabbitUtils;
 import net.notfab.lindsey.core.framework.FakeBuilder;
-import net.notfab.lindsey.core.framework.permissions.PermissionManager;
+import net.notfab.lindsey.core.service.PermissionsService;
 import net.notfab.lindsey.shared.rpc.services.RemoteGuildsService;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 public class RemoteGuildsServiceImpl implements RemoteGuildsService {
 
     private final ShardManager shardManager;
-    private final PermissionManager permissions;
+    private final PermissionsService permissions;
 
-    public RemoteGuildsServiceImpl(ShardManager shardManager, PermissionManager permissions) {
+    public RemoteGuildsServiceImpl(ShardManager shardManager, PermissionsService permissions) {
         this.shardManager = shardManager;
         this.permissions = permissions;
     }

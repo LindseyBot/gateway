@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.framework.command;
+package net.notfab.lindsey.core.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lindseybot.controller.registry.CommandRegistry;
@@ -8,6 +8,9 @@ import net.lindseybot.entities.interaction.commands.CommandMetaBase;
 import net.lindseybot.entities.interaction.commands.SubCommandMeta;
 import net.lindseybot.entities.interaction.commands.SubcommandGroupMeta;
 import net.lindseybot.enums.PermissionLevel;
+import net.notfab.lindsey.core.framework.command.BotCommand;
+import net.notfab.lindsey.core.framework.command.Command;
+import net.notfab.lindsey.core.framework.command.MethodReference;
 import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
 import net.notfab.lindsey.core.listeners.MetaListener;
 import org.springframework.stereotype.Service;
@@ -20,13 +23,13 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class CommandManager {
+public class CommandService {
 
     private final CommandRegistry registry;
     private final MetaListener metaListener;
     private final Map<String, MethodReference> listeners = new HashMap<>();
 
-    public CommandManager(List<Command> commands, CommandRegistry registry, MetaListener metaListener) {
+    public CommandService(List<Command> commands, CommandRegistry registry, MetaListener metaListener) {
         this.registry = registry;
         this.metaListener = metaListener;
         commands.forEach(this::register);
