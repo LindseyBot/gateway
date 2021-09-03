@@ -1,17 +1,22 @@
 {
   "properties": [
     {
-      "name": "bot.token",
+      "name": "app.bot.token",
       "type": "java.lang.String",
       "description": "Discord token."
     },
     {
-      "name": "bot.integrations.rapidapi",
+      "name": "app.bot.beta",
+      "type": "java.lang.Boolean",
+      "description": "If this instance is a beta instance."
+    },
+    {
+      "name": "app.integrations.rapidapi",
       "type": "java.lang.String",
       "description": "RapidAPI api token."
     },
     {
-      "name": "bot.integrations.kitsu",
+      "name": "app.integrations.kitsu",
       "type": "java.lang.String",
       "description": "Kitsu API token."
     },
@@ -29,6 +34,21 @@
       "name": "app.logs.timeout",
       "type": "java.lang.Long",
       "description": "Timeout in milliseconds for graylog."
+    },
+    {
+      "name": "app.controller.url",
+      "type": "java.lang.String",
+      "description": "URL for bot coordinator."
+    },
+    {
+      "name": "app.controller.token",
+      "type": "java.lang.String",
+      "description": "Authentication token for bot coordinator."
+    },
+    {
+      "name": "app.controller.id",
+      "type": "java.lang.String",
+      "description": "Worker identifier for bot coordinator."
     }
   ]
 }

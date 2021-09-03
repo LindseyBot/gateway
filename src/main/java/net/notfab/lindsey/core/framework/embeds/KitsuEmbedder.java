@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @Component
 public class KitsuEmbedder implements WebsiteEmbedder {
 
-    @Value("${bot.integrations.kitsu}")
+    @Value("${app.integrations.kitsu}")
     private String key;
 
     @Autowired

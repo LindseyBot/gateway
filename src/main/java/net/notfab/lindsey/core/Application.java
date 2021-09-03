@@ -5,10 +5,10 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.notfab.lindsey.core.spring.config.AppSettings;
 import net.notfab.lindsey.shared.services.ReferencingService;
 import net.notfab.lindsey.shared.utils.Snowflake;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,9 +20,6 @@ import javax.security.auth.login.LoginException;
 
 @SpringBootApplication
 public class Application implements ApplicationRunner {
-
-    @Value("${bot.token}")
-    private String token;
 
     @Autowired
     private Lindsey lindsey;
@@ -37,8 +34,8 @@ public class Application implements ApplicationRunner {
     }
 
     @Bean
-    public ShardManager shardManager() throws LoginException {
-        return DefaultShardManagerBuilder.createDefault(this.token)
+    public ShardManager shardManager(AppSettings settings) throws LoginException {
+        return DefaultShardManagerBuilder.createDefault(settings.getToken())
             .enableIntents(GatewayIntent.GUILD_MEMBERS)
             .disableCache(CacheFlag.CLIENT_STATUS, CacheFlag.ACTIVITY)
             .build();

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class PropertyConfig {
 
     @Bean
-    @ConfigurationProperties(prefix = "bot.controller")
+    @ConfigurationProperties(prefix = "app.controller")
     public ControllerProperties controller() {
         return new ControllerProperties();
     }

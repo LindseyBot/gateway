@@ -1,6 +1,8 @@
-bot:
-  token: ''
+app:
   encryption: ''
+  bot:
+    token: ''
+    beta: true
   integrations:
     rapidapi: ''
     kitsu: ''

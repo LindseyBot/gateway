@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "bot.logs")
+@ConfigurationProperties(prefix = "app.logs")
 public class GrayLogProperties {
 
     private String host;

@@ -62,12 +62,14 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-amqp')
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
 
-    runtimeOnly('com.h2database:h2:1.4.200')
+    //noinspection GradlePackageUpdate
     compileOnly('org.projectlombok:lombok')
-
     annotationProcessor('org.projectlombok:lombok')
+    //noinspection GradlePackageUpdate
     annotationProcessor('org.springframework.boot:spring-boot-configuration-processor')
+    //noinspection GradlePackageUpdate
     testImplementation('org.springframework.amqp:spring-rabbit-test')
+    //noinspection GradlePackageUpdate
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
