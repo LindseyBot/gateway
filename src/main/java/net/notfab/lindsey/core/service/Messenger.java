@@ -2,27 +2,22 @@ package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.lindseybot.entities.discord.Label;
-import net.notfab.lindsey.core.framework.Emotes;
 import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
-import net.notfab.lindsey.shared.entities.profile.server.MusicSettings;
-import net.notfab.lindsey.shared.repositories.sql.server.MusicSettingsRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Messenger {
 
     private final Translator i18n;
-    private final ShardManager shardManager;
-    private final MusicSettingsRepository musicSettings;
 
-    public Messenger(Translator i18n, ShardManager shardManager, MusicSettingsRepository musicSettings) {
+    public Messenger(Translator i18n) {
         this.i18n = i18n;
-        this.shardManager = shardManager;
-        this.musicSettings = musicSettings;
     }
 
     private String getContent(Label label, Member member, User user) {
@@ -78,26 +73,6 @@ public class Messenger {
         } else {
             this.send(channel, url);
         }
-    }
-
-    public void sendMusic(long guildId, String message) {
-        Guild guild = this.shardManager.getGuildById(guildId);
-        if (guild == null) {
-            return;
-        }
-        MusicSettings settings = this.musicSettings.findById(guildId)
-            .orElse(new MusicSettings(guildId));
-        if (!settings.isLogTracks()) {
-            return;
-        }
-        TextChannel channel = guild.getTextChannelById(settings.getLogChannel());
-        if (channel == null) {
-            settings.setLogTracks(false);
-            settings.setLogChannel(null);
-            this.musicSettings.save(settings);
-            return;
-        }
-        this.send(channel, Emotes.MUSIC_LOGO.asEmote() + " " + message);
     }
 
 }

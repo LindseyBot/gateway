@@ -11,10 +11,10 @@ import net.notfab.eventti.ListenerPriority;
 import net.notfab.lindsey.core.framework.embeds.WebsiteEmbedder;
 import net.notfab.lindsey.core.framework.events.ServerMessageReceivedEvent;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
+import net.notfab.lindsey.core.repositories.sql.BetterEmbedSettingsRepository;
 import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
 import net.notfab.lindsey.shared.entities.profile.server.BetterEmbedsSettings;
-import net.notfab.lindsey.shared.repositories.sql.BetterEmbedSettingsRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

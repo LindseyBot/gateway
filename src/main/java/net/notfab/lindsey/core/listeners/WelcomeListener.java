@@ -6,9 +6,9 @@ import net.notfab.eventti.Listener;
 import net.notfab.lindsey.core.framework.PlaceHolderUtils;
 import net.notfab.lindsey.core.framework.Utils;
 import net.notfab.lindsey.core.framework.events.ServerMemberJoinEvent;
+import net.notfab.lindsey.core.repositories.sql.WelcomeSettingsRepository;
 import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.shared.entities.server.WelcomeSettings;
-import net.notfab.lindsey.shared.repositories.sql.WelcomeSettingsRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

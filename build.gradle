@@ -47,7 +47,7 @@ dependencies {
     // Framework
     implementation('org.graylog2:gelfclient:1.5.1')
     implementation('net.jodah:expiringmap:0.5.10')
-    implementation('net.notfab.lindsey:shared:0.1.44')
+    implementation('net.notfab.lindsey:shared:0.1.45')
     implementation('net.notfab:Eventti:1.3.7')
     implementation('com.github.mpkorstanje:simmetrics-core:4.1.1')
     implementation('org.mozilla:rhino:1.7.13')

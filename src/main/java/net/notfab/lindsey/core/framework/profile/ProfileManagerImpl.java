@@ -1,12 +1,12 @@
 package net.notfab.lindsey.core.framework.profile;
 
 import lombok.Getter;
+import net.notfab.lindsey.core.repositories.sql.MemberProfileRepository;
+import net.notfab.lindsey.core.repositories.sql.ServerProfileRepository;
+import net.notfab.lindsey.core.repositories.sql.UserProfileRepository;
 import net.notfab.lindsey.shared.entities.profile.MemberProfile;
 import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
-import net.notfab.lindsey.shared.repositories.sql.MemberProfileRepository;
-import net.notfab.lindsey.shared.repositories.sql.ServerProfileRepository;
-import net.notfab.lindsey.shared.repositories.sql.UserProfileRepository;
 import net.notfab.lindsey.shared.utils.Snowflake;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;

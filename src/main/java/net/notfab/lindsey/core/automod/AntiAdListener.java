@@ -7,10 +7,10 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.lindseybot.enums.AutoModFeature;
 import net.notfab.lindsey.core.framework.Utils;
+import net.notfab.lindsey.core.repositories.sql.AntiAdRepository;
 import net.notfab.lindsey.core.service.StrikeService;
 import net.notfab.lindsey.core.service.Translator;
 import net.notfab.lindsey.shared.entities.profile.server.AntiAd;
-import net.notfab.lindsey.shared.repositories.sql.server.AntiAdRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

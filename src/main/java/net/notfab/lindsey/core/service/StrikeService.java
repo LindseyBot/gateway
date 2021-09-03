@@ -2,8 +2,8 @@ package net.notfab.lindsey.core.service;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.notfab.lindsey.core.framework.events.StrikeReceivedEvent;
+import net.notfab.lindsey.core.repositories.sql.StrikeRepository;
 import net.notfab.lindsey.shared.entities.profile.member.Strike;
-import net.notfab.lindsey.shared.repositories.sql.StrikeRepository;
 import net.notfab.lindsey.shared.utils.Snowflake;
 import org.springframework.stereotype.Service;
 

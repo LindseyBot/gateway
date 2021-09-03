@@ -4,9 +4,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.notfab.lindsey.core.repositories.sql.StarboardRepository;
+import net.notfab.lindsey.core.repositories.sql.StarboardSettingsRepository;
 import net.notfab.lindsey.shared.entities.Starboard;
 import net.notfab.lindsey.shared.entities.profile.server.StarboardSettings;
-import net.notfab.lindsey.shared.repositories.sql.server.StarboardSettingsRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
