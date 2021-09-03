@@ -34,13 +34,9 @@ public class DiscordListener extends ListenerAdapter {
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         if (event.getAuthor().isBot() || event.isWebhookMessage() || event.getMember() == null) {
             return;
-        }
-
-        if (isNotAllowed(event.getGuild())) {
+        } else if (isNotAllowed(event.getGuild())) {
             return;
-        }
-
-        if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
+        } else if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
             return;
         }
 
@@ -52,7 +48,7 @@ public class DiscordListener extends ListenerAdapter {
 
         /*
          * TODO: Document hierarchy, usually is
-         * Commands -> AutoMod -> Others -> Loggers
+         * AutoMod -> Others -> Loggers
          */
         this.events.fire(localEvent);
     }
@@ -61,13 +57,9 @@ public class DiscordListener extends ListenerAdapter {
     public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
         if (event.getAuthor().isBot() || event.getMessage().isWebhookMessage() || event.getMember() == null) {
             return;
-        }
-
-        if (isNotAllowed(event.getGuild())) {
+        } else if (isNotAllowed(event.getGuild())) {
             return;
-        }
-
-        if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
+        } else if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
             return;
         }
 
@@ -84,13 +76,9 @@ public class DiscordListener extends ListenerAdapter {
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
         if (event.getMember().getUser().isBot()) {
             return;
-        }
-
-        if (isNotAllowed(event.getGuild())) {
+        } else if (isNotAllowed(event.getGuild())) {
             return;
-        }
-
-        if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
+        } else if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
             return;
         }
 
@@ -108,13 +96,9 @@ public class DiscordListener extends ListenerAdapter {
     public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
         if (event.getMember() == null || event.getMember().getUser().isBot()) {
             return;
-        }
-
-        if (isNotAllowed(event.getGuild())) {
+        } else if (isNotAllowed(event.getGuild())) {
             return;
-        }
-
-        if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
+        } else if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
             return;
         }
 
