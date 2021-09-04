@@ -40,7 +40,6 @@ public class CommandService {
         CommandMeta metadata = command.getMetadata();
         if (metadata != null) {
             this.registry.register(metadata);
-            log.info("Registered command {}", metadata.getName());
         }
         for (Method method : command.getClass().getDeclaredMethods()) {
             BotCommand cmd = method.getDeclaredAnnotation(BotCommand.class);
