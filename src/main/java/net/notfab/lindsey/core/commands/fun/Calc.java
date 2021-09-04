@@ -30,7 +30,7 @@ public class Calc extends Command {
 
     @Override
     public CommandMeta getMetadata() {
-        return new CommandBuilder("calc", Label.raw("Calculates an expression"))
+        return new CommandBuilder("calc", Label.raw("Calculates an expression"), 1.0)
             .permission(PermissionLevel.EVERYONE)
             .module(Modules.FUN)
             .guilds(859946655310413844L)

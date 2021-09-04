@@ -70,7 +70,7 @@ public class CommandListener implements Listener {
         }
         try {
             if (!manager.hasListener(event.getPath())) {
-                log.warn("Received unhandled command: {}", event.getPath());
+                log.info("Received remote command: {}", event.getPath());
                 this.executeRemotely(event);
             } else {
                 MethodReference method = manager.getListener(event.getPath());
@@ -105,6 +105,7 @@ public class CommandListener implements Listener {
                     .convertSendAndReceiveAsType("commands", event.getPath().replace("/", "."), request, this.typeReference());
                 if (response instanceof MessageResponse msg) {
                     // TODO: Convert
+                    log.debug("Remote Response: {}", msg);
                 }
             } catch (Exception ex) {
                 log.error("Failed to execute command", ex);

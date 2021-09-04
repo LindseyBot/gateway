@@ -32,7 +32,15 @@ public class CommandService {
     public CommandService(List<Command> commands, CommandRegistry registry) {
         this.registry = registry;
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(() -> commands.forEach(this::register), 30, TimeUnit.SECONDS);
+        service.schedule(() -> {
+            try {
+                this.registry.fetchAll();
+                commands.forEach(this::register);
+                log.info("Loaded {} commands.", this.registry.getAll().size());
+            } catch (Exception ex) {
+                log.error("Error during command registration", ex);
+            }
+        }, 30, TimeUnit.SECONDS);
         service.shutdown();
     }
 
@@ -79,7 +87,7 @@ public class CommandService {
     public CommandMetaBase findMeta(String path) {
         String[] split = path.split("/");
         CommandMeta command = this.findCommand(path);
-        if (split.length == 1) {
+        if (command == null || split.length == 1) {
             return command;
         } else if (split.length == 2) {
             return command.getSubcommands().stream()

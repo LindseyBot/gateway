@@ -37,7 +37,7 @@ public class Cookies extends Command {
 
     @Override
     public CommandMeta getMetadata() {
-        return new CommandBuilder("cookies", Label.of("commands.cookies.description"))
+        return new CommandBuilder("cookies", Label.of("commands.cookies.description"), 1.0)
             .permission(PermissionLevel.EVERYONE)
             .module(Modules.ECONOMY)
             .addSubcommand(

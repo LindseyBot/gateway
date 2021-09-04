@@ -27,7 +27,7 @@ public class Hackban extends Command {
 
     @Override
     public CommandMeta getMetadata() {
-        return new CommandBuilder("hackban", Label.of("commands.hackban.description"))
+        return new CommandBuilder("hackban", Label.of("commands.hackban.description"), 1.0)
             .module(Modules.MODERATION)
             .permission(PermissionLevel.ADMIN)
             .guilds(859946655310413844L)
