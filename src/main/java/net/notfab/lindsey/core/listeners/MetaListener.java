@@ -1,7 +1,9 @@
 package net.notfab.lindsey.core.listeners;
 
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -22,6 +24,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,10 +51,6 @@ public class MetaListener {
     })
     public void onCommandMeta(@Payload CommandMetaEvent event) {
         CommandMeta model = event.getModel();
-        if (!event.isCreate()) {
-            log.info("Skipped unregistering a command on Discord ({})", model.getName());
-            return;
-        }
         CommandData data;
         try {
             data = this.getData(model);
@@ -59,6 +58,7 @@ public class MetaListener {
             log.error("Failed to convert command to Discord format", ex);
             return;
         }
+        log.info("Received command event [name = {}, create = {}]", model.getName(), event.isCreate());
         if (!model.getGuilds().isEmpty()) {
             for (Long guildId : model.getGuilds()) {
                 Guild guild = this.shardManager.getGuildById(guildId);
@@ -66,10 +66,33 @@ public class MetaListener {
                     log.warn("Failed to register slash command for guild " + guildId);
                     continue;
                 }
-                guild.upsertCommand(data).queue();
+                if (event.isCreate()) {
+                    guild.upsertCommand(data)
+                        .queue((cmd) -> log.info("Registered command {} on guild {}", cmd.getName(), guildId));
+                } else {
+                    guild.retrieveCommands().queue(commands -> {
+                        Optional<Command> oCmd = commands.stream()
+                            .filter(cmd -> cmd.getName().equals(model.getName()))
+                            .findFirst();
+                        oCmd.ifPresent(command -> command.delete().queue((cmd) ->
+                            log.info("Deleted command {} from guild {}", model.getName(), guildId)));
+                    });
+                }
             }
         } else if (!this.settings.isBeta()) {
-            this.shardManager.getShards().get(0).upsertCommand(data).queue();
+            JDA shard = this.shardManager.getShards().get(0);
+            if (event.isCreate()) {
+                shard.upsertCommand(data)
+                    .queue(cmd -> log.info("Registered global command {}", cmd.getName()));
+            } else {
+                shard.retrieveCommands().queue(commands -> {
+                    Optional<Command> oCmd = commands.stream()
+                        .filter(cmd -> cmd.getName().equals(model.getName()))
+                        .findFirst();
+                    oCmd.ifPresent(command -> command.delete().queue((cmd) ->
+                        log.info("Deleted global command {}", model.getName())));
+                });
+            }
         } else {
             log.info("Beta mode enabled, not registering global command: {}", model.getName());
         }

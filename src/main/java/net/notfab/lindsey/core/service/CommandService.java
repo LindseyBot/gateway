@@ -2,7 +2,6 @@ package net.notfab.lindsey.core.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lindseybot.controller.registry.CommandRegistry;
-import net.lindseybot.entities.events.CommandMetaEvent;
 import net.lindseybot.entities.interaction.commands.CommandMeta;
 import net.lindseybot.entities.interaction.commands.CommandMetaBase;
 import net.lindseybot.entities.interaction.commands.SubCommandMeta;
@@ -12,7 +11,6 @@ import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.MethodReference;
 import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
-import net.notfab.lindsey.core.listeners.MetaListener;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
@@ -20,29 +18,28 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 public class CommandService {
 
     private final CommandRegistry registry;
-    private final MetaListener metaListener;
     private final Map<String, MethodReference> listeners = new HashMap<>();
 
-    public CommandService(List<Command> commands, CommandRegistry registry, MetaListener metaListener) {
+    public CommandService(List<Command> commands, CommandRegistry registry) {
         this.registry = registry;
-        this.metaListener = metaListener;
-        commands.forEach(this::register);
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.schedule(() -> commands.forEach(this::register), 30, TimeUnit.SECONDS);
+        service.shutdown();
     }
 
     private void register(Command command) {
         CommandMeta metadata = command.getMetadata();
         if (metadata != null) {
             this.registry.register(metadata);
-            CommandMetaEvent event = new CommandMetaEvent();
-            event.setCreate(true);
-            event.setModel(metadata);
-            this.metaListener.onCommandMeta(event);
             log.info("Registered command {}", metadata.getName());
         }
         for (Method method : command.getClass().getDeclaredMethods()) {
