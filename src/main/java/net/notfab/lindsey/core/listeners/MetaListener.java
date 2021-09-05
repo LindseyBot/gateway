@@ -10,8 +10,10 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import net.lindseybot.controller.registry.ButtonRegistry;
 import net.lindseybot.controller.registry.CommandRegistry;
 import net.lindseybot.entities.discord.Label;
+import net.lindseybot.entities.events.ButtonMetaEvent;
 import net.lindseybot.entities.events.CommandMetaEvent;
 import net.lindseybot.entities.interaction.commands.*;
 import net.notfab.lindsey.core.framework.DiscordAdapter;
@@ -36,12 +38,15 @@ public class MetaListener {
     private final ShardManager shardManager;
     private final AppSettings settings;
     private final CommandRegistry commands;
+    private final ButtonRegistry buttons;
 
-    public MetaListener(DiscordAdapter adapter, ShardManager shardManager, AppSettings settings, CommandRegistry commands) {
+    public MetaListener(DiscordAdapter adapter, ShardManager shardManager, AppSettings settings,
+                        CommandRegistry commands, ButtonRegistry buttons) {
         this.adapter = adapter;
         this.shardManager = shardManager;
         this.settings = settings;
         this.commands = commands;
+        this.buttons = buttons;
     }
 
     /**
@@ -93,6 +98,18 @@ public class MetaListener {
         } else {
             log.info("Beta mode enabled, not updating global command: {}", model.getName());
         }
+    }
+
+    /**
+     * Keeps track of buttons for the registry.
+     *
+     * @param event ButtonMeta event.
+     */
+    @RabbitListener(bindings = {
+        @QueueBinding(value = @Queue(), exchange = @Exchange("events"), key = {"events.buttons.meta"})
+    })
+    public void onButtonMeta(@Payload ButtonMetaEvent event) {
+        this.buttons.onEvent(event);
     }
 
     private String toLabel(Label label) {
