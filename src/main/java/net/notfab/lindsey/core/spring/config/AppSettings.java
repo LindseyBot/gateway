@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class AppSettings {
 
     private String token;
+    private String encryptionKey;
     private boolean beta;
 
 }

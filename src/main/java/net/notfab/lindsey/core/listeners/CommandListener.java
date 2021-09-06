@@ -60,6 +60,7 @@ public class CommandListener implements Listener {
     public void onSlashCommand(@NotNull ServerCommandEvent event) {
         CommandMetaBase meta = this.manager.findMeta(event.getPath());
         if (meta == null) {
+            event.setCancelled(true);
             log.warn("Received invalid command: {}", event.getPath());
             return;
         }
@@ -104,8 +105,7 @@ public class CommandListener implements Listener {
                 InteractionResponse response = this.rabbit
                     .convertSendAndReceiveAsType("commands", event.getPath().replace("/", "."), request, this.typeReference());
                 if (response instanceof MessageResponse msg) {
-                    // TODO: Convert
-                    log.debug("Remote Response: {}", msg);
+                    this.msg.reply(event.getUnderlying(), msg.getMessage());
                 }
             } catch (Exception ex) {
                 log.error("Failed to execute command", ex);

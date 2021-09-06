@@ -1,6 +1,7 @@
 package net.notfab.lindsey.core.discord;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
@@ -136,6 +137,35 @@ public class DiscordListener extends ListenerAdapter {
         localEvent.setChannel(event.getTextChannel());
         localEvent.setPath(event.getCommandPath());
         localEvent.setOptions(new OptionMapper(event.getOptions()));
+        localEvent.setUnderlying(event);
+
+        this.events.fire(localEvent);
+    }
+
+    @Override
+    public void onButtonClick(@NotNull ButtonClickEvent event) {
+        if (event.getMember() == null || event.getMember().getUser().isBot()) {
+            return;
+        } else if (event.getGuild() == null) {
+            return;
+        } else if (isNotAllowed(event.getGuild())) {
+            event.reply("No authorization.").setEphemeral(true)
+                .queue();
+            return;
+        } else if (event.getMember().isPending()) {
+            event.reply("Please complete membership screening before executing any commands.").setEphemeral(true)
+                .queue();
+            return;
+        } else if (this.ignores.isIgnored(event.getGuild().getIdLong(), event.getChannel().getIdLong())) {
+            return;
+        }
+
+        ButtonClickedEvent localEvent = new ButtonClickedEvent();
+        localEvent.setMember(event.getMember());
+        localEvent.setButton(event.getButton());
+        localEvent.setGuild(event.getGuild());
+        localEvent.setChannel(event.getTextChannel());
+        localEvent.setId(event.getComponentId());
         localEvent.setUnderlying(event);
 
         this.events.fire(localEvent);

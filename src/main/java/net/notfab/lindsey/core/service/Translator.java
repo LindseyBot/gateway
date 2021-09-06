@@ -2,6 +2,7 @@ package net.notfab.lindsey.core.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
@@ -48,6 +49,18 @@ public class Translator {
             language = profile.getLanguage();
         }
         return get(language, message, args);
+    }
+
+    public String get(ISnowflake snowflake, String name) {
+        if (snowflake instanceof User user) {
+            return this.get(user, name);
+        } else if (snowflake instanceof Guild guild) {
+            return this.get(guild, name);
+        } else if (snowflake instanceof Member member) {
+            return this.get(member, name);
+        } else {
+            return this.get(Language.en_US, name);
+        }
     }
 
     public String get(Language language, String key, Object... args) {
