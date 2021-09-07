@@ -3,10 +3,7 @@ package net.notfab.lindsey.core.framework;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Emoji;
-import net.dv8tion.jda.api.entities.ISnowflake;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Button;
 import net.dv8tion.jda.api.interactions.components.ButtonStyle;
@@ -50,8 +47,14 @@ public class DiscordAdapter {
     public String getLabel(Label msg, ISnowflake snowflake) {
         if (msg.isLiteral()) {
             return msg.getName();
+        } else if (snowflake instanceof User user) {
+            return this.i18n.get(user, msg.getName(), msg.getArguments());
+        } else if (snowflake instanceof Guild guild) {
+            return this.i18n.get(guild, msg.getName(), msg.getArguments());
+        } else if (snowflake instanceof Member member) {
+            return this.i18n.get(member, msg.getName(), msg.getArguments());
         } else {
-            return this.i18n.get(snowflake, msg.getName());
+            return this.i18n.get(Language.en_US, msg.getName(), msg.getArguments());
         }
     }
 
