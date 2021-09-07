@@ -4,9 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lindseybot.controller.registry.CommandRegistry;
 import net.lindseybot.entities.interaction.commands.CommandMeta;
 import net.lindseybot.entities.interaction.commands.CommandMetaBase;
-import net.lindseybot.entities.interaction.commands.SubCommandMeta;
 import net.lindseybot.entities.interaction.commands.SubcommandGroupMeta;
-import net.lindseybot.enums.PermissionLevel;
 import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.command.MethodReference;
@@ -103,40 +101,6 @@ public class CommandService {
                 .filter(g -> g.getName().equals(split[1]))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Invalid command"));
-        }
-    }
-
-    public PermissionLevel getPermission(String path) {
-        CommandMeta meta = this.findCommand(path);
-        String[] split = path.split("/");
-        if (split.length == 1) {
-            return meta.getPermission();
-        } else if (split.length == 2) {
-            SubCommandMeta data = meta.getSubcommands().stream()
-                .filter(s -> s.getName().equals(split[1]))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Invalid command"));
-            if (data.getPermission() != null) {
-                return data.getPermission();
-            } else {
-                return meta.getPermission();
-            }
-        } else {
-            SubcommandGroupMeta group = meta.getGroups().stream()
-                .filter(g -> g.getName().equals(split[1]))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Invalid command"));
-            SubCommandMeta sub = group.getSubcommands().stream()
-                .filter(s -> s.getName().equals(split[1]))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Invalid command"));
-            if (sub.getPermission() != null) {
-                return sub.getPermission();
-            } else if (group.getPermission() != null) {
-                return group.getPermission();
-            } else {
-                return meta.getPermission();
-            }
         }
     }
 

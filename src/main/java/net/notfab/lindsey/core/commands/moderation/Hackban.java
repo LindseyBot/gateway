@@ -6,7 +6,6 @@ import net.lindseybot.entities.interaction.commands.CommandMeta;
 import net.lindseybot.entities.interaction.commands.OptType;
 import net.lindseybot.entities.interaction.commands.builder.CommandBuilder;
 import net.lindseybot.enums.Modules;
-import net.lindseybot.enums.PermissionLevel;
 import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
@@ -29,7 +28,7 @@ public class Hackban extends Command {
     public CommandMeta getMetadata() {
         return new CommandBuilder("hackban", Label.of("commands.hackban.description"), 1.0)
             .module(Modules.MODERATION)
-            .permission(PermissionLevel.ADMIN)
+            .privileged()
             .guilds(859946655310413844L)
             .addOption(OptType.LONG, "user", Label.of("commands.hackban.user"), true)
             .addOption(OptType.STRING, "reason", Label.of("commands.hackban.reason"), false)

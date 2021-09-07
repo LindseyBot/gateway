@@ -13,6 +13,7 @@ import net.notfab.lindsey.core.repositories.sql.RoleHistoryRepository;
 import net.notfab.lindsey.core.service.KeepRoleService;
 import net.notfab.lindsey.core.service.Translator;
 import net.notfab.lindsey.shared.entities.profile.member.RoleHistory;
+import net.notfab.lindsey.shared.enums.Language;
 import net.notfab.lindsey.shared.utils.Snowflake;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -75,7 +76,7 @@ public class RoleHistoryListener extends ListenerAdapter {
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
         event.getGuild().modifyMemberRoles(event.getMember(), roles)
-            .reason(i18n.get(event.getGuild(), "features.keeproles", roles.size()))
+            .reason(i18n.get(Language.en_US, "features.keeproles", roles.size()))
             .queue();
     }
 

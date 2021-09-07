@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
-import net.notfab.lindsey.shared.entities.profile.ServerProfile;
 import net.notfab.lindsey.shared.enums.Language;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -37,17 +36,6 @@ public class Translator {
 
     public String get(User user, String message, Object... args) {
         Language language = profiles.get(user).getLanguage();
-        return get(language, message, args);
-    }
-
-    public String get(Guild guild, String message, Object... args) {
-        ServerProfile profile = profiles.get(guild);
-        Language language;
-        if (profile.getLanguage() == null) {
-            language = Language.en_US;
-        } else {
-            language = profile.getLanguage();
-        }
         return get(language, message, args);
     }
 

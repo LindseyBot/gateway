@@ -11,6 +11,7 @@ import net.notfab.lindsey.core.repositories.sql.AntiAdRepository;
 import net.notfab.lindsey.core.service.StrikeService;
 import net.notfab.lindsey.core.service.Translator;
 import net.notfab.lindsey.shared.entities.profile.server.AntiAd;
+import net.notfab.lindsey.shared.enums.Language;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -71,7 +72,7 @@ public class AntiAdListener implements AutoModerator {
         message.delete()
             .reason("Advertising")
             .flatMap(aVoid -> message.getChannel()
-                .sendMessage(i18n.get(guild, "automod.antiad.warn", author.getEffectiveName())))
+                .sendMessage(i18n.get(Language.en_US, "automod.antiad.warn", author.getEffectiveName())))
             .delay(10, TimeUnit.SECONDS)
             .flatMap(Message::delete)
             .queue(Utils.noop(), Utils.noop());

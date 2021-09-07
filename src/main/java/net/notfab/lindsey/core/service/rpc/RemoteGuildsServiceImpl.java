@@ -1,12 +1,11 @@
 package net.notfab.lindsey.core.service.rpc;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.lindseybot.entities.discord.*;
-import net.lindseybot.enums.PermissionLevel;
 import net.lindseybot.utils.RabbitUtils;
 import net.notfab.lindsey.core.framework.FakeBuilder;
-import net.notfab.lindsey.core.service.PermissionsService;
 import net.notfab.lindsey.shared.rpc.services.RemoteGuildsService;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -24,11 +23,9 @@ import java.util.stream.Collectors;
 public class RemoteGuildsServiceImpl implements RemoteGuildsService {
 
     private final ShardManager shardManager;
-    private final PermissionsService permissions;
 
-    public RemoteGuildsServiceImpl(ShardManager shardManager, PermissionsService permissions) {
+    public RemoteGuildsServiceImpl(ShardManager shardManager) {
         this.shardManager = shardManager;
-        this.permissions = permissions;
     }
 
     private boolean hasPermission(Guild guild, long userId) {
@@ -40,7 +37,7 @@ public class RemoteGuildsServiceImpl implements RemoteGuildsService {
         if (member == null) {
             return false;
         }
-        return this.permissions.hasPermission(member, PermissionLevel.ADMIN);
+        return member.isOwner() || member.hasPermission(Permission.ADMINISTRATOR);
     }
 
     @Override

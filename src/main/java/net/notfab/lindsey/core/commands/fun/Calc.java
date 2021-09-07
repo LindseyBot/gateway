@@ -6,7 +6,6 @@ import net.lindseybot.entities.interaction.commands.CommandMeta;
 import net.lindseybot.entities.interaction.commands.OptType;
 import net.lindseybot.entities.interaction.commands.builder.CommandBuilder;
 import net.lindseybot.enums.Modules;
-import net.lindseybot.enums.PermissionLevel;
 import net.notfab.lindsey.core.framework.command.BotCommand;
 import net.notfab.lindsey.core.framework.command.Command;
 import net.notfab.lindsey.core.framework.events.ServerCommandEvent;
@@ -31,7 +30,7 @@ public class Calc extends Command {
     @Override
     public CommandMeta getMetadata() {
         return new CommandBuilder("calc", Label.raw("Calculates an expression"), 1.0)
-            .permission(PermissionLevel.EVERYONE)
+            .privileged()
             .module(Modules.FUN)
             .guilds(859946655310413844L)
             .addOption(OptType.STRING, "expression", Label.raw("Mathematical expression"), true)

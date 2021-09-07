@@ -12,7 +12,6 @@ import net.lindseybot.entities.interaction.commands.OptionHolder;
 import net.lindseybot.entities.interaction.request.CommandRequest;
 import net.lindseybot.entities.interaction.response.InteractionResponse;
 import net.lindseybot.entities.interaction.response.MessageResponse;
-import net.lindseybot.enums.PermissionLevel;
 import net.notfab.eventti.EventHandler;
 import net.notfab.eventti.Listener;
 import net.notfab.lindsey.core.framework.FakeBuilder;
@@ -63,10 +62,14 @@ public class CommandListener implements Listener {
             event.setCancelled(true);
             log.warn("Received invalid command: {}", event.getPath());
             return;
-        }
-        PermissionLevel access = this.manager.getPermission(event.getPath());
-        if (!permissions.hasPermission(event.getMember(), access)) {
-            this.msg.reply(event, Label.of("permissions.command"), true);
+        } else if (meta.isPrivileged()) {
+            String cmdName = event.getPath().contains("/") ? event.getPath().split("/")[0] : event.getPath();
+            if (!this.permissions.hasPermission(event.getMember(), cmdName)) {
+                this.msg.reply(event, Label.of("permissions.command"), true);
+                return;
+            }
+        } else if (meta.isNsfw() && !event.getChannel().isNSFW()) {
+            this.msg.reply(event, Label.of("validation.nsfw"), true);
             return;
         }
         try {
