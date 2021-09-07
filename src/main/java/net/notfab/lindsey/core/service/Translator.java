@@ -41,11 +41,13 @@ public class Translator {
 
     public String get(ISnowflake snowflake, String name) {
         if (snowflake instanceof User user) {
-            return this.get(user, name);
+            Language language = profiles.get(user).getLanguage();
+            return get(language, name);
         } else if (snowflake instanceof Guild guild) {
             return this.get(guild.getOwner(), name);
         } else if (snowflake instanceof Member member) {
-            return this.get(member, name);
+            Language language = profiles.get(member.getUser()).getLanguage();
+            return get(language, name);
         } else {
             return this.get(Language.en_US, name);
         }
