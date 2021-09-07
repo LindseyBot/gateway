@@ -1,4 +1,4 @@
-package net.notfab.lindsey.core.commands.moderation;
+package net.notfab.lindsey.core.commands;
 
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.lindseybot.entities.discord.Label;
