@@ -43,7 +43,7 @@ public class Translator {
         if (snowflake instanceof User user) {
             return this.get(user, name);
         } else if (snowflake instanceof Guild guild) {
-            return this.get(guild, name);
+            return this.get(guild.getOwner(), name);
         } else if (snowflake instanceof Member member) {
             return this.get(member, name);
         } else {
