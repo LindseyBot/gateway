@@ -4,18 +4,15 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.notfab.lindsey.core.framework.profile.ProfileManager;
 import net.notfab.lindsey.shared.entities.profile.UserProfile;
-import net.notfab.lindsey.shared.enums.LeaderboardType;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EconomyService {
 
     private final ProfileManager profiles;
-    private final LeaderboardService leaderboards;
 
-    public EconomyService(ProfileManager profiles, LeaderboardService leaderboards) {
+    public EconomyService(ProfileManager profiles) {
         this.profiles = profiles;
-        this.leaderboards = leaderboards;
     }
 
     public boolean has(Member member, long count) {
@@ -43,7 +40,6 @@ public class EconomyService {
         UserProfile profile = profiles.getUser(user);
         profile.setCookies(profile.getCookies() + count);
         profiles.save(profile);
-        leaderboards.update(user, LeaderboardType.COOKIES);
     }
 
     public void deduct(Member member, long count) {
@@ -61,7 +57,6 @@ public class EconomyService {
         }
         profile.setCookies(profile.getCookies() - count);
         profiles.save(profile);
-        leaderboards.update(user, LeaderboardType.COOKIES);
     }
 
 }
