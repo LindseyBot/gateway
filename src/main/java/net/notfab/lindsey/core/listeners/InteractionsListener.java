@@ -60,15 +60,15 @@ public class InteractionsListener implements Listener {
         request.setMember(FakeBuilder.toFake(event.getMember()));
         request.setChannel(FakeBuilder.toFake(event.getChannel()));
 
-        ButtonMeta meta = this.buttons.get(method);
         try {
             this.taskExecutor
-                .submit(() -> this.execute(event.getUnderlying(), request, meta))
+                .submit(() -> this.execute(event.getUnderlying(), request))
                 .get(1500, TimeUnit.MILLISECONDS);
         } catch (ExecutionException | InterruptedException ex) {
             log.error("Failed to schedule command execution", ex);
         } catch (TimeoutException ex) {
             log.warn("Timed out during button execution: {}", request.getId());
+            ButtonMeta meta = this.buttons.get(method);
             if (meta.isEdit()) {
                 event.getUnderlying()
                     .deferEdit()
@@ -81,13 +81,13 @@ public class InteractionsListener implements Listener {
         }
     }
 
-    private void execute(ButtonClickEvent event, ButtonRequest request, ButtonMeta meta) {
+    private void execute(ButtonClickEvent event, ButtonRequest request) {
         try {
             ButtonResponse response = this.rabbit.convertSendAndReceiveAsType("buttons",
                 request.getId(), request, ButtonResponse.typeReference());
             if (response == null) {
                 log.error("Button response is null: {}", request.getId());
-            } else if (meta.isEdit()) {
+            } else if (response.isEdit()) {
                 this.msg.edit(event, response);
             } else {
                 this.msg.reply(event, response);
