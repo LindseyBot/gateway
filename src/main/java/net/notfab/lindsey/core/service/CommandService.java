@@ -98,7 +98,7 @@ public class CommandService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Invalid command"));
             return group.getSubcommands().stream()
-                .filter(g -> g.getName().equals(split[1]))
+                .filter(g -> g.getName().equals(split[2]))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Invalid command"));
         }
