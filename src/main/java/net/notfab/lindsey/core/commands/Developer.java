@@ -58,49 +58,78 @@ public class Developer extends Command {
 
     @BotCommand("dev/commands/reload")
     public void onReloadCommands(ServerCommandEvent event) {
+        if (!isAuthorized(event)) {
+            this.msg.reply(event, Label.raw("n"), false);
+            return;
+        }
         this.commands.fetchAll();
-        this.msg.reply(event, Label.raw("Reloaded all commands."), true);
+        this.msg.reply(event, Label.raw("Reloaded all commands."), false);
     }
 
     @BotCommand("dev/commands/redeploy")
     public void onRedeployCommands(ServerCommandEvent event) {
+        if (!isAuthorized(event)) {
+            this.msg.reply(event, Label.raw("n"), false);
+            return;
+        }
         for (CommandMeta meta : this.commands.getAll()) {
             CommandMetaEvent e = new CommandMetaEvent();
             e.setModel(meta);
             e.setCreate(true);
             this.metaListener.onCommandMeta(e);
         }
-        this.msg.reply(event, Label.raw("Redeployed all commands."), true);
+        this.msg.reply(event, Label.raw("Redeployed all commands."), false);
     }
 
     @BotCommand("dev/commands/list")
     public void onListCommands(ServerCommandEvent event) {
+        if (!isAuthorized(event)) {
+            this.msg.reply(event, Label.raw("n"), false);
+            return;
+        }
         StringBuilder builder = new StringBuilder();
         for (CommandMeta meta : this.commands.getAll()) {
             builder.append(", ").append(meta.getName());
         }
-        this.msg.reply(event, Label.raw("Commands: " + builder.toString().replaceFirst(", ", "")), true);
+        this.msg.reply(event, Label.raw("Commands: " + builder.toString().replaceFirst(", ", "")), false);
     }
 
     @BotCommand("dev/i18n/reload")
     public void onReloadI18n(ServerCommandEvent event) {
+        if (!isAuthorized(event)) {
+            this.msg.reply(event, Label.raw("n"), false);
+            return;
+        }
         int loaded = this.i18n.reloadLanguages();
-        this.msg.reply(event, Label.raw("Reloaded " + loaded + " languages."), true);
+        this.msg.reply(event, Label.raw("Reloaded " + loaded + " languages."), false);
     }
 
     @BotCommand("dev/buttons/reload")
     public void onReloadButtons(ServerCommandEvent event) {
+        if (!isAuthorized(event)) {
+            this.msg.reply(event, Label.raw("n"), false);
+            return;
+        }
         this.buttons.fetchAll();
-        this.msg.reply(event, Label.raw("Reloaded all buttons."), true);
+        this.msg.reply(event, Label.raw("Reloaded all buttons."), false);
     }
 
     @BotCommand("dev/buttons/list")
     public void onListButtons(ServerCommandEvent event) {
+        if (!isAuthorized(event)) {
+            this.msg.reply(event, Label.raw("n"), false);
+            return;
+        }
         StringBuilder builder = new StringBuilder();
         for (ButtonMeta meta : this.buttons.getAll()) {
             builder.append(", ").append(meta.getMethod());
         }
-        this.msg.reply(event, Label.raw("Buttons: " + builder.toString().replaceFirst(", ", "")), true);
+        this.msg.reply(event, Label.raw("Buttons: " + builder.toString().replaceFirst(", ", "")), false);
+    }
+
+    private boolean isAuthorized(ServerCommandEvent event) {
+        long userId = event.getMember().getIdLong();
+        return userId == 87166524837613568L || userId == 119566649731842049L;
     }
 
 }
