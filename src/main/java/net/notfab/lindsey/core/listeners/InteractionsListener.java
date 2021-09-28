@@ -10,6 +10,7 @@ import net.notfab.eventti.Listener;
 import net.notfab.lindsey.core.framework.FakeBuilder;
 import net.notfab.lindsey.core.framework.events.ButtonClickedEvent;
 import net.notfab.lindsey.core.service.ButtonService;
+import net.notfab.lindsey.core.service.EventService;
 import net.notfab.lindsey.core.service.Messenger;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -29,13 +30,14 @@ public class InteractionsListener implements Listener {
     private final ThreadPoolTaskExecutor taskExecutor;
     private final Messenger msg;
 
-    public InteractionsListener(ButtonService buttons, RabbitTemplate rabbit, Messenger msg) {
+    public InteractionsListener(ButtonService buttons, RabbitTemplate rabbit, Messenger msg, EventService events) {
         this.buttons = buttons;
         this.rabbit = rabbit;
         this.msg = msg;
         taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setThreadNamePrefix("interactions-");
         taskExecutor.initialize();
+        events.addListener(this);
     }
 
     @EventHandler(ignoreCancelled = true)
