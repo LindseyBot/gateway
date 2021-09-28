@@ -13,6 +13,8 @@ public class ButtonService {
 
     public ButtonService(ButtonRegistry registry) {
         this.registry = registry;
+        this.registry.fetchAll();
+        log.info("Loaded " + registry.getAll().size() + " buttons.");
     }
 
     public boolean exists(String name) {

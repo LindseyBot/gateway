@@ -38,7 +38,7 @@ public class CommandService {
             } catch (Exception ex) {
                 log.error("Error during command registration", ex);
             }
-        }, 30, TimeUnit.SECONDS);
+        }, 15, TimeUnit.SECONDS);
         service.shutdown();
     }
 
