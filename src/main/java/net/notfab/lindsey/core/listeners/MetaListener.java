@@ -109,6 +109,7 @@ public class MetaListener {
         @QueueBinding(value = @Queue(), exchange = @Exchange("events"), key = {"events.buttons.meta"})
     })
     public void onButtonMeta(@Payload ButtonMetaEvent event) {
+        log.info("Received button event [id = {}, create = {}]", event.getModel().getMethod(), event.isCreate());
         this.buttons.onEvent(event);
     }
 
